@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/regist/regist",
+    "pages/talk/talk",
+    "pages/service/service",
+    "pages/tip/tip",
+    "pages/home/home",
+    "pages/talk/addTalk/addTalk",
+    "pages/talk/talkDetail/talkDetail"
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "钓鱼助手",
+    "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {
+    "van-panel": "vant-weapp/panel",
+    "van-icon": "vant-weapp/icon",
+    "van-cell": "vant-weapp/cell",
+    "van-cell-group": "vant-weapp/cell-group",
+    "van-search": "vant-weapp/search",
+    "van-notice-bar": "vant-weapp/notice-bar",
+    "van-transition": "vant-weapp/transition",
+    "van-tab": "vant-weapp/tab",
+    "van-tabs": "vant-weapp/tabs",
+    "van-button": "vant-weapp/button",
+    "van-nav-bar": "vant-weapp/nav-bar",
+    "van-field": "vant-weapp/field",
+    "van-notify": "vant-weapp/notify",
+    "van-dialog": "vant-weapp/dialog",
+    "van-loading": "vant-weapp/loading"
+  },
+  "tabBar": {
+    "custom": true,
+    "list": [
+      {
+        "pagePath": "pages/talk/talk"
+      },
+      {
+        "pagePath": "pages/service/service"
+      },
+      {
+        "pagePath": "pages/tip/tip"
+      },
+      {
+        "pagePath": "pages/home/home"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

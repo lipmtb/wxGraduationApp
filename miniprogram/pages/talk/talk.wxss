@@ -1,0 +1,39 @@
+/* pages/talk/talk.wxss */
+
+view.wrapper{
+  padding:0 0 600rpx 0;
+}
+#toAddTalkBtn{
+  position:fixed;
+  width:100rpx;
+  z-index:10000;
+  bottom:100rpx;
+  left:0;
+  right:0;
+  margin:auto;
+  opacity:.4;
+}
+/* 搜索按钮 */
+.searchWrapper .searchBtn {
+  background-color:transparent;
+  padding:0rpx 10rpx;
+  color:#fff;
+  font-weight:700;
+  letter-spacing: 0.4rem;
+
+}
+
+/* 钓友圈 */
+.friendNav{
+  text-align:center;
+  background-color:rgb(231, 241, 135);
+  padding:24rpx 0;
+}
+
+.friendNav text.titleText{
+  display:inline-block;
+  height:34rpx;
+  width:52rpx;
+  font-size:20px;
+  padding:0 12rpx;
+}

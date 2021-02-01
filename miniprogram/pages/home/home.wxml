@@ -1,0 +1,5 @@
+<!--pages/home/home.wxml-->
+<view class="userInfoCart">
+  <image src="{{userAvatar}}"></image>
+  <text>{{userName}}</text>
+</view>

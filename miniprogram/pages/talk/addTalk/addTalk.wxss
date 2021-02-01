@@ -1,0 +1,40 @@
+/* miniprogram/pages/talk/addTalk/addTalk.wxss */
+
+.titleStyle {
+   color: #329df9; 
+
+}
+
+/* 大盒子图片 */
+.imgViewBox{
+   overflow:hidden;
+}
+
+/* 每个图片的view */
+.imgViewBox .singleImgBox{
+   position: relative;
+   float:left;
+   width:50%;
+   border:1px dotted rgb(250, 248, 248);
+   border-left:0;
+   border-bottom:0;
+   box-sizing: border-box;
+}
+/* 图片 */
+.imgViewBox .singleImgBox image.imgItem{
+   width:100%;
+}
+/* 删除icon */
+.imgViewBox .singleImgBox .deleteIcon{
+   position:absolute !important;
+   width:60rpx  !important;
+   top:10rpx  !important;
+   right:0  !important;
+  text-align:center !important;
+}
+/* 发布按钮 */
+.sendBtnClass{
+   border-radius:0 0 10rpx 10rpx !important;
+   letter-spacing: 1rem !important;
+   font-size:1.5rem !important;
+}

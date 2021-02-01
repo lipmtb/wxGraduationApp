@@ -1,0 +1,22 @@
+<!--pages/regist/regist.wxml-->
+<van-dialog id="van-dialog" />
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+
+<view class="noLoginView" wx:if="{{notRegist}}"> 
+  <view class="topNav">
+    <text>注册</text>
+    <van-icon name="question-o" slot="right" bind:click="showMessage" />
+  </view>
+
+  <van-cell-group>
+    <van-field required center clearable label="昵称" placeholder="输入你的昵称" border="{{ false }}"
+      bind:change="onUserInputNickname" use-button-slot>
+      <button slot="button" open-type="getUserInfo" bindgetuserinfo="onUserRegist">注册</button>
+
+    </van-field>
+  </van-cell-group>
+</view>
+
+<view wx:else>
+  <button slot="button" open-type="getUserInfo" bindgetuserinfo="onUserLogin">登录</button>
+</view>

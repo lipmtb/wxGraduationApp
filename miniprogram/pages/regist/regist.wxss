@@ -1,0 +1,7 @@
+/* pages/regist/regist.wxss */
+
+.topNav{
+  text-align:center;
+  padding:60rpx 0;
+}
+
