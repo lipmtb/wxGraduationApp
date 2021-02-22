@@ -32,9 +32,21 @@
    right:0  !important;
   text-align:center !important;
 }
+.add-location-btn{
+   background-color:#329df9;
+   margin-left:36rpx;
+
+}
+.del-location-icon{
+   float:right;
+   margin-right:20rpx;
+}
 /* 发布按钮 */
 .sendBtnClass{
+   display:block;
+   margin-top:20rpx;
    border-radius:0 0 10rpx 10rpx !important;
    letter-spacing: 1rem !important;
    font-size:1.5rem !important;
+
 }

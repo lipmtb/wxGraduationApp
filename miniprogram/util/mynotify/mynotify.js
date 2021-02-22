@@ -11,7 +11,7 @@ class MyNotify {
   notifyInit() {
     let that = this;
     this.pageThis.setData({
-      notifyStyleInit: 'position:absolute;top:-142rpx;width:100%;padding:20px 0;background-color:' + that.notifyPanelColor + ';text-align:center;border-radius:0 0 10px 10px;z-index:10000000000000',
+      notifyStyleInit: 'position:fixed;top:-142rpx;width:100%;padding:20px 0;background-color:' + that.notifyPanelColor + ';text-align:center;border-radius:0 0 10px 10px;z-index:10000000000000',
       topMessage: that.notifyMessage
     });
   }

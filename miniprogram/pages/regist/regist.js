@@ -31,7 +31,8 @@ Page({
       this.setData({
         notRegist: res.result.length === 0 ? true : false
       });
-
+      
+  //用户注册过，判断是否授权过期
       if (res.result.length >0) {
         //用户的登录状态
         wx.getSetting({ //判断用户是否授权过

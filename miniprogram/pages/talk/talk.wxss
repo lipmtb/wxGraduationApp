@@ -3,6 +3,11 @@
 view.wrapper{
   padding:0 0 600rpx 0;
 }
+
+.select-sheet{
+  position:relative;
+  z-index:10000000000000000;
+}
 #toAddTalkBtn{
   position:fixed;
   width:100rpx;
@@ -36,4 +41,32 @@ view.wrapper{
   width:52rpx;
   font-size:20px;
   padding:0 12rpx;
+}
+
+/* 热门更多 */
+.more-talk-view{
+  overflow: hidden;
+  margin-top:-25rpx;
+  padding:28rpx 0;
+}
+.more-talk-view .more-text{
+  float:right;
+  font-size:1rem;
+  color:rgb(138, 136, 136);
+  text-decoration:underline;
+  margin-right:20rpx;
+}
+
+.questionNav{
+  background-color:rgb(140,118,241);
+}
+
+.question-list-wrapper{
+  padding:20rpx 5rpx;
+}
+
+
+.reach-bottom-view{
+  color:#5d5556;
+  text-align:center;
 }

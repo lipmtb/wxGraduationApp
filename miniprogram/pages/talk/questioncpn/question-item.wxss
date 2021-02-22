@@ -1,0 +1,26 @@
+/* pages/talk/questioncpn/question-item.wxss */
+.question-item-wrapper{
+  padding:20rpx 0;
+  border-top:1px solid #ccc;
+  margin:20rpx 0;
+}
+.question-item-top image.user-avatar{
+  width:60rpx;
+  height:60rpx;
+  border-radius:50%;
+}
+
+.question-item-top .text-detail,.arrow-icon{
+  float:right;
+  margin-top:10rpx;
+}
+.question-item-body{
+  text-align:center;
+  font-size:40rpx;
+  font-weight:600;
+}
+
+.question-publish-time{
+  font-size:26rpx;
+  color:#8e8888;
+}

@@ -1,0 +1,21 @@
+<!--miniprogram/pages/tip/classifyDetail/moreClassify/moreClassify.wxml-->
+<view class="classify-select-view">
+    <block wx:for="{{classifyNameLists}}" wx:for-item="classifyitem">
+      <navigator url="../classifyDetail/classifyDetail?classifyId={{classifyitem._id}}">
+        <view class="select-item-view" >
+          <text class="class-item-text">{{classifyitem.classifyName}}</text>
+          <text class="classify-count">阅读:{{classifyitem.readCount}}</text>
+        </view>
+      </navigator>
+
+    </block>
+
+  </view>
+
+  <view class="more-view" bind:tap="getMoreClassify" wx:if="{{hasMoreTopic}}">
+    <text class="more-text">更多分类</text>
+  </view>
+
+  <view wx:else class="more-view">
+    <text class="more-text">没有更多了。。。</text>
+  </view>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "my-talk-cpn":"../../talk/talkcpn/talk-item",
+    "my-question-cpn":"../../talk/questioncpn/question-item",
+    "my-tip-cpn":"../../tip/tipcpn/tip-item"
+  }
+}

@@ -1,0 +1,55 @@
+/* miniprogram/pages/tip/classifyDetail/classifyDetail.wxss */
+
+
+.classify-detail-wrapper{
+  padding:8rpx 0 300rpx 0;
+}
+
+/* 到底了 */
+.bottom-view{
+  text-align:center;
+  color:#04087575;
+}
+.type-top-icon{
+
+  vertical-align: -3rpx;
+  margin:8rpx;
+}
+.type-top-text{
+  background-color:#c6adef;
+  padding:4rpx 10rpx;
+}
+
+/* 发帖按钮 */
+.add-icon-btn{
+  position:fixed;
+  width:300rpx;
+  bottom:6rpx;
+  left:0;
+  right:0;
+  margin:auto;
+  opacity:.8;
+  text-align:center;
+}
+.classify-top-view{
+  text-align:center;
+}
+
+.classify-topic-text{
+  font-weight:bold;
+  font-size:1.4rem;
+}
+
+.re-text-des{
+  font-weight:bold;
+  color:rgb(85, 84, 84);
+}
+.relevant-show-view{
+  padding:10rpx 0 0 20rpx;
+}
+.topic-item-view{
+  padding:20rpx 0;
+  text-decoration:underline;
+  text-decoration-color:rgb(195, 0, 255);
+ 
+}

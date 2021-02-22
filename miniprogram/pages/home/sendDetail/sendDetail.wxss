@@ -1,0 +1,9 @@
+/* miniprogram/pages/home/sendDetail/sendDetail.wxss */
+.home-send-view{
+  padding:10rpx 0 200rpx 0;
+}
+
+.ques-del-icon{
+  float:right;
+  margin-right:54rpx;
+}

@@ -1,0 +1,78 @@
+<!--pages/tip/tipcpn/tip-item.wxml-->
+
+<view class="singleTalkWrapper">
+
+  <view class="topView">
+    <slot name="type-icon" ></slot>
+    <slot name="type-describe" ></slot>
+
+    <navigator url="/pages/tip/tipEssayDetail/tipEssayDetail?tipEssayId={{itemData._id}}">
+      <text class="top-detail-anchor">详情</text>
+
+      <van-icon name="arrow" class="top-detail-icon"  />
+    </navigator>
+  </view>
+
+  <view class="mainView">
+    <!-- 图片 -->
+    <view class="main-right">
+      <image wx:if="{{itemData.images.length>0}}" src="{{itemData.images[0]}}" class="firstImg" mode="aspectFill">
+      </image>
+    </view>
+    <view class="main-left">
+      <!-- 文章标题 -->
+      <view wx:if="{{hasReletedTitle}}" class="main-title">
+        <block wx:for="{{itemData.titleArr}}" wx:for-item="titleitem">
+          <text wx:if="{{titleitem==keywords}}" style="color:red;">{{titleitem}}</text>
+          <text wx:else>{{titleitem}}</text>
+        </block>
+      </view>
+
+      <view wx:else class="main-title">{{itemData.title}}</view>
+      <!-- 用户和评论，点赞信息 -->
+      <view class="title-foot">
+        <view class="foot-item">
+          <image src="{{userInfo.avatarUrl}}" class="user-avatar-icon"></image>
+          <text class="user-nick-name">{{userInfo.tempNickName}}</text>
+        </view>
+        <view class="foot-item">
+          <van-icon name="thumb-circle-o" />
+          <text class="count-text">{{likedCount}}</text>
+        </view>
+        <view class="foot-item">
+          <van-icon name="chat-o" />
+          <text class="count-text">{{commentedCount}}</text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{showHighlight}}" class="comment-view">
+      <view class="related-content-view">
+        <view class="content-show-related">
+          <text wx:if="{{hasRelatedContent}}" class="related-text">相关内容</text>
+          <text wx:else class="related-text">无相关内容</text>
+        </view>
+        <view class="re-content-view">
+          <block wx:for="{{itemData.contentArr}}" wx:for-item="textitem">
+            <text wx:if="{{textitem==keywords}}" style="color:blue;font-size:1.4rem;">{{textitem}}</text>
+            <text wx:else>{{textitem}}</text>
+          </block>
+        </view>
+      </view>
+      <view class="comment-show-top">
+        <text wx:if="{{hasRelated}}" class="related-text">相关评论</text>
+        <text wx:else class="related-text">无相关评论</text>
+      </view>
+      <block wx:for="{{itemData.commentLists}}" wx:for-item="commentitem">
+        <view class="comment-item-view">
+          <block wx:for="{{commentitem.commentTextArr}}" wx:for-item="textitem">
+            <text wx:if="{{textitem==keywords}}" style="color:blue;font-size:1.4rem;">{{textitem}}</text>
+            <text wx:else>{{textitem}}</text>
+          </block>
+
+        </view>
+      </block>
+    </view>
+  </view>
+
+
+</view>

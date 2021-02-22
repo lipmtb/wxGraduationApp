@@ -1,0 +1,44 @@
+<!--miniprogram/pages/tip/classifyDetail/classifyDetail.wxml-->
+<view class="classify-detail-wrapper">
+  <navigator url="../addTip/addTip?classifyId={{classifyId}}&&classifyName={{classifyName}}">
+    <view class="add-icon-btn">
+      <van-button icon="plus" type="primary">我要发帖</van-button>
+    </view>
+  </navigator>
+
+  <view class="classify-top-view">
+    <text lass="before-topic-text">当前选择主题：</text>
+    <text class="classify-topic-text">{{classifyName}}</text>
+  </view>
+
+  <view class="topic-lists-wrapper">
+    <block wx:for="{{curTopicLists}}" wx:for-item="essayItem">
+      <tip-item-cpn itemData="{{essayItem}}" userInfo="{{essayItem.userInfo[0]}}"
+        likedCount="{{essayItem.likeArr.length}}" commentedCount="{{essayItem.commentArr.length}}">
+        <van-icon slot="type-icon" name="gem-o" class="type-top-icon" color="#c6adef"></van-icon>
+        <text slot="type-describe" class="type-top-text">{{classifyName}}</text>
+      </tip-item-cpn>
+    </block>
+  </view>
+  <view class="bottom-view" wx:if="{{!hasMoreEssays}}">
+    <text class="bottom-get-text">到底了。。。</text>
+  </view>
+
+  <view class="bottom-related-wrapper">
+    <view class="relevant-text">
+      <text class="re-text-des">相关主题：</text>
+    </view>
+    <view class="relevant-show-view">
+      <block wx:for="{{relevantTopicLists}}" wx:for-item="topicItem">
+        <view class="topic-item-view" catch:tap="toRelevant" data-relevant-id="{{topicItem._id}}">
+          <text>{{topicItem.classifyName}}</text>
+        </view>
+      </block>
+    </view>
+
+  </view>
+
+
+
+
+</view>

@@ -6,16 +6,30 @@
     "pages/tip/tip",
     "pages/home/home",
     "pages/talk/addTalk/addTalk",
-    "pages/talk/talkDetail/talkDetail"
+    "pages/talk/talkDetail/talkDetail",
+    "pages/talk/addQuestion/addQuestion",
+    "pages/talk/questionDetail/questionDetail",
+    "pages/tip/classifyDetail/classifyDetail",
+    "pages/tip/addTip/addTip",
+    "pages/tip/tipEssayDetail/tipEssayDetail",
+    "pages/tip/moreClassify/moreClassify",
+    "pages/home/sendDetail/sendDetail",
+    "pages/home/collectDetail/collectDetail",
+    "pages/home/myDiary/myDiary",
+    "pages/home/myDiary/diaryDetail/diaryDetail",
+    "pages/home/messageDetail/messageDetail"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
     "navigationBarTitleText": "钓鱼助手",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true
   },
   "usingComponents": {
+    "van-switch": "vant-weapp/switch",
+    "van-picker": "vant-weapp/picker",
     "van-panel": "vant-weapp/panel",
     "van-icon": "vant-weapp/icon",
     "van-cell": "vant-weapp/cell",
@@ -30,7 +44,10 @@
     "van-field": "vant-weapp/field",
     "van-notify": "vant-weapp/notify",
     "van-dialog": "vant-weapp/dialog",
-    "van-loading": "vant-weapp/loading"
+    "van-loading": "vant-weapp/loading",
+    "van-action-sheet": "vant-weapp/action-sheet",
+    "van-collapse": "vant-weapp/collapse",
+    "van-collapse-item": "vant-weapp/collapse-item"
   },
   "tabBar": {
     "custom": true,

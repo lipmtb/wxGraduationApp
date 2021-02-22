@@ -1,0 +1,28 @@
+<!--miniprogram/pages/talk/addQuestion/addQuestion.wxml-->
+
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-nav-bar title="描述你的问题" left-text="返回" left-arrow bind:click-left="onClickLeft" title-class="titleStyle" />
+
+<view class="addbox">
+  <van-cell-group>
+    <van-field  label="问题描述" type="textarea" placeholder="输入你的问题" autosize border="{{ false }}" bind:change="onContentInput"/>
+    <view class="imgViewBox">
+      <block wx:for="{{selectedImgArr}}">
+        <view class="singleImgBox">
+          <image src="{{item}}" mode="aspectFit" class="imgItem">
+          </image>
+          <van-icon name="delete" class="deleteIcon" bind:click="onDeleteImg" data-img-idx="{{index}}" />
+        </view>
+
+      </block>
+
+    </view>
+  </van-cell-group>
+  <van-panel title="图片选择" desc="使用图片对问题充分描述,每次最多选择9张" status="{{hasSelectedImg}}" use-footer-slot>
+    <view slot="footer">
+      <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddImage">添加图片</van-button>
+    </view>
+  </van-panel>
+
+  <van-button type="primary" size="normal" color="#329df9" block custom-class="sendBtnClass" bind:click="onAllSend">发布问题</van-button>
+</view>

@@ -1,0 +1,48 @@
+<!--miniprogram/pages/home/messageDetail/messageDetail.wxml-->
+<van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#999">
+  <van-tab title="圈子消息">
+    <view class="foundation-msg-wrapper">
+      <block wx:for="{{mainMessageLists}}" wx:for-item="mainitem" wx:for-index="msgidx">
+        <view class="message-item" catch:tap="toMsgDetail" data-msg-index="{{msgidx}}" data-msg-id="{{mainitem._id}}"
+          data-source-info="{{mainitem.messageDetail}}" data-msg-status="{{mainitem.status}}">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">{{mainitem.messageDetail.msgFromType}}</text>
+            <text wx:if="{{mainitem.status==='progress'}}" style="color:red" class="status-text">未读</text>
+            <text wx:else class="status-text">已读</text>
+          </view>
+
+          <view class="msg-main">
+            <text>{{mainitem.messageDetail.msgContent}}</text>
+          </view>
+
+          <view class="msg-footer">
+            <text>{{mainitem.time}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </van-tab>
+  <van-tab title="系统消息">
+    <view class="foundation-msg-wrapper">
+      <block wx:for="{{sysMessageLists}}" wx:for-item="sysitem" wx:for-index="sysidx">
+        <view class="message-item" data-msg-index="{{sysidx}}" data-msg-id="{{sysitem._id}}"
+          data-source-info="{{sysitem.messageDetail}}" data-msg-status="{{sysitem.status}}">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">{{sysitem.messageDetail.msgFromType}}</text>
+          </view>
+
+          <view class="msg-main">
+            <text>{{sysitem.messageDetail.msgContent}}</text>
+          </view>
+
+          <view class="msg-footer">
+            <text>{{sysitem.time}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+  </van-tab>
+</van-tabs>

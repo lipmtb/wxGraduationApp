@@ -1,2 +1,45 @@
 <!--pages/service/service.wxml-->
-<text>pages/service/service.wxml</text>
+<view class="wrapper">
+  <van-tabs active="{{ active }}" bind:change="onChange" color="#999" line-width="60" line-height="2">
+    <!-- 天气服务Tab -->
+    <van-tab title="天气服务">
+      <view class="wea-top-view">
+        <view class="cur-pos-view" catch:tap="chooseLocationFn">
+          <van-icon name="location-o"></van-icon>
+          <text class="pos-text">{{currentLocationText}}</text>
+        </view>
+      </view>
+      <view class="location-time-weather">
+        <view class="location-time">
+          <canvas type="2d" id="da-time-canvas"></canvas>
+        </view>
+        <view class="location-weather">
+          <image src="../../images/weathericon/{{iconCode}}.png" class="wea-stat-icon"></image>
+          <canvas type="2d" id="loc-wea-cond"></canvas>
+          <canvas type="2d" id="loc-wea-wind"></canvas>
+          <canvas type="2d" id="loc-wea-tmp"></canvas>
+          <canvas type="2d" id="loc-wea-hum"></canvas>
+          <canvas type="2d" id="loc-wea-pres"></canvas>
+          <text class="modify-time-describe">更新时间：{{modifyTimeStr}}</text>
+        </view>
+      </view>
+      <view class="weather-container">
+        <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ weatherEc }}"></ec-canvas>
+      </view>
+
+      <view class="weather-container">
+        <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ minuteEc }}"></ec-canvas>
+      </view>
+
+      <view class="weather-container">
+        <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ seventDayEc }}"></ec-canvas>
+      </view>
+    </van-tab>
+
+    <!-- 钓点服务 -->
+    <van-tab title="钓点服务"></van-tab>
+    <van-tab title="装备服务">装备</van-tab>
+    <van-tab title="其他服务">其他</van-tab>
+  </van-tabs>
+
+</view>

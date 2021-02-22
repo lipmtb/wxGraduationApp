@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "tip-item-cpn":"../tipcpn/tip-item"
+  }
+}

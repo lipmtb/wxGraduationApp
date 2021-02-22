@@ -1,0 +1,49 @@
+/* miniprogram/pages/home/myDiary/myDiary.wxss */
+.textarea-placeholder{
+  color:#ccc;
+  text-indent: 1rem;
+}
+#tarea{
+  border:1px solid #f3eeee;
+}
+
+
+.diary-lists-wrapper{
+  padding:10rpx 0 200rpx 0;
+}
+
+.diary-item-view{
+  padding:6rpx;
+  margin:16rpx 0;
+  border-bottom:1px dotted #d2cfcf63;
+}
+.d-top{
+  font-size:0.8rem;
+}
+.detail-text{
+  float:right;
+  margin-right:10rpx;
+  margin-top:6rpx;
+
+  color:#6f6b6b;
+}
+
+
+.d-brief{
+  padding:20rpx 0;
+  font-size:1.4rem;
+  font-weight:500;
+}
+
+.d-footer{
+  color:#6f6b6b;
+  font-size:0.8rem;
+}
+.submitBtn{
+  float:right;
+}
+
+.more-text{
+  float:right;
+  color:#696363;
+}

@@ -1,3 +1,6 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "my-talk-item":"talkcpn/talk-item",
+    "question-item":"questioncpn/question-item"
+  }
 }

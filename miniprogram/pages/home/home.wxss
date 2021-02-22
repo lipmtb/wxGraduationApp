@@ -1,1 +1,58 @@
 /* pages/home/home.wxss */
+.user-info-view {
+  font-size:0;
+  background-color: #bdb2b2;
+  padding: 20rpx 0 20rpx 10rpx;
+}
+
+.user-info-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+
+}
+
+.user-info-name {
+  font-size: 1.8rem;
+  vertical-align: 37rpx;
+  margin-left:20rpx;
+}
+
+/* 我的项目 */
+.home-topic-wrapper{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top:20rpx;
+}
+
+
+/* 发布和收藏的子项 */
+.send-essay-view{
+  display:flex;
+  justify-content: space-around;
+}
+
+.send-essay-view .send-item{
+  border-right:1px solid #666;
+  padding:20rpx 60rpx;
+}
+.send-essay-view .send-item:first-child{
+  border-left:1px solid #666;
+}
+
+
+/* 我的日记和我的消息 */
+.home-topic-wrapper .my-view{
+  margin:28rpx 38rpx;
+  padding:20rpx 0;
+  /* border-top: 1px solid #66666629; */
+}
+
+.my-view .my-text{
+  margin-left:46rpx;
+}
+
+.my-view .diary-count-text{
+  margin-left:20rpx;
+}

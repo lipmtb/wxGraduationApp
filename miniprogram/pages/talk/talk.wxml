@@ -2,6 +2,8 @@
 <!-- 通知栏  -->
 
 <view class="wrapper">
+  <van-action-sheet show="{{ showSheet }}" bind:select="onSheetSelect" bind:cancel="onSheetCancel"
+    actions="{{ actions }}" cancel-text="取消" class="select-sheet" />
   <van-button icon="plus" type="primary" id="toAddTalkBtn" bind:click="navToAdd"></van-button>
   <van-notice-bar scrollable="{{true}}" left-icon="volume-o" text="钓鱼爱好者集结地，分享你的经历，倾听他人的声音" color="#1989fa"
     background="#ecf9ff"></van-notice-bar>
@@ -9,11 +11,20 @@
   <!-- 搜索框 -->
   <view class="searchWrapper">
 
-    <van-search value="{{ value }}" label="" placeholder="请输入搜索关键词" use-action-slot bind:change="userInputChange"
+    <van-search value="{{ 66 }}" label="" placeholder="请输入搜索关键词" use-action-slot bind:change="userInputChange"
       shape="round" background="#4fc08d">
       <view slot="action" class="searchBtn" bind:tap="onSearch">搜索</view>
     </van-search>
 
+  </view>
+
+  <view class="search-res-view">
+    <block wx:for="{{searchResLists}}" wx:Lfor-item="item">
+      <my-talk-item itemData="{{item}}" showHighlight="{{true}}" keywords="{{keywords}}">
+        <van-icon slot="type-icon" name="search" class="top-hot-icon" color='rgb(25, 137, 250)' />
+        <text slot="type-describe" class="top-hot-text">搜索结果</text>
+      </my-talk-item>
+    </block>
   </view>
   <!-- 钓友圈 -->
   <view class="friendNav">
@@ -25,24 +36,46 @@
   <!-- 最热和最新 -->
   <van-tabs active="{{ active }}" color="#ff9600" bind:change="tabChange" line-height="{{2}}">
     <van-tab title="热门">
-      <block wx:for="{{hotLists}}">
-        <view class="singleTalkWrapper"> 
-          <van-icon name="{{item.userInfo[0].avatarUrl}}" />
-          <van-panel title="{{item.title}}" desc="描述信息" status="状态">
-            <view>{{item.content}}</view>
-          </van-panel>
-        </view>
-
-      </block>
+      <view class="my-talk-cpn-list">
+        <block wx:for="{{hotLists}}">
+          <my-talk-item itemData="{{item}}">
+            <van-icon slot="type-icon" name="fire" class="top-hot-icon" color='#ff9600' />
+            <text slot="type-describe" class="top-hot-text">热门</text>
+          </my-talk-item>
+        </block>
+      </view>
+      <view class="more-talk-view">
+        <text bindtap="getMoreHot" class="more-text">更多</text>
+      </view>
     </van-tab>
-    <van-tab title="最新">最新</van-tab>
+    <van-tab title="最新">
+      <view class="my-talk-cpn-list">
+        <block wx:for="{{newLists}}">
+          <my-talk-item itemData="{{item}}">
+            <van-icon slot="type-icon" name="new-o" class="top-hot-icon" color='#ff455b' />
+            <text slot="type-describe" class="top-hot-text">最新</text>
+          </my-talk-item>
+        </block>
+      </view>
+      <view class="more-talk-view">
+        <text bindtap="getMoreNew" class="more-text">更多</text>
+      </view>
+    </van-tab>
   </van-tabs>
 
   <!-- 问答圈 -->
-  <view class="friendNav">
+  <view class="friendNav questionNav">
     <text class="titleText">问</text>
     <text class="titleText">答</text>
     <text class="titleText">圈</text>
   </view>
 
+  <view class="question-list-wrapper">
+    <block wx:for="{{questionLists}}">
+      <question-item itemData="{{item}}"></question-item>
+    </block>
+  </view>
+  <view class="reach-bottom-view" style="{{bottomStyleShow}}">
+    <text>~到底了~</text>
+  </view>
 </view>

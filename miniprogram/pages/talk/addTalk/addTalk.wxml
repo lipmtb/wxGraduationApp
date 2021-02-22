@@ -1,11 +1,12 @@
 <!--miniprogram/pages/talk/addTalk/addTalk.wxml-->
 <view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
-<van-nav-bar title="分享你的想法" left-text="返回" left-arrow bind:click-left="onClickLeft" title-class="titleStyle" />
+<van-nav-bar title="钓友圈分享" left-text="返回" left-arrow bind:click-left="onClickLeft" title-class="titleStyle" />
 
 <view class="addbox">
   <van-cell-group>
-    <van-field  clearable label="标题" placeholder="请输入标题"  bind:change="onTitleInput" />
-    <van-field  label="内容描述" type="textarea" placeholder="随便说几句" autosize border="{{ false }}" bind:change="onContentInput"/>
+    <van-field clearable label="标题" placeholder="请输入标题" bind:change="onTitleInput" />
+    <van-field label="内容描述" type="textarea" placeholder="随便说几句" autosize border="{{ false }}"
+      bind:change="onContentInput" />
     <view class="imgViewBox">
       <block wx:for="{{selectedImgArr}}">
         <view class="singleImgBox">
@@ -23,6 +24,13 @@
       <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddImage">添加图片</van-button>
     </view>
   </van-panel>
-
-  <van-button type="primary" size="normal" color="#329df9" block custom-class="sendBtnClass" bind:click="onAllSend">发布</van-button>
+  <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddLocation" class="add-location-btn">添加位置
+  </van-button>
+ <view class="location-str-info" wx:if="{{locationStr}}">
+  <van-icon name="location-o"></van-icon>
+  <text>{{locationStr}}</text>
+  <van-icon name="delete" class="del-location-icon" bind:click="onDeleteLocation"></van-icon>
+ </view>
 </view>
+<van-button type="primary" size="normal" color="#329df9" block class="sendBtnClass" bind:click="onAllSend">发布
+</van-button>

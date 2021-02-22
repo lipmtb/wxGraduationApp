@@ -1,0 +1,49 @@
+<!--miniprogram/pages/home/collectDetail/collectDetail.wxml-->
+
+<view class="home-send-view">
+  <van-tabs active="{{ active }}" bind:change="onChange">
+    <!-- 钓友圈 -->
+    <van-tab title="钓友圈" name="talk">
+      <view class="data-lists-view">
+        <block wx:for="{{talkLists}}" wx:for-item="talkitem">
+          <my-talk-cpn class="talk-item-view" itemData="{{talkitem}}">
+            <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
+            <text slot="type-describe" class="type-text">钓友圈</text>
+          </my-talk-cpn>
+        </block>
+      </view>
+      <view wx:if="{{!hasMoreArr[0]}}">
+        <text>没有更多了。。。</text>
+      </view>
+    </van-tab>
+    <!-- 问答圈 -->
+    <van-tab title="问答圈" name="question">
+      <view class="data-lists-view">
+        <block wx:for="{{questionLists}}" wx:for-item="questionitem">
+          <my-question-cpn class="talk-item-view" itemData="{{questionitem}}">
+            <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
+            <text slot="type-describe" class="type-text">问答圈</text>
+          </my-question-cpn>
+        </block>
+      </view>
+      <view wx:if="{{!hasMoreArr[1]}}">
+        <text>没有更多了。。。</text>
+      </view>
+    </van-tab>
+
+    <van-tab title="技巧" name="detail">
+      <view class="data-lists-view">
+        <block wx:for="{{tipLists}}" wx:for-item="tipitem">
+          <my-tip-cpn class="talk-item-view" itemData="{{tipitem}}" userInfo="{{tipitem.userInfo}}" likedCount="{{tipitem.likedCount}}" commentedCount="{{tipitem.commentedCount}}">
+            <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
+            <text slot="type-describe" class="type-text">{{tipitem.topicName}}</text>
+          </my-tip-cpn>
+        </block>
+      </view>
+      <view wx:if="{{!hasMoreArr[2]}}">
+        <text>没有更多了。。。</text>
+      </view>
+    </van-tab>
+
+  </van-tabs>
+</view>

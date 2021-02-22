@@ -1,0 +1,27 @@
+/* miniprogram/pages/home/myDiary/diaryDetail/diaryDetail.wxss */
+.diary-top{
+  text-align:center;
+  margin:10px;
+}
+.diary-detail-wrapper{
+  padding:10rpx 0 200rpx 0;
+}
+
+.location-view,.diary-footer-view{
+  font-size:0.8rem;
+  color:#999;
+}
+
+.weather-str{
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size:0.8rem;
+  color:#999;
+}
+.diary-title{
+  text-align:center;
+  font-size:1.4rem;
+  font-weight:560;
+}
+.diary-content{
+  text-indent:1rem;
+}

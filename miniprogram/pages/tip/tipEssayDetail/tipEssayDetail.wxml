@@ -1,0 +1,78 @@
+<!--miniprogram/pages/tip/tipEssayDetail/tipEssayDetail.wxml-->
+
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-icon name="good-job-o" class="like-good-icon" size="40px"></van-icon>
+<view class="detail-wrapper">
+  <!-- 评论发布输入框 -->
+  <van-field value="{{commentInputValue}}" placeholder="输入你的评论" placeholder-style="text-indent:1rem;"
+    border="{{ false }}" bind:change="onCommentChange" class="comment-field">
+    <van-button slot="button" size="small" type="primary" bind:click="onSendComment">发表评论</van-button>
+  </van-field>
+
+  <!-- 顶部用户信息和标题 -->
+  <view class="top-view">
+    <view class="user-info-view">
+      <image class="user-avatar-img" src="{{anglerInfo.avatarUrl}}"></image>
+      <text class="user-nickname-info">{{anglerInfo.tempNickName}}</text>
+      <van-icon wx:if="{{hasCollected}}" class="star-icon" name="star" size="20px" color="#ff0"
+        bind:click="onCancelCollect"></van-icon>
+      <van-icon wx:else class="star-icon" name="star-o" size="20px" bind:click="onCollect"></van-icon>
+    </view>
+    <view class="top-title">{{tipItemData.title}}</view>
+  </view>
+
+  <!-- 内容详细   -->
+  <view class="content-detail-wrapper">
+    <!-- 内容的详细描述 -->
+    <view class="content-text-view">
+      <text>{{tipItemData.content}}</text>
+    </view>
+
+    <!-- 内容相关图片 -->
+    <view class="content-img-view">
+      <block wx:for="{{tipItemData.images}}">
+        <image src="{{item}}" mode="aspectFit" class="content-img-item"></image>
+      </block>
+    </view>
+  </view>
+
+  <!-- 发布时间和分享 -->
+  <view class="talk-time-share">
+    <text>{{tipItemData.publishTime}}</text>
+  </view>
+  <!-- 相关评论列表 -->
+  <view class="user-comment-wrapper">
+    <!-- 评论的数量 -->
+    <view class="comment-count-view">
+      <text class="all-comment-text">全部评论</text>
+      <text class="all-comment-count">{{commentLists.length}}</text>
+      <van-icon wx:if="{{hasLiked}}" name="thumb-circle"  size="40px" class="like-van-icon" bind:click="unLikeTalk"/>
+      <van-icon wx:else name="thumb-circle-o"  size="40px"  data-like-name="like-icon" class="like-van-icon"  bind:click="likeTalk"/>
+    </view>
+    <!-- 评论的列表 -->
+    <view class="comment-list-wrapper">
+      <block wx:for="{{commentLists}}">
+        <view class="comment-item-view">
+          <!-- 一条评论的顶部 -->
+          <view class="comment-top-view">
+            <image class="user-avatar" src="{{item.userInfo.avatarUrl}}"></image>
+            <text class="user-nickname">{{item.userInfo.tempNickName}}</text>
+          </view>
+          <!-- 评论的内容 -->
+          <view class="comment-body-view">
+            <text>{{item.commentText}}</text>
+          </view>
+          <!-- 一条评论的底部信息 -->
+          <view class="comment-foot-view">
+            <text class="footer-count">第{{commentLists.length-index}}楼</text>
+            <text>{{item.commentTime}}</text>
+          </view>
+        </view>
+
+      </block>
+    </view>
+
+  </view>
+
+
+</view>

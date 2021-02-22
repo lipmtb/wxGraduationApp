@@ -1,2 +1,54 @@
 <!--pages/tip/tip.wxml-->
-<text>pages/tip/tip.wxml</text>
+<!-- 技巧选项页面 -->
+<view class="tip-wrapper">
+
+  <!-- 技巧分类 -->
+  <view class="tip-classify">
+    <van-icon class="essence-icon" name="medal-o" color="rgb(255, 177, 0)"></van-icon>
+    <text class="essence-text">技巧分类</text>
+    <view class="right-nav" catch:tap="toMoreClassifyPage">
+      <text class="more-text">更多分类</text>
+      <van-icon name="arrow" class="arrow-icon"></van-icon>
+    </view>
+
+  </view>
+
+  <!-- 技巧选择 -->
+  <view class="classify-select-view">
+    <block wx:for="{{classifyNameLists}}" wx:for-item="classifyitem">
+      <navigator url="classifyDetail/classifyDetail?classifyId={{classifyitem._id}}">
+        <view class="select-item-view" >
+          <text class="class-item-text">{{classifyitem.classifyName}}</text>
+          <text class="classify-count">阅读:{{classifyitem.count}}</text>
+        </view>
+      </navigator>
+
+    </block>
+
+  </view>
+  <!-- 精选 -->
+  <view class="essence-top">
+    <van-icon class="essence-icon" name="diamond-o" color="rgb(255, 177, 0)"></van-icon>
+    <text class="essence-text">精选</text>
+    <view class="right-nav">
+      <text class="more-text" catch:tap="moreSpecial">更多精选</text>
+      <van-icon name="arrow" class="arrow-icon"></van-icon>
+    </view>
+
+  </view>
+
+  <!-- 精选内容 -->
+  <view class="essence-content-view">
+    <block wx:for="{{essenceLists}}" wx:for-item="essenceitem">
+      <my-tip-item class="tip-cpn-item" itemData="{{essenceitem}}" userInfo="{{essenceitem.userInfo[0]}}" likedCount="{{essenceitem.likeArr.length}}" commentedCount="{{essenceitem.commentArr.length}}">
+        <van-icon slot="type-icon" name="diamond-o" class="top-hot-icon" color='rgb(255, 177, 0)' />
+        <text slot="type-describe" class="top-hot-text">精选</text>
+      </my-tip-item>
+    </block>
+  </view>
+
+  <view class="bottom-view" wx:if="{{!hasMoreEssays}}">
+    <text class="bottom-get-text">没有更多了。。。</text>
+  </view>
+
+</view>

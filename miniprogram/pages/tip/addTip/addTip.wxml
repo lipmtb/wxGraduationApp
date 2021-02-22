@@ -1,0 +1,37 @@
+<!--miniprogram/pages/tip/addTip/addTip.wxml-->
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-nav-bar title="{{defaultClassName}}发帖" left-text="返回" left-arrow bind:click-left="onClickLeft" title-class="titleStyle" />
+<view class="topic-choose-view">
+  <van-picker show-toolbar title="分类主题选择" columns="{{ classifyNameLists }}" bind:cancel="onCancel" bind:confirm="onConfirm" bind:change="pickerSelect" loading="{{!hasTopicLists}}" visible-item-count="{{pickerVisibleCount}}" default-index="{{classifyNameIdx}}" cancel-button-text="选择"/>
+  <view class="custom-topic-view">
+    <input type="text" id="customInputId" placeholder="输入自定义的主题" placeholder-style="text-indent:1rem;line-height:80rpx" style="{{showCustomInput}}" bindinput="onInputTopic" maxlength="12" required/>
+    <van-switch class="custom-switch-btn" checked="{{ checked }}" bind:change="onSwitchCustom" />
+    <text class="custom-before">自定义主题</text>
+  </view>
+</view>
+<view class="addbox">
+  <van-cell-group>
+    <van-field clearable label="标题" placeholder="请输入标题" bind:change="onTitleInput" />
+    <van-field label="内容描述" type="textarea" placeholder="请输入内容描述" autosize border="{{ false }}"
+      bind:change="onContentInput" />
+    <view class="imgViewBox">
+      <block wx:for="{{selectedImgArr}}">
+        <view class="singleImgBox">
+          <image src="{{item}}" mode="aspectFit" class="imgItem">
+          </image>
+          <van-icon name="delete" class="deleteIcon" bind:click="onDeleteImg" data-img-idx="{{index}}" />
+        </view>
+
+      </block>
+
+    </view>
+  </van-cell-group>
+  <van-panel title="图片选择" desc="使用图片对内容充分描述,每次最多选择9张" status="{{hasSelectedImg}}" use-footer-slot>
+    <view slot="footer">
+      <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddImage">添加图片</van-button>
+    </view>
+  </van-panel>
+
+  <van-button type="primary" size="normal" color="#329df9" block custom-class="sendBtnClass" bind:click="onAllSend">发布
+  </van-button>
+</view>

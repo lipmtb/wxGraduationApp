@@ -2,7 +2,7 @@
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": true,
     "enhance": true,
     "postcss": true,
@@ -45,6 +45,7 @@
   "appid": "wx8ba275ed8b28009c",
   "projectname": "myGraduation",
   "libVersion": "2.14.1",
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
   "condition": {
     "plugin": {
       "list": []
@@ -57,12 +58,6 @@
     },
     "miniprogram": {
       "list": [
-        {
-          "id": -1,
-          "name": "db guide",
-          "pathName": "pages/databaseGuide/databaseGuide",
-          "query": ""
-        },
         {
           "name": "pages/home/home",
           "pathName": "pages/home/home",
@@ -78,6 +73,72 @@
         {
           "name": "talk",
           "pathName": "pages/talk/talk",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/talk/talkDetail/talkDetail",
+          "pathName": "pages/talk/talkDetail/talkDetail",
+          "query": "talkId=28ee4e3e6017e7c1025315dd714ffe52",
+          "scene": null
+        },
+        {
+          "name": "pages/talk/questionDetail/questionDetail",
+          "pathName": "pages/talk/questionDetail/questionDetail",
+          "query": "questionId=79550af26020ebbb035736427fb9f634",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/tip",
+          "pathName": "pages/tip/tip",
+          "query": "questionId=79550af26020ebbb035736427fb9f634",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/classifyDetail/classifyDetail",
+          "pathName": "pages/tip/classifyDetail/classifyDetail",
+          "query": "classifyId=28ee4e3e602618f804bdc11b686746ec",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/addTip/addTip",
+          "pathName": "pages/tip/addTip/addTip",
+          "query": "classifyId=b00064a76026193104801756453217ee",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/moreClassify/moreClassify",
+          "pathName": "pages/tip/moreClassify/moreClassify",
+          "query": "classifyId=28ee4e3e602618f804bdc11b686746ec",
+          "scene": null
+        },
+        {
+          "name": "pages/home/sendDetail/sendDetail",
+          "pathName": "pages/home/sendDetail/sendDetail",
+          "query": "sendType=question",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myDiary/myDiary",
+          "pathName": "pages/home/myDiary/myDiary",
+          "query": "sendType=question",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myDiary/diaryDetail/diaryDetail",
+          "pathName": "pages/home/myDiary/diaryDetail/diaryDetail",
+          "query": "diaryId=b00064a7602b866a0542dd6e1e8c0b37",
+          "scene": null
+        },
+        {
+          "name": "pages/home/messageDetail/messageDetail",
+          "pathName": "pages/home/messageDetail/messageDetail",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/service",
+          "pathName": "pages/service/service",
           "scene": null
         }
       ]

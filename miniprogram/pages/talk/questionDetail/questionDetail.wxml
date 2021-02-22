@@ -1,0 +1,117 @@
+<!--miniprogram/pages/talk/questionDetail/questionDetail.wxml-->
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-icon name="good-job-o" class="like-good-icon" size="40px"></van-icon>
+<view class="detail-wrapper">
+  <!-- 评论发布输入框 -->
+  <van-field value="{{commentInputValue}}" placeholder="{{placeHolderText}}" placeholder-style="text-indent:1rem;"
+    border="{{ false }}" bind:change="onCommentChange" class="comment-field" focus="{{hasFocus}}">
+    <van-button wx:if="{{commentTarget===questionItemData._id}}" slot="button" size="small" type="primary"
+      bind:click="onSendComment">发表
+    </van-button>
+    <van-button wx:else slot="button" size="small" type="primary" bind:click="onReplyComment">回复</van-button>
+  </van-field>
+
+  <!-- 顶部用户信息和标题 -->
+  <view class="top-view">
+    <view class="user-info-view">
+      <image class="user-avatar-img" src="{{anglerInfo.avatarUrl}}"></image>
+      <text class="user-nickname-info">{{anglerInfo.tempNickName}}</text>
+      <van-icon wx:if="{{hasCollected}}" class="star-icon" name="star" size="20px" color="#ff0"
+        bind:click="onCancelCollect"></van-icon>
+      <van-icon wx:else class="star-icon" name="star-o" size="20px" bind:click="onCollect"></van-icon>
+    </view>
+  </view>
+
+  <!-- 内容详细   -->
+  <view class="content-detail-wrapper">
+    <!-- 内容的详细描述 -->
+    <view class="content-text-view">
+      <text>{{questionItemData.content}}</text>
+    </view>
+
+    <!-- 内容相关图片 -->
+    <view class="content-img-view">
+      <block wx:for="{{questionItemData.images}}">
+        <image src="{{item}}" mode="aspectFit" class="content-img-item"></image>
+      </block>
+    </view>
+  </view>
+
+  <!-- 发布时间和分享 -->
+  <view class="talk-time-share">
+    <text>{{questionItemData.publishTime}}</text>
+  </view>
+
+  <!-- 相关评论列表 -->
+  <view class="user-comment-wrapper">
+    <!-- 评论的数量 -->
+    <view class="comment-count-view">
+      <text class="all-comment-text">全部回答</text>
+      <text class="all-comment-count">{{totalCommentCount}}</text>
+
+    </view>
+    <!-- 评论的列表 -->
+    <view class="comment-list-wrapper">
+      <block wx:for="{{commentLists}}">
+        <view class="comment-item-view" catch:tap="commentToReply" data-tar-comment-id="{{item._id}}"
+          data-tar-user="{{item.userInfo}}" data-tar-index="{{index}}">
+          <!-- 一条评论的顶部 -->
+          <view class="comment-top-view">
+            <image class="user-avatar" src="{{item.userInfo.avatarUrl}}"></image>
+            <text class="user-nickname">{{item.userInfo.tempNickName}}</text>
+          </view>
+          <!-- 评论的内容 -->
+          <view class="comment-body-view">
+            <text>{{item.commentText}}</text>
+            <text class="like-cmt-count">{{item.likeCount}}</text>
+            <van-icon wx:if="{{item.hasLiked}}" name="thumb-circle" data-like-idx="{{index}}" data-like-tar="{{item}}"
+              size="20px" class="thumb-icon" catch:tap="unlikeComment"  id="thumbIcon-{{index}}"/>
+
+            <van-icon wx:else name="thumb-circle-o" data-like-idx="{{index}}" data-like-tar="{{item}}" size="20px"
+              class="thumb-icon" catch:tap="likeComment"  id="thumbIcon-{{index}}"/>
+          </view>
+          <!-- 一条评论的底部信息 -->
+          <view class="comment-foot-view">
+            <!-- <text class="footer-count">第{{commentLists.length-index}}楼</text> -->
+            <text>{{item.commentTime}}</text>
+            <!-- <text class="like-cmt-count">{{item.likeCount}}</text> -->
+            <view class="comment-item-childs">
+              <block wx:for="{{item.replyLists}}" wx:for-item="replyItem" wx:for-index="replyIndex">
+                <!-- 一条回复 -->
+                <view class="comment-reply-children" catch:tap="commentToReply" data-tar-user="{{replyItem.userInfo}}"
+                  data-tar-comment-id="{{item._id}}" data-tar-index="{{index}}">
+                  <!-- 回复主体 -->
+                  <view class="comment-reply-view">
+                    <image class="user-avatar" src="{{replyItem.userInfo.avatarUrl}}"></image>
+                    <text class="user-nickname">{{replyItem.userInfo.tempNickName}}</text>
+                    <text class="middle-reply-text">回复</text>
+                    <image class="user-avatar" src="{{replyItem.tarUserInfo.avatarUrl}}"></image>
+                    <text class="user-nickname">{{replyItem.tarUserInfo.tempNickName}}</text>
+                    <text class="reply-content">{{replyItem.content}}</text>
+                    <text class="like-comment-count">{{replyItem.likeCount}}</text>
+                    <van-icon wx:if="{{replyItem.hasLiked}}" name="thumb-circle" data-like-tar="{{replyItem}}"
+                      size="20px" class="thumb-icon" data-like-idx="{{index}}" data-like-idx-child="{{replyIndex}}"
+                      catch:tap="unlikeReplyComment" />
+
+                    <van-icon wx:else name="thumb-circle-o" data-like-idx-child="{{replyIndex}}"
+                      data-like-idx="{{index}}" data-like-tar="{{replyItem}}" size="20px" class="thumb-icon"
+                      catch:tap="likeReplyComment" />
+                  </view>
+                  <!-- 回复底部信息 -->
+                  <view class="comment-reply-foot">
+                    <text class="reply-time">{{replyItem.commentTime}}</text>
+                    <!-- <text class="like-comment-count">{{replyItem.likeCount}}</text> -->
+                  </view>
+                </view>
+              </block>
+            </view>
+          </view>
+        </view>
+
+      </block>
+    </view>
+
+  </view>
+
+
+</view>

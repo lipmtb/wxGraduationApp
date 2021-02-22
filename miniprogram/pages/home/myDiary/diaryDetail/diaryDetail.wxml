@@ -1,0 +1,33 @@
+<!-- 日记详情 -->
+<view class="diary-detail-wrapper">
+  <view class="diary-top">
+    <text class="diary-top-text">我的日记详情</text>
+  </view>
+  <view class="diary-detail-content">
+    <view class="diary-location-weather">
+      <view class="location-view" wx:if="{{itemData.diaryLocation}}">
+        <van-icon name="location-o" class="location-icon"></van-icon>
+        <text class="location-name">{{itemData.diaryLocation.name}}</text>
+      </view>
+      <view class="weather-view" wx:if="{{itemData.diaryWeather}}">
+        <text class="weather-str">天气：{{itemData.diaryWeather.cond_txt}}</text>
+        <image wx:if="{{itemData.diaryWeather.cond_txt==='晴'}}" src="https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2687048359,165477934&fm=26&gp=0.jpg">
+        </image>
+        <image wx:else src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2506171575,1147806990&fm=26&gp=0.jpg">
+        </image>
+      </view>
+    </view>
+    <view class="diary-title-content">
+      <view class="diary-title">
+        <text>{{itemData.diaryTitle}}</text>
+      </view>
+      <view class="diary-content">
+        <text>{{itemData.diaryContent}}</text>
+      </view>
+    </view>
+
+    <view class="diary-footer-view">
+      <text>{{itemData.publishTime}}</text>
+    </view>
+  </view>
+</view>

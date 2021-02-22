@@ -7,11 +7,13 @@ Page({
 
   data: {
     selectedImgArr: [], //用户选择上传的图片
-    hasSelectedImg: '未选择'
+    hasSelectedImg: '未选择',
+    locationStr:''
   },
   pageData: {
     titleInputStr: '', //用户发布的标题内容
-    contentInputStr: '' //用户发布的内容描述
+    contentInputStr: '', //用户发布的内容描述
+    userLocationInfo:null
   },
   onLoad() {
     //初始化通知（后面注册成败与否可以调用）
@@ -63,6 +65,33 @@ Page({
       }
     })
   },
+  //用户添加位置信息
+  userAddLocation(){
+    let that=this;
+    wx.chooseLocation({
+      success(res){
+        console.log(res);
+        let {longitude,latitude,address,name}=res;
+        that.pageData.userLocationInfo={
+          longitude,latitude,address,name
+        };
+        that.setData({
+          locationStr:res.name
+        },()=>{
+          wx.showToast({
+            title: '添加位置成功',
+          })
+        })
+      }
+    })
+  },
+  //用户取消位置
+  onDeleteLocation(){
+    this.pageData.userLocationInfo=null;
+    this.setData({
+      locationStr:''
+    })
+  },
   // 发布
   async onAllSend() {
     let that = this;
@@ -73,6 +102,7 @@ Page({
           title: that.pageData.titleInputStr,
           content: that.pageData.contentInputStr,
           images: res,
+          location:that.pageData.userLocationInfo,
           publishTime: new Date()
         }
       }).then((res) => {

@@ -1,0 +1,4 @@
+/* miniprogram/pages/home/collectDetail/collectDetail.wxss */
+.home-send-view{
+  padding:10rpx 0 200rpx 0;
+}

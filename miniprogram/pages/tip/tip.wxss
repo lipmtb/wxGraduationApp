@@ -1,1 +1,65 @@
 /* pages/tip/tip.wxss */
+.tip-wrapper{
+  padding:20rpx 0;
+  padding-bottom:200rpx;
+}
+/* 技巧分类 */
+.classify-select-view{
+  border-bottom:1px dotted #999;
+  padding:20rpx 0;
+  overflow:hidden;
+}
+.select-item-view{
+  float:left;
+  padding:10rpx;
+  margin:6rpx;
+  width:210rpx;
+  height:210rpx;
+  border:2px double #6f08f9;
+  border-radius:50%;
+  background: -webkit-radial-gradient(center center,600px 600px,rgba(65,116,230,1),rgba(57,205,249,0));
+}
+
+.class-item-text{
+  display:block;
+  margin-top:68rpx;
+  margin-left:8rpx;
+  text-align:center;
+  color:#fff;
+  font-weight:500;
+}
+
+.classify-count{
+  display:block;
+  margin-left:8rpx;
+  text-align:center;
+  color:rgb(255, 255, 255);
+  font-weight:500;
+  font-size:0.6rem;
+}
+
+/* 技巧分类和精选文本 */
+ .essence-text{
+  display:inline-block;
+  background-color: rgb(214, 142, 35);
+  padding:8rpx 40rpx;
+  border-radius:20rpx;
+}
+/* 更多 */
+.right-nav{
+  float:right;
+  padding:6rpx 6rpx 6rpx 10rpx;
+  margin-top:10rpx;
+  margin-right:12rpx;
+  font-size:0.8rem;
+  color:#929396;
+}
+/* 更多精选箭头 */
+.arrow-icon{
+  float:right;
+  margin-top:4rpx;
+}
+.bottom-view{
+  text-align:center;
+  color:#04087575;
+}

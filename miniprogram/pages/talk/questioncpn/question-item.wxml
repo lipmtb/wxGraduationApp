@@ -1,0 +1,23 @@
+<!--pages/talk/questioncpn/question-item.wxml-->
+<view class="question-item-wrapper">
+  <view class="question-item-top">
+    <image class="user-avatar" src="{{itemData.userInfo.avatarUrl}}"></image>
+    <text class="user-name">{{itemData.userInfo.tempNickName}}</text>
+    <van-icon class="arrow-icon" name="arrow"></van-icon>
+    <text class="text-detail" bind:tap="toQuestionDetail">详情</text>
+  </view>
+  <view class="question-item-body">
+    <text name="question-area">{{itemData.content}}</text>
+  </view>
+  <view class="question-item-footer">
+    <text class="question-publish-time">{{itemData.publishTime}}</text>
+    <slot name="del-icon"></slot>
+  </view>
+  <!-- <view class="best-show-view">
+   <text class="best-answer">讨论中：</text>
+   <text class="best-answer">待解决</text>
+  <van-icon name="star"></van-icon>
+  <van-icon name="star"></van-icon>
+  <van-icon name="star"></van-icon>
+</view> -->
+</view>

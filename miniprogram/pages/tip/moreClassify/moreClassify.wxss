@@ -1,0 +1,46 @@
+/* miniprogram/pages/tip/classifyDetail/moreClassify/moreClassify.wxss */
+
+.classify-select-view{
+
+  padding:20rpx 0;
+  overflow:hidden;
+}
+.select-item-view{
+  float:left;
+  padding:10rpx;
+  margin:6rpx;
+  width:210rpx;
+  height:210rpx;
+  border:2px double #6f08f9;
+  border-radius:50%;
+  background: -webkit-radial-gradient(center center,600px 600px,rgba(65,116,230,1),rgba(57,205,249,0));
+}
+
+.class-item-text{
+  display:block;
+  margin-top:68rpx;
+  margin-left:8rpx;
+  text-align:center;
+  color:#fff;
+  font-weight:500;
+}
+
+.classify-count{
+  display:block;
+  margin-left:8rpx;
+  text-align:center;
+  color:rgb(255, 255, 255);
+  font-weight:500;
+  font-size:0.6rem;
+}
+
+.more-view {
+  overflow: hidden;
+}
+.more-text{
+  float:right;
+  text-decoration:underline solid #ccc;
+  margin-right:20rpx;
+  font-size:0.8rem;
+  color:#888888;
+}

@@ -1,1 +1,88 @@
 /* pages/service/service.wxss */
+.wrapper {
+  padding: 10rpx 0 300rpx 0;
+  text-align: center;
+}
+
+/* 时间日期 */
+.location-time-weather {
+  overflow: hidden;
+}
+
+.location-time {
+  float: left;
+}
+
+.location-weather {
+  position: relative;
+  float: right;
+  width:320rpx;
+  height:400rpx;
+}
+
+/* 日期canvas */
+#da-time-canvas {
+  width: 320rpx;
+  height: 200rpx;
+}
+/* 天气icon */
+.wea-stat-icon{
+  position: absolute;
+  width:110rpx;
+  height:110rpx;
+  left:-20rpx;
+  top:20rpx;
+}
+/* 天气canvas */
+#loc-wea-cond {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 320rpx;
+  height: 160rpx;
+}
+#loc-wea-wind {
+  position: absolute;
+  left: 120rpx;
+  top: 0;
+  width: 320rpx;
+  height: 160rpx;
+}
+#loc-wea-tmp {
+  position: absolute;
+  left: 0;
+  top: 60rpx;
+  width: 320rpx;
+  height: 180rpx;
+}
+
+#loc-wea-hum {
+  position: absolute;
+  left: -80rpx;
+  top: 140rpx;
+  width: 320rpx;
+  height: 120rpx;
+}
+
+#loc-wea-pres {
+  position: absolute;
+  left: 80rpx;
+  top: 140rpx;
+  width: 320rpx;
+  height: 120rpx;
+}
+
+.modify-time-describe{
+  position: absolute;
+  left: 43rpx;
+  top: 200rpx;
+  width: 236rpx;
+  height: 80rpx;
+  color:#b1a3a3;
+  font-size:0.32rem;
+}
+/* 24小时天气canvas的容器 */
+.weather-container {
+  height: 600rpx;
+  margin-top:60rpx;
+}

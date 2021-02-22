@@ -1,0 +1,57 @@
+<!--miniprogram/pages/home/myDiary/myDiary.wxml-->
+<!-- 我的日记 -->
+<view class="diary-wrapper">
+  <van-tabs active="{{ active }}" bind:change="onChange" color="#ddd">
+    <van-tab title="写日记" name="wirteTab">
+      <view class="diary-top-view">
+        <van-field value="{{ titleValue }}" clearable label="标题" placeholder="输入日记标题" bind:change="inputTitle" />
+      </view>
+      <textarea id="tarea" value="{{contentValue}}" placeholder="日记内容" placeholder-class="textarea-placeholder"
+        rows="14" cols="40" bindinput="inputContent"></textarea>
+      <view class="diary-location-view">
+        <view class="location-btn-view">
+          <van-button catch:tap="addLocationInfo" class="add-location-btn">添加位置信息</van-button>
+          <van-button catch:tap="deleteLocationInfo" class="del-location-btn">删除位置信息</van-button>
+        </view>
+        <view class="location-info-text">
+          <van-icon name="location-o"></van-icon>
+          <text>位置：{{addressName}}</text>
+        </view>
+      </view>
+
+      <view class="diary-weather-view" catch:tap="addWeatherInfo">
+        <van-button>添加天气信息</van-button>
+        <view class="weather-text">{{weatherStr}}</view>
+      </view>
+      <van-button type="primary" class="submitBtn" catch:tap="addDiary">提交日记</van-button>
+    </van-tab>
+
+
+
+    <van-tab title="历史" name="historyTab">
+      <view class="diary-lists-wrapper">
+        <block wx:for="{{hisDiaryLists}}" wx:for-item="hisitem">
+          <view class="diary-item-view">
+            <view class="d-top">
+              <van-icon name="records"></van-icon>
+              <text class="type-text">日记</text>
+              <text class="detail-text" catch:tap="toDiaryDetail" data-diary-id="{{hisitem._id}}">详情</text>
+            </view>
+            <view class="d-brief">
+              <text class="d-title">{{hisitem.diaryTitle}}</text>
+            </view>
+            <view class="d-footer">
+              <text class="d-time">{{hisitem.publishTime}}</text>
+            </view>
+          </view>
+        </block>
+
+        <view class="footer-view-more" wx:if="{{!hasMoreDiary}}">
+          <text class="more-text">没有更多了</text>
+        </view>
+      </view>
+
+    </van-tab>
+
+  </van-tabs>
+</view>

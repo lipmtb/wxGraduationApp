@@ -1,3 +1,5 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "my-tip-item":"tipcpn/tip-item"
+  }
 }

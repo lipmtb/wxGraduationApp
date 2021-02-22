@@ -15,5 +15,13 @@ App({
     }
 
     this.globalData = {}// regist.js 添加：app.globalData.userObj = userObj;
+
+    wx.cloud.callFunction({
+      name:'getUserOpenId'
+    }).then((res)=>{
+  
+      this.globalData.userOpenId=res.result;
+      wx.setStorageSync('userOpenId', res.result);
+    })
   }
 })
