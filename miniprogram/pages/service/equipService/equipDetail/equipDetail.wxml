@@ -1,0 +1,81 @@
+<!--miniprogram/pages/service/equipService/equipDetail/equipDetail.wxml-->
+
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-icon name="good-job-o" class="like-good-icon" size="40px"></van-icon>
+
+<van-popup show="{{ popVisible }}" bind:close="onClosePop" closeable="{{true}}" close-icon="close" position="bottom"
+  custom-style="height: 40%">
+  <van-datetime-picker type="date" value="{{ currentDate }}" max-date="{{maxDate}}" min-date="{{ minDate }}"
+    bind:confirm="timeConfirm" formatter="{{ formatter }}" title="{{titlePopStr}}" cancel-button-text="选择"
+    visible-item-count="{{visCount}}" />
+</van-popup>
+
+<view class="detail-wrapper">
+  <!-- 顶部用户信息和标题 -->
+  <view class="top-view">
+    <view class="user-info-view">
+      <image class="user-avatar-img" src="{{anglerInfo.avatarUrl}}"></image>
+      <text class="user-nickname-info">{{anglerInfo.tempNickName}}</text>
+      <van-icon wx:if="{{hasCollected}}" class="star-icon" name="star" size="20px" color="#ff0"
+        bind:click="onCancelCollect"></van-icon>
+      <van-icon wx:else class="star-icon" name="star-o" size="20px" bind:click="onCollect"></van-icon>
+    </view>
+
+    <view class="top-title">{{equipItemData.equipName}}</view>
+  </view>
+
+  <!-- 装备简介和图片   -->
+  <view class="content-detail-wrapper">
+    <!-- 装备简介-->
+    <view class="content-text-view">
+
+      <view>类型：{{equipItemData.equipType.equipTypeName}}</view>
+      <view style="color:#999;font-weight:bold;">装备简介：</view>
+      <text style="padding-left:10rpx;">{{equipItemData.equipDesc}}</text>
+    </view>
+
+    <!-- 内容相关图片 -->
+    <view class="content-img-view">
+      <block wx:for="{{equipItemData.images}}">
+        <image src="{{item}}" mode="aspectFit" class="content-img-item"></image>
+      </block>
+    </view>
+  </view>
+
+  <view class="rent-time-view">
+    <!-- 选择出租时间 -->
+    <view class="select-time-view">
+
+      <van-button type="info" bind:click="onShowPop" size="small" data-btn-info="{{'start'}}">租用开始时间</van-button>
+      <text class="time-str-text">{{startTimeStr}}</text>
+    </view>
+
+    <view class="select-time-view">
+      <van-button type="info" bind:click="onShowPop" size="small" data-btn-info="{{'end'}}">租用结束时间</van-button>
+      <text class="time-str-text">{{endTimeStr}}</text>
+    </view>
+
+    <view class="rent-user-view">
+      <van-cell-group>
+        <van-field label="地址" placeholder="填写你的详细地址" border="{{ false }}" bind:change="onInputAddress" />
+        <van-field label="联系方式" placeholder="填写你的联系方式" border="{{ false }}" bind:change="onInputRelated" />
+
+      </van-cell-group>
+    </view>
+    <!-- 提交租用信息 -->
+    <view class="submit-order-view">
+      <van-button type="info" bind:click="confirmOrder" size="small" data-btn-info="{{'end'}}">租用</van-button>
+    </view>
+  </view>
+
+  <!-- 发布位置和距离你的位置多少 -->
+  <view class="talk-time-share">
+    <text class="talk-publish-time">距离你：{{disCalc}}m</text>
+    <view wx:if="{{equipItemData.locationDetail}}">
+      <van-icon name="location-o" bind:click="chooseLocationDetail"
+        data-location-info="{{equipItemData.locationDetail}}">
+      </van-icon>
+      <text>{{equipItemData.locationDetail.name}}</text>
+    </view>
+  </view>
+</view>

@@ -1,9 +1,12 @@
 import * as echart from '../../ec-canvas/echarts';
 let QQMapWX = require('../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
+const db = wx.cloud.database();
+const _ = db.command;
+const $ = _.aggregate;
 //24小时天气
 let weatherOption = {
   title: {
-    text: "未来24小时预报",
+    text: "未来24小时气温云量预报",
     show: true,
     textStyle: {
       fontSize: 16,
@@ -16,14 +19,8 @@ let weatherOption = {
     }, {
       name: '云量',
       icon: 'circle'
-    }, {
-      name: '风速',
-      icon: 'arrow'
-    }, {
-      name: '风力',
-      icon: 'arrow'
     }],
-    left: 128,
+    left: 200,
     top: 10
   },
   grid: {
@@ -35,17 +32,17 @@ let weatherOption = {
   dataset: {
     // 图形的数据来源
     source: [
-      ["product", "temper", "cloudlg", "windsp", "windlg"]
+      ["product", "temper", "cloudlg"]
     ]
   },
   xAxis: {
-    name: '小时',
+    name: '气温云量',
     type: 'category',
     axisPointer: {
       label: {
         formatter: function (params) {
-          console.log(params.seriesData);
-          return  params.value +
+
+          return params.value +
             (params.seriesData.length ? '：' + params.seriesData[0].data : '');
         }
       }
@@ -73,7 +70,53 @@ let weatherOption = {
       x: 'product',
       y: 'cloudlg'
     }
-  }, {
+  }]
+
+}
+let tempChart = null;
+
+//风力风速
+let windOption = {
+  title: {
+    text: "未来24小时风力风速预报",
+    show: true,
+    textStyle: {
+      fontSize: 16,
+      color: '#666'
+    }
+  },
+  legend: {
+    data: [{
+      name: '风速',
+      icon: 'arrow'
+    }, {
+      name: '风力',
+      icon: 'arrow'
+    }],
+    left: 200,
+    top: 10
+  },
+  grid: {
+    left: 30,
+    width: '90%',
+    height: '60%',
+    bottom: 50
+  },
+  dataset: {
+    // 图形的数据来源
+    source: [
+      ["product", "windsp", "windlg"]
+    ]
+  },
+  xAxis: {
+    name: '风力风速',
+    type: 'category'
+  },
+  yAxis: {},
+  dataZoom: { //控制第一个xAxis的拉伸
+    xAxisIndex: 0
+  },
+  series: [{
     name: '风速',
     type: 'line',
     encode: {
@@ -90,7 +133,7 @@ let weatherOption = {
   }]
 
 }
-let tempChart = null;
+let windChart = null;
 
 //2小时内降水
 let minutelyOption = {
@@ -156,7 +199,7 @@ let dailyOption = {
       name: '最低温'
     }],
     left: 180,
-    top: 24
+    top: 16
   },
   grid: {
     left: 30,
@@ -188,6 +231,10 @@ let dailyOption = {
     encode: {
       x: 'product',
       y: 'maxTemp'
+    },
+    label: {
+      show: true,
+      fontSize: 12
     }
   }, {
     name: '最低温',
@@ -195,6 +242,10 @@ let dailyOption = {
     encode: {
       x: 'product',
       y: 'minTemp'
+    },
+    label: {
+      show: true,
+      fontSize: 12
     }
   }]
 }
@@ -203,9 +254,19 @@ Page({
   pageData: {
     qqmapsdk: null, //腾讯位置服务api对象
     curLat: 0, //当前位置的纬度
-    curLng: 0 //当前位置的经度
+    curLng: 0, //当前位置的经度
+    curInputText: '', //搜索地点的输入
+    recommendLocLists: [],
+    curRecommendLocCount: 0,
+    minDis: 0,
+    maxDis: 10000, //默认取10km内的地点
+    hasMoreRecLoc: true
   },
   data: {
+    active: 0, //当前的服务是天气服务，钓点服务还是其他
+    defaultDis: 0, //默认10km以内
+    visibleCount: 2, //默认的显示行数
+    disColumns: ["10km内", "10km-50km", "50km以上"],
     weatherEc: {
       onInit: function (canvas, width, height, dpr) {
         tempChart = echart.init(canvas, null, {
@@ -217,6 +278,19 @@ Page({
 
         tempChart.setOption(weatherOption);
         return tempChart;
+      }
+    },
+    windEc: {
+      onInit: function (canvas, width, height, dpr) {
+        windChart = echart.init(canvas, null, {
+          width: width,
+          height: height,
+          devicePixelRatio: dpr
+        });
+
+        canvas.setChart(windChart);
+        windChart.setOption(windOption);
+        return windChart;
       }
     },
     minuteEc: {
@@ -247,16 +321,66 @@ Page({
     },
     iconCode: 100 //天气的图标
   },
+  onTabChange(e) {
+    console.log(e.detail);
+  },
+  onConfirmDis(e) {
+    // console.log(e.detail.index);
+    let that = this;
+    wx.showLoading({
+      title: '加载中'
+    })
+    switch (e.detail.index) {
+      case 0: {
+        that.pageData.minDis = 0;
+        that.pageData.maxDis = 10000;
+        break;
+      }
+      case 1: {
+        that.pageData.minDis = 10000;
+        that.pageData.maxDis = 50000;
+        break;
+      }
+      case 2: {
+        that.pageData.minDis = 50000;
+        that.pageData.maxDis = 1000000000;
+        break;
+      }
+    }
+
+    that.pageData.hasMoreRecLoc = true;
+    that.pageData.curRecommendLocCount = 0;
+    that.pageData.recommendLocLists = [];
+
+    that.getNearRecommendLocLists().then(() => {
+      wx.hideLoading({
+        success: (res) => {
+          that.setData({
+            visibleCount: 0
+          })
+        },
+      })
+    });
+  },
+  onSelectDis(e) {
+    // console.log(e);
+    this.setData({
+      visibleCount: 2
+    })
+  },
   onLoad() {
     this.pageData.qqmapsdk = new QQMapWX({
       key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
     });
+    //天气服务
+    //获取当前位置信息，并获取当前位置的天气情况
     this.getCurrentLocation().then(() => {
       this.getRecommendLocationName(); //坐标逆地址解析为人性化的地址名
       this.getWeatherByLoca(); //获取当前经纬度的天气
       this.getFurture24(); //获取未来24小时天气情况
       this.getMinutesPrecip(); //获取降水情况
       this.getFurtureDayWeather(); //获取未来7天的天气情况
+      this.getNearRecommendLocLists();
     });
     this.getDatimeText(); //获取当前日期
 
@@ -355,20 +479,28 @@ Page({
     // console.log(weaRes);
     let hourlyArr = weaRes.hourly;
     let fxTimeArr = new Array();
+    let windTimeArr = new Array();
     for (let hourlyItem of hourlyArr) {
-      let arr = new Array(3);
-      arr[0] = hourlyItem.fxTime.split(/T|\+/)[1];
-      arr[1] = parseInt(hourlyItem.temp);
-      arr[2] = parseInt(hourlyItem.cloud);
-      arr[3] = parseInt(hourlyItem.windSpeed);
-      arr[4] = parseInt(hourlyItem.windScale);
-      fxTimeArr.push(arr);
+      let temparr = new Array(3);
+      let windarr = new Array(3);
+      temparr[0] = hourlyItem.fxTime.split(/T|\+/)[1];
+      temparr[1] = parseInt(hourlyItem.temp);
+      temparr[2] = parseInt(hourlyItem.cloud);
+
+      windarr[0] = hourlyItem.fxTime.split(/T|\+/)[1];
+      windarr[1] = parseInt(hourlyItem.windSpeed);
+      windarr[2] = parseInt(hourlyItem.windScale);
+      fxTimeArr.push(temparr);
+      windTimeArr.push(windarr);
 
     }
-    // console.log(fxTimeArr);
+
     weatherOption.dataset.source.splice(1, 24, ...fxTimeArr);
+    windOption.dataset.source.splice(1, 24, ...windTimeArr);
+
     // console.log(weatherOption.dataset.source);
     tempChart.setOption(weatherOption);
+    windChart.setOption(windOption);
 
   },
   //获取未来2小时的降水量
@@ -394,7 +526,7 @@ Page({
     minutelyOption.title.text = mResObj.summary;
     minutelyOption.dataset.source.splice(1, 24, ...minuteAll);
     minutelyChart.setOption(minutelyOption);
-    // console.log(minutelyOption.dataset.source);
+
   },
   //获取未来7天的天气情况
   async getFurtureDayWeather() {
@@ -469,21 +601,34 @@ Page({
       let width = quRes[0].width;
       let height = quRes[0].height;
 
-      // console.log(width, height);
+
       let context = canvas.getContext("2d"); //获取2d上下文对象
-
-
-      context.font = "bold " + scale + "px KaiTi";
-      context.lineWidth = 2;
       let metrics = context.measureText(textstr); //测量文本的宽度
-      // console.log(metrics);
-      let linearGra = context.createLinearGradient(width / 2 - metrics.width / 2, height / 2 + 10, width / 2 + metrics.width / 2, height / 2 + 10);
-      linearGra.addColorStop(0, "#00f");
-      linearGra.addColorStop(0.4, "#0f0");
-      linearGra.addColorStop(0.6, "#f0f");
-      linearGra.addColorStop(1, "#00f");
-      context.fillStyle = linearGra;
-      context.fillText(textstr, width / 2, height / 2 + 40);
+
+
+
+      let a = -21;
+      let timer = setInterval(function () {
+        a++;
+        if (a === 2) {
+          clearInterval(timer);
+          return;
+        }
+        context.clearRect(-20, -20, width * 3, height * 2);
+        context.save();
+        context.beginPath();
+        let linearGra = context.createLinearGradient(width / 2 - metrics.width / 2, height / 2 + 10, width / 2 + metrics.width / 2, height / 2 + 10);
+        linearGra.addColorStop(0, "#00f");
+        linearGra.addColorStop(0.4, "#0f0");
+        linearGra.addColorStop(0.6, "#f0f");
+        linearGra.addColorStop(1, "#00f");
+        context.fillStyle = linearGra;
+        context.font = (scale + a) + "px KaiTi";
+        context.closePath();
+        context.fillText(textstr, width / 2, height / 2 + 40);
+        context.restore();
+      }, 100);
+
 
     })
   },
@@ -498,7 +643,7 @@ Page({
           longitude: that.pageData.curLng
         },
         success: (res) => {
-
+          console.log("逆地址解析：",res);
           that.setData({
             currentLocationText: res.result.formatted_addresses.recommend
           });
@@ -515,13 +660,14 @@ Page({
 
   },
   //获取用户当前的位置的名称，保存当前设置的经纬度
+  //基于这个经纬度位置获取天气情况
   async getCurrentLocation() {
     let that = this;
     return await new Promise((resolve) => {
       wx.getLocation({
         type: 'gcj02',
         success: (res) => {
-          // console.log(res);
+           console.log(res);
           let lon = res.longitude;
           let lat = res.latitude;
           that.pageData.curLat = lat;
@@ -547,8 +693,89 @@ Page({
         let newLat = res.latitude;
         that.pageData.curLat = newLat;
         that.pageData.curLng = newLng;
-        that.getRecommendLocationName();
+
+        that.getRecommendLocationName(); //坐标逆地址解析为人性化的地址名
+        that.getWeatherByLoca(); //获取当前经纬度的天气
+        that.getFurture24(); //获取未来24小时天气情况
+        that.getMinutesPrecip(); //获取降水情况
+        that.getFurtureDayWeather(); //获取未来7天的天气情况
       }
     })
+  },
+  //钓点服务
+  //获取附近的钓点位置列表：recommendLocLists
+  async getNearRecommendLocLists() {
+    // console.log(this.pageData.curLng, this.pageData.curLat);
+    let that = this;
+    let nearRes = await db.collection("anglerLoc").aggregate().geoNear({
+      distanceField: "distance",
+      spherical: true,
+      near: db.Geo.Point(that.pageData.curLng, that.pageData.curLat),
+      key: "location",
+      includeLocs: 'location',
+      maxDistance: that.pageData.maxDis,
+      minDistance: that.pageData.minDis
+    }).sort({
+      distance: 1 //距离由近到远
+    }).skip(that.pageData.curRecommendLocCount).limit(4).end();
+    console.log(nearRes);
+
+    if (nearRes.list.length === 0 || nearRes.list.length < 4) {
+      that.pageData.hasMoreRecLoc = false;
+
+    }
+    that.pageData.curRecommendLocCount += nearRes.list.length;
+    that.pageData.recommendLocLists.push(...nearRes.list);
+    that.setData({
+      recommendLocLists: that.pageData.recommendLocLists
+    })
+    return nearRes.list;
+  },
+  //加载更多钓点
+  showMoreLoc() {
+    if (this.pageData.hasMoreRecLoc) {
+      wx.showLoading({
+        title: '更多钓点',
+      });
+      this.getNearRecommendLocLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+    } else {
+      wx.showToast({
+        title: '没有更多了'
+      })
+    }
+  },
+  //输入搜索关键词
+  onInputLoc(e) {
+    this.pageData.curInputText = e.detail;
+  },
+  //搜索某个地址
+  onSearch() {
+    let that = this;
+    this.pageData.qqmapsdk.search({
+      keyword: that.pageData.curInputText,
+      location: {
+        latitude: that.pageData.curLat,
+        longitude: that.pageData.curLng
+      },
+      success: (locres) => {
+        console.log("搜索结果：", locres);
+
+        that.setData({
+          searchLocLists: locres.data
+        })
+      }
+    })
+  },
+  //去钓点详情页面
+  toLocDetail(e) {
+    let locid = e.currentTarget.dataset.locId;
+    wx.navigateTo({
+      url: 'locDetail/locDetail?locId=' + locid,
+    })
+
   }
 })

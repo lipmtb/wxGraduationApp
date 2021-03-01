@@ -86,3 +86,43 @@
   height: 600rpx;
   margin-top:60rpx;
 }
+
+/* 钓点服务 */
+
+/* 发布钓点 */
+.public-loc-view{
+  height:120rpx;
+  position:relative;
+}
+.public-loc-view .subscribe-text{
+  position:absolute;
+  right:10rpx;
+  background-color:#f5b266;
+  padding:6rpx 12rpx;
+  border-radius:20rpx;
+  text-decoration:underline;
+}
+.search-btn{
+  background-color:#a6f161;
+  padding:3rpx 20rpx;
+  font-size:0.8rem;
+  border-radius:10rpx;
+  box-shadow:2rpx 4rpx 16rpx #00f;
+}
+/* 搜索结果的标签插槽 */
+.category-text{
+  float:left;
+  margin-left:8rpx;
+  padding:4rpx;
+  background-color:rgb(88, 177, 189);
+  border-radius:10rpx;
+}
+/* 附近钓点 */
+.near-loc-lists{
+  padding-top:20rpx;
+}
+
+.near-loc-lists .category-text{
+  padding:4rpx 10rpx;
+  background-color:rgb(110, 200, 243);
+}

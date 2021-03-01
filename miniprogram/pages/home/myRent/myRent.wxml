@@ -1,0 +1,57 @@
+<!--miniprogram/pages/home/myRent/myRent.wxml-->
+<view class="order-wrapper">
+  <van-tabs active="{{ curActive }}" bind:change="onChangeTab">
+    <!-- 我的租赁 -->
+    <van-tab title="我的租赁">
+      <block wx:for="{{rentOrderLists}}" wx:for-item="rentitem" wx:for-index="rentidx">
+        <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{rentidx}}"
+          data-order-info="{{rentitem}}" async-close bind:close="onClose">
+          <view class="message-item" data-equip-id="{{rentitem.rentEquipId}}" catch:tap="toOrderDetail">
+            <view class="msg-top">
+              <van-icon name="diamond-o"></van-icon>
+              <text class="from-type-name">装备租赁</text>
+            </view>
+
+            <view class="msg-main">
+              <text>租用的装备名：{{rentitem.equipInfo.equipName}}</text>
+              <view>打算租用的开始时间：{{rentitem.rentStartTime}}</view>
+              <view>打算租用的结束时间：{{rentitem.rentEndTime}}</view>
+            </view>
+
+
+          </view>
+          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消</view>
+        </van-swipe-cell>
+      </block>
+
+      <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
+        catch:tap="showMoreOrders">更多租赁信息</text>
+    </van-tab>
+
+    <!-- 租赁订单:由租赁message：type=equipOrder 的messageDetail.msgFrom可知道订单数组，通过数组where.in -->
+    <van-tab title="租赁订单">
+      <block wx:for="{{equipRentLists}}" wx:for-item="rentequipitem" wx:for-index="rentidx">
+        <view class="message-item" data-rent-id="{{rentequipitem._id}}" catch:tap="toRentEquipDetail">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">租赁订单</text>
+          </view>
+
+          <view class="msg-main">
+            <text>用户：{{rentequipitem.rentUserName}}想要租用你的装备：{{rentequipitem.equipInfo.equipName}}</text>
+            <view>打算租用的开始时间：{{rentequipitem.rentStartTime}}</view>
+            <view>打算租用的结束时间：{{rentequipitem.rentEndTime}}</view>
+          </view>
+
+
+        </view>
+      </block>
+
+      <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
+        catch:tap="moreOrderEquip">更多租赁订单</text>
+    </van-tab>
+
+  </van-tabs>
+
+
+</view>

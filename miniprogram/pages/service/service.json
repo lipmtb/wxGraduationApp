@@ -1,5 +1,8 @@
 {
   "usingComponents": {
-    "ec-canvas":"../../ec-canvas/ec-canvas"
+    "ec-canvas":"../../ec-canvas/ec-canvas",
+    "my-loc-cpn":"loc-cpn/loc",
+    "near-cpn":"loc-near-cpn/loc-near-cpn",
+    "equip-cpn":"equipService/equipService"
   }
 }

@@ -5,7 +5,7 @@
 </view>
 
 <!-- 我的各个项目 -->
-<view class="home-topic-wrapper">
+<view class="home-topic-wrapper" style="padding-bottom:200rpx;">
 
   <van-collapse value="{{ activeNames }}" bind:change="onChange">
     <van-collapse-item title="我的发布" name="1" icon="notes-o" class="section-view">
@@ -13,6 +13,7 @@
         <text class="send-item" data-send-type="talk">钓友圈</text>
         <text class="send-item" data-send-type="question">问答圈</text>
         <text class="send-item" data-send-type="tip">技巧话题</text>
+        <text class="send-item" data-send-type="anglerLoc">钓点</text>
       </view>
     </van-collapse-item>
 
@@ -21,9 +22,28 @@
         <text class="send-item" data-send-type="talk">钓友圈</text>
         <text class="send-item" data-send-type="question">问答圈</text>
         <text class="send-item" data-send-type="tip">技巧话题</text>
+        <text class="send-item" data-send-type="anglerLoc">钓点</text>
       </view>
     </van-collapse-item>
   </van-collapse>
+
+  <!-- 钓点预约 -->
+
+  <view class="my-view" catch:tap="toMyOrderPage">
+    <van-icon name="diamond-o"></van-icon>
+    <text class="my-text">钓点预约</text>
+    <text class="diary-count-text">{{orderCount}}</text>
+  </view>
+
+  <!-- 装备租赁 -->
+
+  <view class="my-view" catch:tap="toMyRentPage">
+    <van-icon name="diamond-o"></van-icon>
+    <text class="my-text">装备租赁</text>
+    <text class="diary-count-text">{{rentEquipCount}}</text>
+  </view>
+
+  <!-- 我的日记 -->
   <navigator url="myDiary/myDiary">
     <view class="my-view">
       <van-icon name="records"></van-icon>
@@ -32,12 +52,12 @@
     </view>
   </navigator>
 
-
-    <view class="my-view" catch:tap="toMessageDetail">
-      <van-icon wx:if="{{inProgressCount===0}}" name="volume-o"></van-icon>
-      <van-icon wx:else name="volume-o" info="{{inProgressCount}}+"></van-icon>
-      <text class="my-text">我的消息</text>
-    </view>
+  <!-- 我的消息 -->
+  <view class="my-view" catch:tap="toMessageDetail">
+    <van-icon wx:if="{{inProgressCount===0}}" name="volume-o"></van-icon>
+    <van-icon wx:else name="volume-o" info="{{inProgressCount}}+"></van-icon>
+    <text class="my-text">我的消息</text>
+  </view>
 
 
 

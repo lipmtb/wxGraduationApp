@@ -139,6 +139,43 @@
         {
           "name": "pages/service/service",
           "pathName": "pages/service/service",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/publicLoc",
+          "pathName": "pages/service/publicLoc/publicLoc",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/locDetail/locDetail",
+          "pathName": "pages/service/locDetail/locDetail",
+          "query": "locId=b00064a76034eda406c2306c1df9bd22",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myOrder/myOrder",
+          "pathName": "pages/home/myOrder/myOrder",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/publicEquip/publicEquip",
+          "pathName": "pages/service/equipService/publicEquip/publicEquip",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/publicEquip/publicEquip",
+          "pathName": "pages/service/equipService/publicEquip/publicEquip",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/equipDetail",
+          "pathName": "pages/service/equipService/equipDetail/equipDetail",
+          "query": "equipId=057f92a660389632003b0228739973df",
           "scene": null
         }
       ]

@@ -1,6 +1,7 @@
 <!--miniprogram/pages/home/messageDetail/messageDetail.wxml-->
+<!-- 我的消息 -->
 <van-tabs active="{{ activeTab }}" bind:change="onTabChange" color="#999">
-  <van-tab title="圈子消息">
+  <van-tab title="圈内消息">
     <view class="foundation-msg-wrapper">
       <block wx:for="{{mainMessageLists}}" wx:for-item="mainitem" wx:for-index="msgidx">
         <view class="message-item" catch:tap="toMsgDetail" data-msg-index="{{msgidx}}" data-msg-id="{{mainitem._id}}"
@@ -23,6 +24,56 @@
       </block>
     </view>
   </van-tab>
+  
+  <van-tab title="预约消息">
+    <view class="foundation-msg-wrapper">
+      <block wx:for="{{orderMsgLists}}" wx:for-item="orderitem" wx:for-index="orderIdx">
+        <view class="message-item" catch:tap="toLocDetail" data-msg-index="{{orderIdx}}" data-msg-id="{{orderitem._id}}"
+          data-msg-detail="{{orderitem.messageDetail}}" data-msg-status="{{orderitem.status}}">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">{{orderitem.messageDetail.msgFromType}}</text>
+            <text wx:if="{{orderitem.status==='progress'}}" style="color:red" class="status-text">未读</text>
+            <text wx:else class="status-text">已读</text>
+          </view>
+
+          <view class="msg-main">
+            <text>{{orderitem.messageDetail.msgContent}}</text>
+          </view>
+
+          <view class="msg-footer">
+            <text>{{orderitem.time}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </van-tab>
+
+  <van-tab title="租赁消息">
+    <view class="foundation-msg-wrapper">
+      <block wx:for="{{rentOrderLists}}" wx:for-item="rentMsgItem" wx:for-index="rentIdx">
+        <view class="message-item" catch:tap="toRentDetail" data-msg-index="{{rentIdx}}" data-msg-id="{{rentMsgItem._id}}"
+          data-msg-detail="{{rentMsgItem.messageDetail}}" data-msg-status="{{rentMsgItem.status}}">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">租赁消息</text>
+            <text wx:if="{{rentMsgItem.status==='progress'}}" style="color:red" class="status-text">未读</text>
+            <text wx:else class="status-text">已读</text>
+          </view>
+
+          <view class="msg-main">
+            <text>{{rentMsgItem.messageDetail.msgContent}}</text>
+          </view>
+
+          <view class="msg-footer">
+            <text>{{rentMsgItem.time}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </van-tab>
+
+
   <van-tab title="系统消息">
     <view class="foundation-msg-wrapper">
       <block wx:for="{{sysMessageLists}}" wx:for-item="sysitem" wx:for-index="sysidx">

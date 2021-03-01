@@ -35,11 +35,11 @@
           <image src="{{userInfo.avatarUrl}}" class="user-avatar-icon"></image>
           <text class="user-nick-name">{{userInfo.tempNickName}}</text>
         </view>
-        <view class="foot-item">
+        <view class="foot-item" >
           <van-icon name="thumb-circle-o" />
           <text class="count-text">{{likedCount}}</text>
         </view>
-        <view class="foot-item">
+        <view class="foot-item" >
           <van-icon name="chat-o" />
           <text class="count-text">{{commentedCount}}</text>
         </view>

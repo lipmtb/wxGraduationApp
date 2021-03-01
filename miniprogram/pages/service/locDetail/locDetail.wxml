@@ -1,0 +1,133 @@
+<!--miniprogram/pages/service/locDetail/locDetail.wxml-->
+<van-popup show="{{ popVisible }}" bind:close="onClosePop" closeable="{{true}}" close-icon="close" position="bottom"
+  custom-style="height: 40%">
+  <van-datetime-picker type="datetime" value="{{ currentDate }}" min-date="{{ minDate }}"
+    bind:confirm="onSelectedTimeConfirm" formatter="{{ formatter }}" title="选择预约时间" cancel-button-text="选择"
+    bind:cancel="showSelectOrder" visible-item-count="{{visCount}}" />
+</van-popup>
+
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+<van-icon name="good-job-o" class="like-good-icon" size="40px"></van-icon>
+<view class="detail-wrapper">
+  <!-- 评论发布输入框 -->
+  <van-field value="{{commentInputValue}}" placeholder="输入你的评论" placeholder-style="text-indent:1rem;"
+    border="{{ false }}" bind:change="onCommentChange" class="comment-field">
+    <van-button slot="button" size="small" type="primary" bind:click="onSendComment">发表评论</van-button>
+  </van-field>
+
+  <!-- 顶部用户信息和标题 -->
+  <view class="top-view">
+    <view class="user-info-view">
+      <image class="user-avatar-img" src="{{anglerInfo.avatarUrl}}"></image>
+      <text class="user-nickname-info">{{anglerInfo.tempNickName}}</text>
+      <van-icon wx:if="{{hasCollected}}" class="star-icon" name="star" size="20px" color="#ff0"
+        bind:click="onCancelCollect"></van-icon>
+      <van-icon wx:else class="star-icon" name="star-o" size="20px" bind:click="onCollect"></van-icon>
+    </view>
+
+    <view class="top-title">{{locItemData.locName}}</view>
+  </view>
+
+  <!-- 钓点简介和图片   -->
+  <view class="content-detail-wrapper">
+    <!-- 钓点简介-->
+    <view class="content-text-view">
+      <view style="color:#999;font-weight:bold;">钓点简介：</view>
+      <text style="padding-left:10rpx;">{{locItemData.locDesc}}</text>
+    </view>
+
+    <!-- 内容相关图片 -->
+    <view class="content-img-view">
+      <block wx:for="{{locItemData.images}}">
+        <image src="{{item}}" mode="aspectFit" class="content-img-item"></image>
+      </block>
+    </view>
+  </view>
+
+  <!-- 收费和联系方式 -->
+  <view class="loc-contact-charge"
+    style="font-size:0.6rem;margin-top:120rpx;color:#02b721;text-align:left;text-indent:0.16rem;">
+    <view>收费方式：{{locItemData.charge||'免费'}}</view>
+    <view>联系方式:{{locItemData.contact}}</view>
+  </view>
+  <!-- 发布时间和发布位置 -->
+  <view class="talk-time-share">
+    <text class="talk-publish-time">{{locItemData.publishTime}}</text>
+    <view wx:if="{{locItemData.locationDetail}}">
+      <van-icon name="location-o" bind:click="chooseLocationDetail" data-location-info="{{locItemData.locationDetail}}">
+      </van-icon>
+      <text>{{locItemData.locationDetail.name}}</text>
+    </view>
+  </view>
+
+  <!-- 评分 -->
+  <view class="user-rate-view" style="overflow:hidden;padding:20rpx 0;color:#2ca006;font-size:0.2rem;">
+    <van-rate value="{{ rateValue }}" bind:change="onRateLoc" style="float:right;" disabled="{{!canRate}}" allow-half
+      size="{{14}}" />
+    <text class="rate-before-text" style="float:right;">你的评分：</text>
+    <text style="float:left;">综合评分：</text>
+    <van-rate value="{{ avgRateValue }}" style="float:left;" size="{{14}}" readonly allow-half />
+  </view>
+
+  <!-- 预约钓点 -->
+  <view class="order-view" style="padding-bottom:10rpx;">
+    <view class="related-view" style="padding:40rpx 0;font-size:0.8rem;color:#999;">
+      <text style="vertical-align:-5rpx;">联系方式：</text>
+      <input type="text" placeholder="填写联系方式" style="float:right;margin-right:71px;margin-left:-35px;border:1px dotted #10ff00;text-align:left;padding-left:10rpx;" bind:input="onInputRelated"/>
+    </view>
+    <van-button style="font-weight:bold;" class="order-loc-text" type="primary" bind:click="showPop">预约钓点</van-button>
+    <view wx:if="{{orderId}}">
+      <van-button bind:click="cancelOrderTime" size="mini" color="#7232dd" data-loc-order-id="{{orderId}}">取消预约
+      </van-button>
+      <text style="margin:0 40rpx;">{{orderTime}}</text>
+      <button bind:tap="requestUserSubscription">发送预约提醒</button>
+
+    </view>
+
+  </view>
+  <!-- 相关评论列表 -->
+  <view class="user-comment-wrapper">
+    <!-- 评论的数量 -->
+    <view class="comment-count-view">
+      <text class="all-comment-text">全部评论</text>
+      <text class="all-comment-count">{{commentLists.length}}</text>
+      <!-- <van-icon wx:if="{{hasLiked}}" name="thumb-circle"  size="40px" class="like-van-icon" bind:click="unLikeTalk"/>
+      <van-icon wx:else name="thumb-circle-o"  size="40px"  data-like-name="like-icon" class="like-van-icon"  bind:click="likeTalk"/> -->
+    </view>
+    <!-- 评论的列表 -->
+    <view class="comment-list-wrapper">
+      <block wx:for="{{commentLists}}">
+        <view class="comment-item-view">
+          <!-- 一条评论的顶部 -->
+          <view class="comment-top-view">
+            <image class="user-avatar" src="{{item.userInfo.avatarUrl}}"></image>
+            <text class="user-nickname">{{item.userInfo.tempNickName}}</text>
+          </view>
+          <!-- 评论的内容 -->
+          <view class="comment-body-view">
+            <text>{{item.commentText}}</text>
+          </view>
+          <!-- 一条评论的底部信息 -->
+          <view class="comment-foot-view">
+            <text class="footer-count">第{{commentLists.length-index}}楼</text>
+            <text>{{item.commentTime}}</text>
+          </view>
+        </view>
+
+      </block>
+    </view>
+
+  </view>
+
+</view>
+
+
+
+<view style="color:#f5b017;padding:40rpx;font-size:1.6rem;font-weight:bold;border-top:1px solid #ccc;">钓点周边</view>
+<view class="recommend-near-loc" style="padding-bottom:300rpx;">
+  <block wx:for="{{recommendNearLists}}" wx:for-item="nearItem">
+    <loc-cpn itemData="{{nearItem}}">
+      <text slot="type-describe" class="category-text">{{nearItem.category}}</text>
+    </loc-cpn>
+  </block>
+</view>

@@ -1,0 +1,71 @@
+<!--pages/service/equipService/equipService.wxml-->
+<view class="equip-wrapper">
+  <!-- 搜索 -->
+  <view class="search-view">
+    <van-search value="{{ searchValue }}" placeholder="请输入搜索关键词" bind:search="onSearchEquip"
+      bind:change="onInputEquipText" use-action-slot>
+      <view slot="action" bind:tap="onSearchEquip" class="search-btn">搜索</view>
+    </van-search>
+
+    <!-- 搜索结果列表 -->
+    <view class="search-res-view">
+      <view class="search-top-text" style="text-align:center;font-weight:bold;font-size:1.4rem;"
+        wx:if="{{searchEquipLists.length>0}}">
+        <text>搜索结果</text>
+      </view>
+      <block wx:for="{{searchEquipLists}}" wx:for-item="searchItem">
+        <view class="card-view-search" catch:tap="toEquipDetailPage">
+          <van-card class="card-item" wx:if="{{searchItem.images[0]}}" thumb="{{ searchItem.images[0] }}"
+            tag="{{searchItem.tagName}}" desc="{{searchItem.equipDesc}}" title="{{searchItem.equipName}}"
+            thumb-class="thumb-style" thumb-link="{{searchItem.link}}" centered="true"
+            data-equip-link="{{searchItem.link}}" />
+          <van-card class="card-item" wx:else tag="{{searchItem.tagName}}" desc="{{searchItem.equipDesc}}"
+            title="{{searchItem.equipName}}" thumb-class="thumb-style" thumb-link="{{searchItem.link}}"
+            data-equip-link="{{searchItem.link}}" centered="true" />
+        </view>
+
+      </block>
+    </view>
+
+  </view>
+
+  <!-- 发布装备 -->
+  <view class="public-loc-view">
+
+    <text class="subscribe-text" catch:tap="toPublicEquip">发布装备</text>
+  </view>
+
+
+  <!-- 热门装备 -->
+  <view class="classify-equip">
+    <van-tree-select items="{{ items }}" height="55vw" main-active-index="{{ mainActiveIndex }}"
+      active-id="{{ activeId }}" bind:click-nav="onClickNav">
+
+    </van-tree-select>
+    <view class="equip-list-view" catch:tap="toEquipDetailPage">
+      <block wx:for="{{equipLists}}" wx:for-item="eItem" wx:for-index="eIdx">
+        <view class="card-view">
+          <van-card wx:if="{{eItem.images[0]}}" thumb="{{ eItem.images[0] }}" tag="{{tagName}}"
+            desc="{{eItem.equipDesc}}" title="{{eItem.equipName}}" thumb-class="thumb-style" thumb-link="{{eItem.link}}"
+            centered="true" data-equip-link="{{eItem.link}}" />
+          <van-card wx:else desc="{{eItem.equipDesc}}" title="{{eItem.equipName}}" thumb-class="thumb-style"
+            thumb-link="{{eItem.link}}" data-equip-link="{{eItem.link}}" centered="true" />
+        </view>
+
+      </block>
+    </view>
+
+    <!-- 上一页和下一页 -->
+    <view class="page-show-btn" style="position:absolute;">
+      <van-button size="small" bind:click="toLastPage" disabled="{{!hasLast}}">上一页</van-button>
+      <van-button size="small" bind:click="toNextPage" disabled="{{!hasNext}}">下一页</van-button>
+    </view>
+
+  </view>
+  <!-- <view class="hot-equip">
+    <block wx:for="hotEquipLists" wx:for-item="equipItem">
+      <equip-item itemData="{{equipItem}}"></equip-item>
+    </block>
+  </view> -->
+
+</view>

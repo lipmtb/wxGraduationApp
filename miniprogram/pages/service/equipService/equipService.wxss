@@ -1,0 +1,35 @@
+/* pages/service/equipService/equipService.wxss */
+.public-loc-view{
+  height:120rpx;
+  position:relative;
+}
+.public-loc-view .subscribe-text{
+  position:absolute;
+  right:10rpx;
+  background-color:#f5b266;
+  padding:6rpx 12rpx;
+  border-radius:20rpx;
+  text-decoration:underline;
+}
+
+.classify-equip{
+  position: relative;
+}
+.equip-list-view{
+  position:absolute;
+  top:0;
+  left:283rpx;
+
+}
+
+.card-view-search{
+  
+  margin:58rpx 16rpx;
+  box-shadow: 2rpx 2rpx 18rpx #666;
+}
+
+.card-view{
+  border-bottom:1px solid #3f4c4a;
+  margin:20rpx 10rpx;
+  box-shadow: 2rpx 2rpx 18rpx;
+}

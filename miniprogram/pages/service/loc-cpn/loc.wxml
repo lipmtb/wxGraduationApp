@@ -1,0 +1,34 @@
+<!-- 搜索结果组件 -->
+
+<view class="singleTalkWrapper">
+
+  <view class="topView">
+    <slot name="type-icon"></slot>
+    <slot name="type-describe"></slot>
+  </view>
+
+  <view class="mainView">
+    <!-- 图片 -->
+    <view class="main-right">
+      <image wx:if="{{itemData.images.length>0}}" src="{{itemData.images[0]}}" class="firstImg" mode="aspectFill">
+      </image>
+    </view>
+    <view class="main-left">
+      <!-- 地点描述 -->
+      <view class="main-title">{{itemData.title}}</view>
+
+      <!-- 地点距离 -->
+      <view class="title-foot">
+        <van-icon name="location-o" class="foot-loc-icon" bind:click="onOpenLoc" data-loc-name="{{itemData.address}}"
+          data-loc="{{itemData.location}}"></van-icon>
+        <text class="loc-desc-addr">{{itemData.address}}</text>
+        <text wx:if="{{itemData.farDistance}}" class="loc-dis-count">距离：{{itemData.farDistance}}km</text>
+        <text wx:else class="loc-dis-count">距离：{{itemData._distance}}米</text>
+        
+      </view>
+    </view>
+
+  </view>
+
+
+</view>

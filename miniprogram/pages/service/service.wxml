@@ -1,6 +1,6 @@
 <!--pages/service/service.wxml-->
 <view class="wrapper">
-  <van-tabs active="{{ active }}" bind:change="onChange" color="#999" line-width="60" line-height="2">
+  <van-tabs active="{{ active }}" bind:change="onTabChange" color="#999" line-width="60" line-height="2">
     <!-- 天气服务Tab -->
     <van-tab title="天气服务">
       <view class="wea-top-view">
@@ -23,22 +23,98 @@
           <text class="modify-time-describe">更新时间：{{modifyTimeStr}}</text>
         </view>
       </view>
+
+      <!-- 气温云量 -->
       <view class="weather-container">
         <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ weatherEc }}"></ec-canvas>
       </view>
 
+      <!-- 风力风速 -->
+      <view class="weather-container">
+        <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ windEc }}"></ec-canvas>
+      </view>
+
+      <!-- 2小时分钟级降水 -->
       <view class="weather-container">
         <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ minuteEc }}"></ec-canvas>
       </view>
 
+      <!-- 7天天气预测 -->
       <view class="weather-container">
         <ec-canvas id="mychart-dom-bar" canvas-id="mychart-bar" ec="{{ seventDayEc }}"></ec-canvas>
       </view>
     </van-tab>
 
     <!-- 钓点服务 -->
-    <van-tab title="钓点服务"></van-tab>
-    <van-tab title="装备服务">装备</van-tab>
+    <van-tab title="钓点服务">
+      <!-- 位置 -->
+      <view class="wea-top-view">
+        <view class="cur-pos-view" catch:tap="chooseLocationFn">
+          <van-icon name="location-o"></van-icon>
+          <text class="pos-text">{{currentLocationText}}</text>
+        </view>
+      </view>
+      <!-- 搜索 -->
+      <view class="search-view">
+        <van-search value="{{ searchValue }}" placeholder="请输入搜索关键词" bind:search="onSearch" bind:change="onInputLoc"
+          use-action-slot>
+          <view slot="action" bind:tap="onSearch" class="search-btn">搜索</view>
+        </van-search>
+
+        <!-- 搜索结果列表 -->
+        <view class="search-res-view">
+          <view class="search-top-text" style="font-weight:bold;font-size:1.4rem;" wx:if="{{searchLocLists.length>0}}">
+            <text>搜索结果</text>
+          </view>
+          <block wx:for="{{searchLocLists}}" wx:for-item="searchItem">
+            <my-loc-cpn itemData="{{searchItem}}">
+
+              <text slot="type-describe" class="category-text">{{searchItem.category}}</text>
+            </my-loc-cpn>
+          </block>
+        </view>
+      </view>
+
+      <!-- 发布钓点 -->
+      <view class="public-loc-view">
+        <navigator url="publicLoc/publicLoc">
+
+          <text class="subscribe-text">发布钓点</text>
+        </navigator>
+      </view>
+      <!-- 附近钓点 -->
+      <view class="title-loc-top" style="font-weight:bold;font-size:1.4rem;margin-top:60rpx;">
+        <text>附近钓点</text>
+      </view>
+
+      <view class="dis-filter-view">
+        <van-picker show-toolbar title="距离选择" columns="{{ disColumns }}" bind:confirm="onConfirmDis"
+          bind:cancel="onSelectDis" cancel-button-text="选择" visible-item-count="{{visibleCount}}"
+          default-index="{{defaultDis}}" />
+      </view>
+      <!-- 附近钓点列表 -->
+      <view class="near-loc-lists">
+        <block wx:for="{{recommendLocLists}}" wx:for-item="locItem">
+          <near-cpn itemData="{{locItem}}">
+            <text slot="type-describe" class="category-text">钓点</text>
+            <text slot="type-icon" class="to-loc-detail"
+              style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;" catch:tap="toLocDetail"
+              data-loc-id="{{locItem._id}}">详情</text>
+          </near-cpn>
+        </block>
+      </view>
+      <view class="more-recommend-foot" style="color:#999;font-size:0.6rem;">
+        <text class="more-text" style="float:right;margin-right:12rpx;" catch:tap="showMoreLoc">更多</text>
+      </view>
+
+    </van-tab>
+
+    <!-- 装备服务 -->
+    <van-tab title="装备服务">
+      <equip-cpn></equip-cpn>
+    </van-tab>
+
+    <!-- 其他服务 -->
     <van-tab title="其他服务">其他</van-tab>
   </van-tabs>
 

@@ -8,7 +8,8 @@ Page({
     talkLists: [],
     questionLists: [],
     tipLists: [],
-    hasMoreArr: [true, true, true]
+    locLists: [],
+    hasMoreArr: [true, true, true, true]
   },
   pageData: {
     myopenid: '',
@@ -17,7 +18,8 @@ Page({
     curTabIdx: 0, //当前所在的Tab
     curTalkCount: 0, //加载的钓友圈帖子数
     curQuestionCount: 0, //加载的问答圈帖子数
-    curTipCount: 0
+    curTipCount: 0,
+    curLocCount: 0
   },
   onLoad: function (options) {
     let that = this;
@@ -34,6 +36,9 @@ Page({
         //判断初始选择的项目类型是钓友圈，问答圈还是技巧
         that.pageData.curSendType = options.sendType;
         let activeNum = options.sendType === 'question' ? 1 : options.sendType === 'tip' ? 2 : 0;
+        if (options.sendType === 'anglerLoc') {
+          activeNum = 3;
+        }
         that.pageData.curTabIdx = activeNum;
         that.setData({
           active: activeNum
@@ -42,7 +47,7 @@ Page({
       })
     });
   },
-  //切换三个选项
+  //切换选项
   onChange(e) {
     // console.log(e.detail.index);
     let changeIdx = e.detail.index;
@@ -59,7 +64,10 @@ Page({
       this.getTypeData(changeIdx);
       return;
     }
-
+    if (changeIdx === 3 && this.pageData.curLocCount === 0) {
+      this.getTypeData(changeIdx);
+      return;
+    }
   },
   //加载某个类型的数据
   getTypeData(typenum) {
@@ -131,6 +139,27 @@ Page({
         });
         break;
       }
+      case 3: {
+        that.getLocLists().then((res) => {
+          wx.hideLoading({
+            success: (res) => {},
+          })
+
+          if (res.length === 0) {
+            that.setData({
+              'hasMoreArr[3]': false
+            });
+            return;
+          }
+          that.data.locLists.push(...res);
+          that.pageData.curLocCount += res.length;
+          console.log("加载发布的钓点", res);
+          that.setData({
+            locLists: that.data.locLists
+          })
+        });
+        break;
+      }
     }
   },
   //加载钓友圈
@@ -181,20 +210,36 @@ Page({
     }
     return getTipRes.data;
   },
-  deleteQuestion(e){
+  //获取我发布的钓点
+  async getLocLists() {
+    let openid = this.pageData.myopenid || wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      openid = openRes.result;
+    }
+    let locRes = await db.collection("anglerLoc").where({
+      _openid: openid
+    }).skip(this.pageData.curLocCount).limit(6).get();
+
+    return locRes.data;
+  },
+  //删除发布的问答圈
+  deleteQuestion(e) {
     // console.log(e.currentTarget.dataset.delId);
-    let delId=e.currentTarget.dataset.delId;
-    let delIdx=e.currentTarget.dataset.delIndex;
-    db.collection("question").doc(delId).remove().then((res)=>{
+    let delId = e.currentTarget.dataset.delId;
+    let delIdx = e.currentTarget.dataset.delIndex;
+    db.collection("question").doc(delId).remove().then((res) => {
       wx.showToast({
         title: '删除成功',
       });
-      this.pageData.curQuestionCount=this.pageData.curQuestionCount-1;
-      this.data.questionLists.splice(delIdx,1);
+      this.pageData.curQuestionCount = this.pageData.curQuestionCount - 1;
+      this.data.questionLists.splice(delIdx, 1);
       this.setData({
-        questionLists:this.data.questionLists
+        questionLists: this.data.questionLists
       })
-    
+
     })
   },
   onReachBottom() {
@@ -207,14 +252,22 @@ Page({
     this.pageData.curTalkCount = 0;
     this.pageData.curQuestionCount = 0;
     this.pageData.curTipCount = 0;
-
+    this.pageData.curLocCount = 0;
     this.setData({
       talkLists: [],
       questionLists: [],
       tipLists: [],
-      hasMoreArr: [true, true, true]
+      locLists: [],
+      hasMoreArr: [true, true, true, true]
     })
 
     this.getTypeData(this.pageData.curTabIdx);
+  },
+  //去发布的钓点详情页
+  toLocDetail(e){
+    let locid=e.currentTarget.dataset.locId;
+    wx.navigateTo({
+      url:'/pages/service/locDetail/locDetail?locId='+locid
+    })
   }
 })

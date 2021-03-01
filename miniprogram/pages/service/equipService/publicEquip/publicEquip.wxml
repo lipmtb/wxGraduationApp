@@ -1,0 +1,76 @@
+<!--miniprogram/pages/service/equipService/publicEquip/publicEquip.wxml-->
+<!-- 发布装备 -->
+<view id="myNotifyView" style="{{notifyStyleInit}}">{{topMessage}}</view>
+
+
+<van-popup show="{{classifyPopVisible }}" bind:close="onCloseClassifyPop" closeable="{{true}}" close-icon="close"
+  position="bottom" custom-style="height: 40%">
+  <van-picker show-toolbar title="装备类型选择" columns="{{ equipTypeLists }}" 
+    bind:confirm="onTypeSelectConfirm" 
+    visible-item-count="{{3}}" default-index="{{0}}" cancel-button-text="" />
+</van-popup>
+
+
+<van-popup show="{{ popVisible }}" bind:close="onClosePop" closeable="{{true}}" close-icon="close" position="bottom"
+  custom-style="height: 40%">
+  <van-datetime-picker type="date" value="{{ currentDate }}" min-date="{{ minDate }}" bind:confirm="timeConfirm"
+    formatter="{{ formatter }}" title="{{titlePopStr}}" cancel-button-text="选择" visible-item-count="{{visCount}}" />
+</van-popup>
+
+
+
+<van-nav-bar title="出租装备" left-text="返回" left-arrow bind:click-left="onClickLeft" title-class="titleStyle" />
+
+<view class="addbox">
+  <van-cell-group>
+    <view>
+
+      <van-button size="small" bind:click="onShowTypePop" icon="plus">装备类型选择</van-button>
+      <text wx:if="{{curTypeStr}}" style="margin-left:12rpx;">{{curTypeStr}}</text>
+    </view>
+    <van-field clearable label="装备名称" placeholder="输入装备的名称" bind:change="onTitleInput" />
+    <van-field label="装备简介" type="textarea" placeholder="随便说几句" autosize border="{{ false }}"
+      bind:change="onContentInput" />
+    <van-field clearable label="联系方式" placeholder="手机号或者qq，微信，抖音号等社交账号" bind:change="onContactInput" />
+
+    <view class="imgViewBox">
+      <block wx:for="{{selectedImgArr}}">
+        <view class="singleImgBox">
+          <image src="{{item}}" mode="aspectFit" class="imgItem">
+          </image>
+          <van-icon name="delete" class="deleteIcon" bind:click="onDeleteImg" data-img-idx="{{index}}" />
+        </view>
+
+      </block>
+
+    </view>
+  </van-cell-group>
+
+  <!-- 选择出租时间 -->
+  <view class="select-time-view">
+
+    <van-button type="info" bind:click="onShowPop" data-btn-info="{{'start'}}">可出租开始时间</van-button>
+    <text class="time-str-text">{{startTimeStr}}</text>
+  </view>
+
+  <view class="select-time-view">
+
+    <van-button type="info" bind:click="onShowPop" data-btn-info="{{'end'}}">可出租结束时间</van-button>
+    <text class="time-str-text">{{endTimeStr}}</text>
+  </view>
+
+  <van-panel title="图片选择" desc="每次最多选择9张" status="{{hasSelectedImg}}" use-footer-slot>
+    <view slot="footer">
+      <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddImage">添加图片</van-button>
+    </view>
+  </van-panel>
+  <van-button icon="add-o" color="#329df9" type="primary" bind:click="userAddLocation" class="add-location-btn">添加位置
+  </van-button>
+  <view class="location-str-info" wx:if="{{locationStr}}">
+    <van-icon name="location-o"></van-icon>
+    <text>{{locationStr}}</text>
+    <van-icon name="delete" class="del-location-icon" bind:click="onDeleteLocation"></van-icon>
+  </view>
+</view>
+<van-button type="primary" size="normal" color="#329df9" block class="sendBtnClass" bind:click="onAllSend">出租
+</van-button>

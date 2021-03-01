@@ -1,0 +1,169 @@
+/* miniprogram/pages/service/locDetail/locDetail.wxss */
+
+
+.detail-wrapper {
+  padding: 20rpx 5rpx 300rpx 5rpx;
+  text-align: center;
+}
+
+
+/* 隐藏的赞icon */
+.like-good-icon {
+  position: fixed !important;
+  width: 100rpx;
+  height: 100rpx;
+  left: 0;
+  right:0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  opacity: 0;
+}
+
+/* 评论 */
+.comment-field {
+  position: fixed;
+  width: 96%;
+  bottom: 10rpx;
+  left: 0;
+  opacity: .8;
+
+}
+
+/* 顶部用户信息和标题 */
+.user-info-view {
+  overflow: hidden;
+}
+
+.user-info-view image.user-avatar-img {
+  float: left;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+
+.user-info-view .user-nickname-info {
+  float: left;
+  padding-top: 10rpx;
+  padding-left: 20rpx;
+  font-size: 1.5rem;
+}
+
+/* 收藏图标 */
+.user-info-view .star-icon {
+  float: right;
+  margin-right: 20rpx;
+  margin-top: 10rpx;
+}
+
+/* 顶部标题 */
+.top-view .top-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+
+}
+
+
+/* 内容描述 */
+.content-text-view {
+  text-indent: 1rem;
+  text-align: left;
+}
+
+/* 图片 */
+.content-img-view {
+  font-size: 0;
+  text-align: center;
+  margin-top: 20rpx;
+}
+
+.content-img-view image.content-img-item {
+  width: 90%;
+
+}
+
+/* 发布时间和分享 */
+.talk-time-share {
+  text-align: left;
+  padding: 40rpx 0 4rpx 10rpx;
+  font-size: 0.8rem;
+  color: rgb(151, 148, 148);
+  height:36rpx;
+}
+
+.talk-publish-time{
+  float:right;
+}
+
+/* 评论区域 */
+.user-comment-wrapper {
+  text-align: left;
+}
+
+/* 评论计数 */
+.comment-count-view {
+  color: rgb(151, 148, 148);
+  padding: 30rpx 0;
+  border-top: 10rpx solid rgba(204, 204, 204, 0.74);
+}
+
+.comment-count-view .all-comment-text {
+  margin-right: 20rpx;
+}
+
+.comment-count-view .like-van-icon {
+  display:inline-block;
+  margin-left: 440rpx;
+  vertical-align: -22rpx;
+  height:100rpx;
+  width:100rpx;
+}
+
+/* 一条评论 */
+.comment-item-view {
+  padding: 20rpx 0;
+  border-top: 1px dotted #ddd;
+}
+
+.comment-item-view:first-of-type {
+  border-top: 0;
+}
+
+/* 评论用户 */
+image.user-avatar {
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+}
+
+.user-nickname {
+  vertical-align: 28rpx;
+  margin-left: 8rpx;
+}
+
+/* 评论内容 */
+.comment-body-view {
+  padding-left: 90rpx;
+  font-size: 1.2rem;
+  margin-top: -30rpx;
+  min-height: 20rpx;
+}
+
+/* 评论的时间和楼层 */
+.comment-item-view .comment-foot-view {
+  font-size: 0.8rem;
+  color: rgba(133, 131, 131, 0.89);
+}
+
+.comment-foot-view .footer-count {
+  margin-right: 20rpx;
+}
+
+/* 附近种类标签插槽 */
+.category-text{
+  float:left;
+  margin-left:8rpx;
+  padding:4rpx;
+  background-color:rgb(88, 177, 189);
+  border-radius:10rpx;
+}

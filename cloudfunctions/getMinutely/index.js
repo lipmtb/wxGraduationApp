@@ -1,4 +1,4 @@
-// 获取某个经纬度的天气信息
+// 获取2小时内的天气变化
 const cloud = require('wx-server-sdk');
 cloud.init();
 const {

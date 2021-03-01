@@ -1,0 +1,22 @@
+<!--miniprogram/pages/home/myOrder/orderLocDetail/orderLocDetail.wxml-->
+
+<view class="rent-order-detail">
+  <van-cell-group>
+    <van-cell title="预约者" value="{{locOrder.fromUserInfo.tempNickName}}">
+    </van-cell>
+  
+    <van-cell title="预约的钓点" value="{{locOrder.locInfo.locName}}"  >
+      <van-icon slot="right-icon" name="arrow" data-loc-id="{{locOrder.orderLocId}}" bind:click="toLocDetail"/>
+    </van-cell>
+
+    <van-cell title="预约的钓点地址" value="{{locOrder.locInfo.locationDetail.name}}">
+    </van-cell>
+    <van-cell title="联系方式" value="{{locOrder.related}}">
+    </van-cell>
+    <van-cell title="预约时间" value="{{locOrder.orderTime}}">
+    </van-cell>
+
+  </van-cell-group>
+
+
+</view>

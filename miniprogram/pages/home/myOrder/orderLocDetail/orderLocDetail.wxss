@@ -1,0 +1,17 @@
+/* miniprogram/pages/home/myOrder/orderLocDetail/orderLocDetail.wxss */
+
+.van-field__input{
+  padding-left:80rpx;
+}
+
+.label-text{
+  display:inline-block;
+  width:240rpx;
+
+}
+
+view:nth-child(2){
+  color:#0b34fb;
+  padding-right:24rpx;
+  font-size:50rpx;
+}

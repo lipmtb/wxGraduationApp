@@ -1,0 +1,13 @@
+<!--miniprogram/pages/service/equipService/rentDetail/rentDetail.wxml-->
+<!-- equipDetail租用后跳转的确认页面 -->
+<view class="rent-detail-wrapper">
+  <van-cell-group>
+    <van-field value="{{ rentEquipName }}" label="租用的装备" disabled />
+    <van-field value="{{ ownerName }}" label="装备主人" disabled />
+    <van-field value="{{ address }}" label="租用地址"  disabled/>
+    <van-field value="{{ related }}" label="联系方式" disabled />
+    <van-field value="{{ rentStartTime }}" label="租用开始时间"  disabled/>
+    <van-field value="{{ rentEndTime }}" label="租用结束时间"  disabled/>
+  </van-cell-group>
+  <van-button type="primary" bind:click="requestUserSubscription" style="float:right;margin-right:20rpx;" disabled="{{btnEnabled}}">确认租用</van-button>
+</view>

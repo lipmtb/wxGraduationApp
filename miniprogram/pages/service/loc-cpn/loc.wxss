@@ -1,0 +1,64 @@
+/* pages/service/loc-cpn/loc.wxss */
+
+.singleTalkWrapper{
+  padding:20rpx 0;
+
+}
+/* 顶部热门详情 */
+.singleTalkWrapper .topView{
+  position: relative;
+  font-size:30rpx;
+  overflow: hidden;
+}
+
+
+
+.mainView{
+  margin:10rpx;
+  padding-bottom:32rpx;
+  border-bottom-style:solid;
+  border-bottom-width:1px;
+  border-bottom-color:#ccc;
+}
+
+/* 内容左侧容器 */
+.mainView .main-left{
+ height:200rpx;
+
+}
+/* 标题 */
+.mainView .main-left .main-title{
+  height:80%;
+  font-size:1.2rem;
+  text-align:center;
+  line-height:140rpx;
+  overflow:hidden;
+}
+
+/* 右侧图片区域view */
+.mainView .main-right{
+  float:right;
+  
+  font-size:0;
+ }
+/* 图片 */
+ .mainView .main-right image.firstImg{
+    width:240rpx;
+    height:200rpx;
+   
+ }
+.title-foot{
+  color:#999;
+  font-size:0.6rem;
+  text-align:left;
+}
+.title-foot .foot-loc-icon{
+  margin-left:6rpx;
+}
+.title-foot .loc-dis-count{
+  float:right;
+  margin-right:6rpx;
+}
+
+
+ 

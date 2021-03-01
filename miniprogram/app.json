@@ -17,7 +17,16 @@
     "pages/home/collectDetail/collectDetail",
     "pages/home/myDiary/myDiary",
     "pages/home/myDiary/diaryDetail/diaryDetail",
-    "pages/home/messageDetail/messageDetail"
+    "pages/home/messageDetail/messageDetail",
+    "pages/service/publicLoc/publicLoc",
+    "pages/service/locDetail/locDetail",
+    "pages/home/myOrder/myOrder",
+    "pages/service/equipService/publicEquip/publicEquip",
+    "pages/service/equipService/equipDetail/equipDetail",
+    "pages/service/equipService/rentDetail/rentDetail",
+    "pages/home/myRent/myRent",
+    "pages/home/myRent/rentOrderDetail/rentOrderDetail",
+    "pages/home/myOrder/orderLocDetail/orderLocDetail"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -47,7 +56,13 @@
     "van-loading": "vant-weapp/loading",
     "van-action-sheet": "vant-weapp/action-sheet",
     "van-collapse": "vant-weapp/collapse",
-    "van-collapse-item": "vant-weapp/collapse-item"
+    "van-collapse-item": "vant-weapp/collapse-item",
+    "van-rate": "vant-weapp/rate",
+    "van-datetime-picker": "vant-weapp/datetime-picker",
+    "van-popup": "vant-weapp/popup",
+    "van-swipe-cell": "vant-weapp/swipe-cell",
+    "van-tree-select": "vant-weapp/tree-select",
+    "van-card": "vant-weapp/card"
   },
   "tabBar": {
     "custom": true,
@@ -65,6 +80,11 @@
         "pagePath": "pages/home/home"
       }
     ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息用于天气服务和其他服务"
+    }
   },
   "sitemapLocation": "sitemap.json"
 }

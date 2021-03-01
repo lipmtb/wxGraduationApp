@@ -1,0 +1,56 @@
+<!--miniprogram/pages/home/myOrder/myOrder.wxml-->
+<!-- 钓点预约 -->
+<view class="order-wrapper">
+  <van-tabs active="{{ curActive }}" bind:change="onTabChange">
+    <!-- 我的预约 -->
+    <van-tab title="我的预约">
+      <block wx:for="{{orderLocLists}}" wx:for-item="mainitem" wx:for-index="msgidx">
+        <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{msgidx}}"
+          data-order-info="{{mainitem}}" async-close bind:close="onClose">
+          <view class="message-item" data-loc-id="{{mainitem.orderLocId}}" catch:tap="toOrderDetail">
+            <view class="msg-top">
+              <van-icon name="diamond-o"></van-icon>
+              <text class="from-type-name">钓点预约</text>
+            </view>
+
+            <view class="msg-main">
+              <text>{{mainitem.orderLocName}}</text>
+              <view>预约的时间：{{mainitem.orderTime}}</view>
+            </view>
+
+
+          </view>
+          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消</view>
+        </van-swipe-cell>
+      </block>
+
+
+      <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
+        catch:tap="showMoreOrders">更多我的预约</text>
+    </van-tab>
+
+    <!-- 预约订单 -->
+    <van-tab title="预约订单">
+      <block wx:for="{{bookLists}}" wx:for-item="bookItem" wx:for-index="bookidx">
+
+        <view class="message-item" data-book-id="{{bookItem._id}}" catch:tap="toBookDetail">
+          <view class="msg-top">
+            <van-icon name="diamond-o"></van-icon>
+            <text class="from-type-name">钓点预约订单</text>
+          </view>
+
+          <view class="msg-main">
+            <text>{{bookItem.fromUser.tempNickName}}预约了钓点：{{bookItem.orderLocName}}</text>
+            <text>预约时间是：{{bookItem.orderTime}}</text>
+          </view>
+        </view>
+      </block>
+
+
+      <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
+        catch:tap="showMoreOrders">更多预约订单</text>
+    </van-tab>
+  </van-tabs>
+
+
+</view>
