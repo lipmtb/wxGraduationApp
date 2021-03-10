@@ -16,7 +16,7 @@
   <view class="mainView">
     <!-- 图片 -->
     <view class="main-right">
-      <image wx:if="{{itemData.images.length>0}}" src="{{itemData.images[0]}}" class="firstImg" mode="aspectFill">
+      <image wx:if="{{itemData.images.length>0}}" src="{{itemData.images[0]}}" class="firstImg" mode="aspectFit">
       </image>
     </view>
     <view class="main-left">

@@ -9,14 +9,15 @@
   </view>
 
   <van-cell-group>
-    <van-field required center clearable label="昵称" placeholder="输入你的昵称" border="{{ false }}"
+    <van-field center clearable label="昵称" placeholder="输入你的昵称" border="{{ false }}"
       bind:change="onUserInputNickname" use-button-slot>
-      <button slot="button" open-type="getUserInfo" bindgetuserinfo="onUserRegist">注册</button>
+      <button slot="button" open-type="getUserInfo" bindgetuserinfo="onUserRegist" style="background-color:#6498e6;color:#fff;">注册</button>
 
     </van-field>
   </van-cell-group>
 </view>
 
-<view wx:else>
-  <button slot="button" open-type="getUserInfo" bindgetuserinfo="onUserLogin">登录</button>
+<view wx:else class="login-arrange-select">
+  <button  class="plain-btn-select" open-type="getUserInfo" bindgetuserinfo="onUserLogin">登录</button>
+  <button class="admin-btn-select" wx:if="{{hasAdRight}}" bind:tap="toArrangePage">进入管理页</button>
 </view>

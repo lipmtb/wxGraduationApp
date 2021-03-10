@@ -2,7 +2,8 @@
 const db = wx.cloud.database();
 const _ = db.command;
 const $ = _.aggregate;
-import customFormatTime from '../../../util/customTime'
+import customFormatTime from '../../../util/customTime';
+let QQMapWX = require('../../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
 Page({
 
   data: {
@@ -11,7 +12,8 @@ Page({
     questionLists: [],
     tipLists: [],
     locLists: [],
-    hasMoreArr: [true, true, true, true]
+    equipLists: [],
+    hasMoreArr: [true, true, true, true, true]
   },
   pageData: {
     myopenid: '',
@@ -21,10 +23,17 @@ Page({
     curTalkCount: 0, //加载的钓友圈帖子数
     curQuestionCount: 0, //加载的问答圈帖子数
     curTipCount: 0,
-    curLocCount: 0
+    curLocCount: 0,
+    curEquipCount: 0
   },
   onLoad: function (options) {
     let that = this;
+    wx.setNavigationBarTitle({
+      title: '我的收藏',
+    })
+    this.pageData.qqmapsdk = new QQMapWX({
+      key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
+    });
     //获取当前用户的openid
     let openidRes = wx.cloud.callFunction({
       name: 'getUserOpenId'
@@ -35,11 +44,14 @@ Page({
         _openid: res.result
       }).get().then((anglerRes) => {
         that.pageData.userInfo = anglerRes.data[0];
-        //判断初始选择的项目类型是钓友圈，问答圈还是技巧
+        //判断初始选择的项目类型
         that.pageData.curSendType = options.sendType;
         let activeNum = options.sendType === 'question' ? 1 : options.sendType === 'tip' ? 2 : 0;
         if (options.sendType === "anglerLoc") {
-          avtiveNum = 3;
+          activeNum = 3;
+        }
+        if (options.sendType === "equip") {
+          activeNum = 4;
         }
         that.pageData.curTabIdx = activeNum;
         that.setData({
@@ -66,6 +78,11 @@ Page({
       return;
     }
     if (changeIdx === 3 && this.pageData.curLocCount === 0) {
+      this.getTypeData(changeIdx);
+      return;
+    }
+
+    if (changeIdx === 4 && this.pageData.curEquipCount === 0) {
       this.getTypeData(changeIdx);
       return;
     }
@@ -163,6 +180,28 @@ Page({
         });
         break;
       }
+
+      case 4: {
+        that.getEquipLists().then((res) => {
+          wx.hideLoading({
+            success: (res) => {},
+          })
+
+          if (res.length === 0) {
+            that.setData({
+              'hasMoreArr[4]': false
+            });
+            return;
+          }
+          that.data.equipLists.push(...res);
+          that.pageData.curEquipCount += res.length;
+          console.log("加载装备", res);
+          that.setData({
+            equipLists: that.data.equipLists
+          })
+        });
+        break;
+      }
     }
   },
   //加载钓友圈
@@ -174,11 +213,24 @@ Page({
     for (let citem of gettalk.data) {
       collectIdArr.push(citem.collectTalkId);
     }
-    // .skip(this.pageData.curTalkCount).limit(6).get();
+    
     let talkLists = await db.collection("talk").where({
       _id: _.in(collectIdArr)
     }).skip(this.pageData.curTalkCount).limit(6).get();;
-
+    for(let taItem of talkLists.data){
+      let ownerRes=await db.collection("angler").where({
+        _openid:taItem._openid
+      }).get();
+      taItem.userInfo=ownerRes.data[0];
+      let commentRes=await db.collection("comment").where({
+        commentTalkId:taItem._id
+      }).count();
+      let likeRes=await db.collection("likeTalk").where({
+        likeTalkId:taItem._id
+      }).count();
+      taItem.commentCount=commentRes.total;
+      taItem.likeCount=likeRes.total;
+    }
     return talkLists.data;
   },
   //加载问答圈
@@ -253,26 +305,86 @@ Page({
     return getTipRes.data;
   },
   //获取我收藏的钓点
-  async getLocLists(){
-    let openid=wx.getStorageSync('userOpenId')|| this.pageData.myopenid;
-    if(!openid){
-      let openRes=await wx.cloud.callFunction({
-        name:"getUserOpenId"
+  async getLocLists() {
+    let openid = wx.getStorageSync('userOpenId') || this.pageData.myopenid;
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: "getUserOpenId"
       });
-      openid=openRes.result;
+      openid = openRes.result;
     }
-    let collectLocRes=await db.collection("collectLoc").where({
-      _openid:openid
+    let collectLocRes = await db.collection("collectLoc").where({
+      _openid: openid
     }).skip(this.pageData.curLocCount).limit(6).get();
 
-    let locIdArr=[];
-    for(let cItem of collectLocRes.data){
+    let locIdArr = [];
+    for (let cItem of collectLocRes.data) {
       locIdArr.push(cItem.collectLocId);
     }
 
-    let locRes=await db.collection("anglerLoc").where({
-      _id:_.in(locIdArr)
+    let locRes = await db.collection("anglerLoc").where({
+      _id: _.in(locIdArr)
     }).get();
+
+    for (let eq of locRes.data) {
+      if (eq.locationDetail) {
+        let locRes = await new Promise((resolve) => {
+          wx.getLocation({
+            type: "gcj02",
+            success(res) {
+              resolve(res);
+            }
+          })
+        });
+        let disLocPros = await new Promise((resolve) => {
+          this.pageData.qqmapsdk.calculateDistance({
+            from: {
+              latitude: locRes.latitude,
+              longitude: locRes.longitude
+            },
+            to: [{
+              location: {
+                lng: eq.locationDetail.longitude,
+                lat: eq.locationDetail.latitude
+              }
+            }],
+            success: (disRes) => {
+              resolve(disRes);
+            }
+          })
+        });
+        console.log(disLocPros);
+        eq.distance = disLocPros.result.elements[0].distance;
+      }
+    }
+    return locRes.data;
+  },
+  //获取我收藏的装备
+  async getEquipLists() {
+    let openid = wx.getStorageSync('userOpenId') || this.pageData.myopenid;
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: "getUserOpenId"
+      });
+      openid = openRes.result;
+    }
+    let collectLocRes = await db.collection("collectEquip").where({
+      _openid: openid
+    }).skip(this.pageData.curEquipCount).limit(6).get();
+
+    let locIdArr = [];
+    for (let cItem of collectLocRes.data) {
+      locIdArr.push(cItem.collectEquipId);
+    }
+
+    let locRes = await db.collection("equip").where({
+      _id: _.in(locIdArr)
+    }).get();
+
+    for (let eq of locRes.data) {
+      let typeRes = await db.collection("equipType").doc(eq.equipTypeId).get();
+      eq.equipType = typeRes.data;
+    }
     return locRes.data;
   },
   onReachBottom() {
@@ -286,12 +398,14 @@ Page({
     this.pageData.curQuestionCount = 0;
     this.pageData.curTipCount = 0;
     this.pageData.curLocCount = 0;
+    this.pageData.curEquipCount = 0;
     this.setData({
       talkLists: [],
       questionLists: [],
       tipLists: [],
       locLists: [],
-      hasMoreArr: [true, true, true, true]
+      equipLists: [],
+      hasMoreArr: [true, true, true, true, true]
     })
 
     this.getTypeData(this.pageData.curTabIdx);
@@ -301,6 +415,13 @@ Page({
     let locid = e.currentTarget.dataset.locId;
     wx.navigateTo({
       url: '/pages/service/locDetail/locDetail?locId=' + locid
+    })
+  },
+  //装备详情
+  toEquipDetail(e) {
+    let eid = e.currentTarget.dataset.equipId;
+    wx.navigateTo({
+      url: '/pages/service/equipService/equipDetail/equipDetail?equipId=' + eid
     })
   }
 })

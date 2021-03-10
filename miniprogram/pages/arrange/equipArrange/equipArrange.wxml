@@ -1,0 +1,53 @@
+<!--miniprogram/pages/arrange/equipArrange/equipArrange.wxml-->
+
+<view class="tip-arrange-wrapper">
+  <!-- 标题 -->
+  <view class="arrange-title">
+    <text>装备管理</text>
+  </view>
+
+  <!-- 搜索-->
+  <view class="search-essays-view">
+    <van-search value="{{ searchValue }}" placeholder="请输入相关内容" bind:search="onSearch" bind:change="onInputKey"
+      use-action-slot>
+      <view slot="action" bind:tap="onSearch" class="search-btn">搜索</view>
+    </van-search>
+
+    <view class="search-res-view">
+      <block wx:for="{{searchLists}}" wx:for="{{sitem}}" wx:for-index="sidx">
+        <view class="search-item">
+          <view class="item-content-show">
+            <text>{{sitem.content}}</text>
+          </view>
+          <view class="operate-view">
+            <button data-oper-item="{{sitem._id}}">查看</button>
+            <button data-oper-item="{{sitem._id}}" data-oper-idx="{{sidx}}">删除</button>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 装备类型管理 -->
+  <view class="classify-arrange-view">
+    <!-- 添加装备类型 -->
+    <view class="add-topic-view">
+      <input value="{{inputTpVal}}" type="text" placeholder="请输入新的类型名" class="input-topic" bindinput="onInputNewType"/>
+      <van-button type="primary" catch:tap="addNewType">添加</van-button>
+    </view>
+
+    <!-- 已经存在的类型-->
+    <view class="topic-exists-view">
+      <view class="tplist-before">
+        <text>已有类型如下：</text>
+      </view>
+      <block wx:for="{{existsClassify}}" wx:for-item="classItem" wx:for-index="classitemidx">
+        <view class="single-topic-item">
+          <text class="topic-name">{{classItem.equipTypeName}}</text>
+          <text class="oper-text-see">查看类型</text>
+          <text class="oper-text-del" catch:tap="onDelTopic" data-del-id="{{classItem._id}}" data-tp-idx="{{classitemidx}}" data-topic-name="{{classItem.equipTypeName}}">删除类型</text>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

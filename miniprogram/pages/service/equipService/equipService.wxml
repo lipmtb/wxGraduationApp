@@ -32,7 +32,7 @@
   <!-- 发布装备 -->
   <view class="public-loc-view">
 
-    <text class="subscribe-text" catch:tap="toPublicEquip">发布装备</text>
+    <text class="subscribe-text" catch:tap="toPublicEquip">装备出租</text>
   </view>
 
 

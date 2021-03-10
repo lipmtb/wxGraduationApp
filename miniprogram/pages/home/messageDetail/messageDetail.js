@@ -131,11 +131,11 @@ Page({
     }).orderBy("time", "desc").skip(this.pageData.curMainMsgCount).limit(4).get();
     for (let it of mainRes.data) {
       it.time = customFormatTime(it.time);
-      it.messageDetail.msgFromType = it.messageDetail.msgFrom === 'talk' ? '钓友圈' : it.messageDetail.msgFrom === 'question' ? '问答圈' : '技巧';
+      it.messageDetail.msgFromType = it.messageDetail.msgFrom === 'talk' ? '钓友圈' : it.messageDetail.msgFrom === 'question' ? '问答圈' : it.messageDetail.msgFrom === 'tipEssays' ? '技巧' : '钓点';
     }
-    if(mainRes.data.length<4){
+    if (mainRes.data.length < 4) {
       this.setData({
-        hasMoreMainMsg:false
+        hasMoreMainMsg: false
       })
     }
     return mainRes.data;
@@ -171,9 +171,9 @@ Page({
       it.messageDetail.msgFromType = "系统消息";
     }
 
-    if(datares.data.length<4){
+    if (datares.data.length < 4) {
       this.setData({
-        hasMoreSysMsg:false
+        hasMoreSysMsg: false
       })
     }
 
@@ -193,15 +193,15 @@ Page({
     let oRes = await db.collection("message").where({
       toUser: openid,
       type: 'locOrder'
-    }).orderBy("time", "asc").skip(this.pageData.curOrderCount).limit(4).get();
+    }).orderBy("time", "desc").skip(this.pageData.curOrderCount).limit(4).get();
     for (let it of oRes.data) {
       it.time = customFormatTime(it.time);
-      it.messageDetail.msgFromType = "预约消息通知";
+      it.messageDetail.msgFromType = "预约消息";
     }
 
-    if(oRes.data.length<4){
+    if (oRes.data.length < 4) {
       this.setData({
-        hasMoreOrderMsg:false
+        hasMoreOrderMsg: false
       })
     }
     return oRes.data;
@@ -218,14 +218,14 @@ Page({
     let rentMsgRes = await db.collection("message").where({
       type: 'equipOrder',
       toUser: openid
-    }).orderBy("time", "asc").skip(this.pageData.curRentMsgCount).limit(4).get();
+    }).orderBy("time", "desc").skip(this.pageData.curRentMsgCount).limit(4).get();
     for (let it of rentMsgRes.data) {
       it.time = customFormatTime(it.time);
     }
 
-    if(rentMsgRes.data.length<4){
+    if (rentMsgRes.data.length < 4) {
       this.setData({
-        hasMoreRentMsg:false
+        hasMoreRentMsg: false
       })
     }
     return rentMsgRes.data;
@@ -233,19 +233,19 @@ Page({
   // 下拉刷新
   onPullDownRefresh() {
     this.pageData.curMainMsgCount = 0;
-    this.pageData.curOrderCount=0;
-    this.pageData.curRentMsgCount=0;
+    this.pageData.curOrderCount = 0;
+    this.pageData.curRentMsgCount = 0;
     this.pageData.curSysMsgCount = 0;
 
     this.setData({
       mainMessageLists: [],
       sysMessageLists: [],
-      orderMsgLists:[],
-      rentOrderLists:[],
+      orderMsgLists: [],
+      rentOrderLists: [],
       hasMoreSysMsg: true,
       hasMoreMainMsg: true,
-      hasMoreOrderMsg:true,
-      hasMoreRentMsg:true
+      hasMoreOrderMsg: true,
+      hasMoreRentMsg: true
     }, () => {
       if (this.pageData.curTabIdx === 0) {
         wx.showLoading({
@@ -269,7 +269,7 @@ Page({
         });
         return;
       }
-      if ( this.pageData.curTabIdx === 1) {
+      if (this.pageData.curTabIdx === 1) {
         wx.showLoading({
           title: '刷新预约消息'
         })
@@ -286,7 +286,7 @@ Page({
           })
         })
       }
-      if ( this.pageData.curTabIdx === 2) {
+      if (this.pageData.curTabIdx === 2) {
         wx.showLoading({
           title: '刷新租赁消息'
         })
@@ -433,9 +433,9 @@ Page({
     let msgId = e.currentTarget.dataset.msgId; //消息的_id，更新status db.colletion.update
     let msgDetail = e.currentTarget.dataset.sourceInfo;
     let tarPage = msgDetail.msgFrom === 'talk' ? '/pages/talk/talkDetail/talkDetail?talkId=' : msgDetail.msgFrom === 'question' ? '/pages/talk/questionDetail/questionDetail?questionId=' : '/pages/tip/tipEssayDetail/tipEssayDetail?tipEssayId=';
-    // if (msgDetail.msgFrom === 'anglerLoc') {
-    //   tarPage = "/pages/service/locDetail/locDetail?locId=";
-    // }
+    if (msgDetail.msgFrom === 'anglerLoc') {
+      tarPage = "/pages/service/locDetail/locDetail?locId=";
+    }
     console.log(tarPage);
     let pageDataId = msgDetail.msgFromId;
     wx.navigateTo({

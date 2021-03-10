@@ -1,0 +1,11 @@
+<!--miniprogram/pages/arrange/arrange.wxml-->
+<view class="arrange-wrapper">
+  <view class="select-view" catch:tap="toArrangeType">
+    <button data-arrange-type="userArrange"  class="type-button">管理用户</button>
+    <!-- <button>管理钓友圈帖子</button>
+    <button>管理问答圈帖子</button> -->
+    <button data-arrange-type="tipArrange"  class="type-button">管理技巧主题帖子</button>
+    <button data-arrange-type="equipArrange" class="type-button" >管理装备</button>
+    <button data-arrange-type="sysMsgArrange" class="type-button" >系统消息</button>
+  </view>
+</view>

@@ -1,4 +1,4 @@
-// 获取2小时内的天气变化
+// 获取2小时内的天气变化：分钟级降水
 const cloud = require('wx-server-sdk');
 cloud.init();
 const {

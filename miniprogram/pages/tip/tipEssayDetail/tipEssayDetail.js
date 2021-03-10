@@ -149,7 +149,7 @@ Page({
         status:'progress',
         time:new Date(),
         messageDetail:{
-          msgFrom:'tip',
+          msgFrom:'tipEssays',
           msgFromId:that.data.tipItemData._id,
           msgContent:fromUser.tempNickName+"在话题： #"+classifyNameStr+"# 评论了你的帖子："+that.pageData.commentText,
           commentId:commentResId

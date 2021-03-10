@@ -1,4 +1,4 @@
-// 获取技巧的精选帖子：随机取两个阅读量高的主题，每个主题取两个收藏数和点赞数和评论数多的帖子
+// 获取技巧的精选帖子：取两个阅读量高的主题，每个主题取两个收藏数和点赞数和评论数多的帖子
 const cloud = require('wx-server-sdk');
 
 cloud.init();
@@ -6,16 +6,22 @@ const db = cloud.database();
 const _ = db.command;
 const $ = _.aggregate;
 
-// 云函数入口函数
 exports.main = async (event, context) => {
   let skipNum=event.skipNum||0;
   let skipTopic=event.skipTopicNum||0;
-  let topicHotRes = await db.collection("readTopic").aggregate().group({
-    _id: '$classifyId',
-    readCount: $.sum(1)
+  let topicHotRes = await db.collection("tipClassify").aggregate().lookup({
+    from:'readTopic',
+    localField:'_id',
+    foreignField:'classifyId',
+    as:'readLists'
+  }).project({
+    _id:1,
+    classifyName:1,
+    readCount:$.size('$readLists')
   }).sort({
     readCount: -1
   }).skip(skipTopic).limit(2).end();
+  
   let resultLists=[];
   for (let hotResItem of topicHotRes.list) {
     let essaysRes = await db.collection("tipEssays").aggregate().match({

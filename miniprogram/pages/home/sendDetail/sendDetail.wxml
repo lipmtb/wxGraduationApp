@@ -5,11 +5,16 @@
     <!-- 钓友圈 -->
     <van-tab title="钓友圈" name="talk">
       <view class="data-lists-view">
-        <block wx:for="{{talkLists}}" wx:for-item="talkitem">
-          <my-talk-cpn class="talk-item-view" itemData="{{talkitem}}">
-            <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
-            <text slot="type-describe" class="type-text">钓友圈</text>
-          </my-talk-cpn>
+        <block wx:for="{{talkLists}}" wx:for-item="talkitem" wx:for-index="talkidx">
+          <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-talk-idx="{{talkidx}}"
+            data-talk-info="{{talkitem}}" async-close bind:close="onCloseTalk">
+            <my-talk-cpn class="talk-item-view" itemData="{{talkitem}}">
+              <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
+              <text slot="type-describe" class="type-text">钓友圈</text>
+            </my-talk-cpn>
+            <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">删除</view>
+          </van-swipe-cell>
+
         </block>
       </view>
       <view wx:if="{{!hasMoreArr[0]}}">
@@ -21,10 +26,15 @@
     <van-tab title="问答圈" name="question">
       <view class="data-lists-view">
         <block wx:for="{{questionLists}}" wx:for-item="questionitem" wx:for-index="quidx">
-          <my-question-cpn class="talk-item-view" itemData="{{questionitem}}">
-            <van-icon slot="del-icon" name="delete" class="ques-del-icon" color='rgb(25, 137, 250)'
-              catch:tap="deleteQuestion" data-del-id="{{questionitem._id}}" data-del-index="{{quidx}}" />
-          </my-question-cpn>
+          <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-ques-idx="{{quidx}}"
+            data-ques-info="{{questionitem}}" async-close bind:close="onCloseQues">
+            <my-question-cpn itemData="{{questionitem}}">
+              />
+            </my-question-cpn>
+            <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">删除</view>
+          </van-swipe-cell>
+
+
         </block>
       </view>
       <view wx:if="{{!hasMoreArr[1]}}">
@@ -32,32 +42,73 @@
       </view>
     </van-tab>
 
-    <van-tab title="技巧" name="detail">
+    <!-- 技巧 -->
+    <van-tab title="技巧" name="tip">
       <view class="data-lists-view">
-        <block wx:for="{{tipLists}}" wx:for-item="tipitem">
-          <my-tip-cpn class="talk-item-view" itemData="{{tipitem}}" userInfo="{{tipitem.userInfo}}"
-            likedCount="{{tipitem.likedCount}}" commentedCount="{{tipitem.commentedCount}}">
-            <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
-            <text slot="type-describe" class="type-text">{{tipitem.topicName}}</text>
-          </my-tip-cpn>
+        <block wx:for="{{tipLists}}" wx:for-item="tipitem" wx:for-index="tipIndex">
+          <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-talk-idx="{{tipIndex}}"
+            data-talk-info="{{tipitem}}" async-close bind:close="onCloseTip">
+            <my-tip-cpn class="talk-item-view" itemData="{{tipitem}}" userInfo="{{tipitem.userInfo}}"
+              likedCount="{{tipitem.likedCount}}" commentedCount="{{tipitem.commentedCount}}">
+              <van-icon slot="type-icon" name="user-o" class="type-icon" color='rgb(25, 137, 250)' />
+              <text slot="type-describe" class="type-text">{{tipitem.topicName}}</text>
+            </my-tip-cpn>
+            <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">删除</view>
+          </van-swipe-cell>
+
         </block>
       </view>
       <view wx:if="{{!hasMoreArr[2]}}">
         <text>没有更多了。。。</text>
       </view>
     </van-tab>
+
+    <!-- 钓点 -->
     <van-tab title="钓点" name="loc">
       <view class="data-lists-view">
-        <block wx:for="{{locLists}}" wx:for-item="locitem">
-          <my-loc-near class="talk-item-view" itemData="{{locitem}}">
-            <text slot="type-describe" class="category-text">钓点</text>
-            <text slot="type-icon" class="to-loc-detail"
-              style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;" catch:tap="toLocDetail"
-              data-loc-id="{{locitem._id}}">详情</text>
-          </my-loc-near>
+        <block wx:for="{{locLists}}" wx:for-item="locitem" wx:for-index="locindex">
+          <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-talk-idx="{{locindex}}"
+            data-talk-info="{{locitem}}" async-close bind:close="onCloseLoc">
+            <my-loc-near class="talk-item-view" itemData="{{locitem}}">
+              <text slot="type-describe"
+                style="padding:8rpx 20rpx;background-color:#77de5e;float:left;margin-left:10rpx;">钓点</text>
+              <text slot="type-icon" class="to-loc-detail"
+                style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;" catch:tap="toLocDetail"
+                data-loc-id="{{locitem._id}}">详情</text>
+            </my-loc-near>
+            <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">删除</view>
+          </van-swipe-cell>
+
         </block>
       </view>
       <view wx:if="{{!hasMoreArr[3]}}">
+        <text>没有更多了。。。</text>
+      </view>
+    </van-tab>
+
+    <!-- 装备 -->
+    <van-tab title="装备" name="equip">
+      <view class="data-lists-view">
+        <block wx:for="{{equipLists}}" wx:for-item="equipItem" wx:for-index="eIdx">
+          <van-swipe-cell id="swipe-cell" right-width="{{ 80 }}" data-equip-idx="{{eIdx}}"
+            data-equip-info="{{equipItem}}" async-close bind:close="onCloseEquip">
+            <view class="equip-item-view" style="margin:60rpx 4rpx;">
+              <my-equip-cpn itemData="{{equipItem}}">
+                <van-icon slot="type-icon" name="diamond-o"></van-icon>
+                <text slot="type-name"
+                  style="margin-left:6rpx;background-color:#f69e33;padding:4rpx 12rpx;">{{equipItem.equipType.equipTypeName}}</text>
+                <text slot="type-describe"
+                  style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;"
+                  catch:tap="toEquipDetail" data-equip-id="{{equipItem._id}}">详情</text>
+              </my-equip-cpn>
+            </view>
+            <view slot="right" style="background-color:#efb923;padding:78px 23px;">删除</view>
+          </van-swipe-cell>
+
+
+        </block>
+      </view>
+      <view wx:if="{{!hasMoreArr[4]}}">
         <text>没有更多了。。。</text>
       </view>
     </van-tab>

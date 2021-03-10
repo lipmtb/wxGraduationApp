@@ -19,7 +19,7 @@
       <navigator url="classifyDetail/classifyDetail?classifyId={{classifyitem._id}}">
         <view class="select-item-view" >
           <text class="class-item-text">{{classifyitem.classifyName}}</text>
-          <text class="classify-count">阅读:{{classifyitem.count}}</text>
+          <text class="classify-count">阅读:{{classifyitem.readCount}}</text>
         </view>
       </navigator>
 
@@ -30,10 +30,6 @@
   <view class="essence-top">
     <van-icon class="essence-icon" name="diamond-o" color="rgb(255, 177, 0)"></van-icon>
     <text class="essence-text">精选</text>
-    <view class="right-nav">
-      <text class="more-text" catch:tap="moreSpecial">更多精选</text>
-      <van-icon name="arrow" class="arrow-icon"></van-icon>
-    </view>
 
   </view>
 
@@ -42,7 +38,7 @@
     <block wx:for="{{essenceLists}}" wx:for-item="essenceitem">
       <my-tip-item class="tip-cpn-item" itemData="{{essenceitem}}" userInfo="{{essenceitem.userInfo[0]}}" likedCount="{{essenceitem.likeArr.length}}" commentedCount="{{essenceitem.commentArr.length}}">
         <van-icon slot="type-icon" name="diamond-o" class="top-hot-icon" color='rgb(255, 177, 0)' />
-        <text slot="type-describe" class="top-hot-text">精选</text>
+        <text slot="type-describe" class="top-hot-text">{{essenceitem.typeName}}</text>
       </my-tip-item>
     </block>
   </view>

@@ -14,6 +14,7 @@
         <text class="send-item" data-send-type="question">问答圈</text>
         <text class="send-item" data-send-type="tip">技巧话题</text>
         <text class="send-item" data-send-type="anglerLoc">钓点</text>
+        <text class="send-item" data-send-type="equip">装备</text>
       </view>
     </van-collapse-item>
 
@@ -23,6 +24,7 @@
         <text class="send-item" data-send-type="question">问答圈</text>
         <text class="send-item" data-send-type="tip">技巧话题</text>
         <text class="send-item" data-send-type="anglerLoc">钓点</text>
+        <text class="send-item" data-send-type="equip">装备</text>
       </view>
     </van-collapse-item>
   </van-collapse>
@@ -30,9 +32,10 @@
   <!-- 钓点预约 -->
 
   <view class="my-view" catch:tap="toMyOrderPage">
-    <van-icon name="diamond-o"></van-icon>
+    <van-icon name="flag-o"></van-icon>
     <text class="my-text">钓点预约</text>
-    <text class="diary-count-text">{{orderCount}}</text>
+    <text wx:if="{{orderCount===0}}" class="diary-count-text"></text>
+    <text wx:else style="color:red;" class="diary-count-text">{{orderCount}}</text>
   </view>
 
   <!-- 装备租赁 -->
@@ -40,7 +43,8 @@
   <view class="my-view" catch:tap="toMyRentPage">
     <van-icon name="diamond-o"></van-icon>
     <text class="my-text">装备租赁</text>
-    <text class="diary-count-text">{{rentEquipCount}}</text>
+    <text wx:if="{{rentEquipCount===0}}" class="diary-count-text"></text>
+    <text wx:else style="color:red;"  class="diary-count-text">{{rentEquipCount}}</text>
   </view>
 
   <!-- 我的日记 -->

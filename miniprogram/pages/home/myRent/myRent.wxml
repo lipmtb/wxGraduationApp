@@ -4,51 +4,91 @@
     <!-- 我的租赁 -->
     <van-tab title="我的租赁">
       <block wx:for="{{rentOrderLists}}" wx:for-item="rentitem" wx:for-index="rentidx">
-        <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{rentidx}}"
-          data-order-info="{{rentitem}}" async-close bind:close="onClose">
-          <view class="message-item" data-equip-id="{{rentitem.rentEquipId}}" catch:tap="toOrderDetail">
+        <van-swipe-cell wx:if="{{rentitem.orderStatus==='progress'}}" id="swipe-cell" right-width="{{ 100 }}"
+          data-order-idx="{{rentidx}}" data-order-info="{{rentitem}}" async-close bind:close="onClose">
+          <view class="message-item" data-rent-id="{{rentitem._id}}" catch:tap="toRentEquipDetail">
             <view class="msg-top">
               <van-icon name="diamond-o"></van-icon>
-              <text class="from-type-name">装备租赁</text>
+              <text class="from-type-name">我的租赁</text>
             </view>
 
-            <view class="msg-main">
+            <view class="msg-main" wx:if="{{rentitem.equipInfo}}">
+
               <text>租用的装备名：{{rentitem.equipInfo.equipName}}</text>
+
               <view>打算租用的开始时间：{{rentitem.rentStartTime}}</view>
               <view>打算租用的结束时间：{{rentitem.rentEndTime}}</view>
             </view>
-
+            <view class="msg-main" wx:else>
+              <text>装备已经被发布者取消</text>
+            </view>
+            <view class="msg-footer">
+              <text style="color:#999;font-size:0.8rem;margin-left:10rpx;">{{rentitem.rentTime}}</text>
+            </view>
 
           </view>
-          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消</view>
+          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消租赁</view>
+        </van-swipe-cell>
+
+        <van-swipe-cell wx:else id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{rentidx}}"
+          data-order-info="{{rentitem}}" async-close bind:close="onCloseDeleteRent">
+          <view class="message-item" data-rent-id="{{rentitem._id}}" catch:tap="toRentEquipDetail">
+            <view class="msg-top">
+              <van-icon name="diamond-o"></van-icon>
+              <text class="from-type-name">我的租赁</text>
+              <text wx:if="{{rentitem.orderStatus==='destroy'}}"
+                style="color:red;float:right;margin-right:10rpx;font-size:1.4rem;">已失效</text>
+              <text wx:else style="color:blue;float:right;margin-right:10rpx;font-size:1.4rem;">已取消</text>
+            </view>
+
+            <view class="msg-main" wx:if="{{rentitem.equipInfo}}">
+
+              <text>租用的装备名：{{rentitem.equipInfo.equipName}}</text>
+
+              <view>打算租用的开始时间：{{rentitem.rentStartTime}}</view>
+              <view>打算租用的结束时间：{{rentitem.rentEndTime}}</view>
+            </view>
+            <view class="msg-main" wx:else>
+              <text>装备已经被发布者取消</text>
+            </view>
+
+            <view class="msg-footer">
+              <text style="color:#999;font-size:0.8rem;margin-left:10rpx;">{{rentitem.rentTime}}</text>
+            </view>
+          </view>
+          <view slot="right" style="background-color:#86ec45;padding:100rpx 38rpx;">删除</view>
         </van-swipe-cell>
       </block>
 
       <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
-        catch:tap="showMoreOrders">更多租赁信息</text>
+        catch:tap="showMoreOrders">更多我的租赁</text>
     </van-tab>
 
-    <!-- 租赁订单:由租赁message：type=equipOrder 的messageDetail.msgFrom可知道订单数组，通过数组where.in -->
-    <van-tab title="租赁订单">
-      <block wx:for="{{equipRentLists}}" wx:for-item="rentequipitem" wx:for-index="rentidx">
-        <view class="message-item" data-rent-id="{{rentequipitem._id}}" catch:tap="toRentEquipDetail">
+    <!-- 租赁消息 -->
+    <van-tab title="租赁消息">
+      <block wx:for="{{rentMsgLists}}" wx:for-item="msgitem" wx:for-index="msgidx">
+        <view class="message-item" data-msg-id="{{msgitem._id}}" data-msg-status="{{msgitem.status}}"
+          data-item-idx="{{msgidx}}" data-rent-id="{{msgitem.messageDetail.msgFromId}}" catch:tap="toRentEquipDetail">
           <view class="msg-top">
             <van-icon name="diamond-o"></van-icon>
-            <text class="from-type-name">租赁订单</text>
+            <text class="from-type-name">租赁消息</text>
+            <text wx:if="{{msgitem.status==='progress'}}" style="color:red;float:right;margin-right:12px;"
+              class="status-text">未读</text>
+            <text wx:else style="float:right;margin-right:12px;" class="status-text">已读</text>
           </view>
 
           <view class="msg-main">
-            <text>用户：{{rentequipitem.rentUserName}}想要租用你的装备：{{rentequipitem.equipInfo.equipName}}</text>
-            <view>打算租用的开始时间：{{rentequipitem.rentStartTime}}</view>
-            <view>打算租用的结束时间：{{rentequipitem.rentEndTime}}</view>
+            <text>{{msgitem.messageDetail.msgContent}}</text>
           </view>
 
-
+          <view class="msg-footer">
+            <text style="color:#999;font-size:0.8rem;margin-left:10rpx;">{{msgitem.time}}</text>
+          </view>
         </view>
       </block>
 
       <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
-        catch:tap="moreOrderEquip">更多租赁订单</text>
+        catch:tap="moreOrderEquip">更多租赁消息</text>
     </van-tab>
 
   </van-tabs>

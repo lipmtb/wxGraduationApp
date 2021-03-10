@@ -37,16 +37,16 @@ let weatherOption = {
   },
   xAxis: {
     name: '气温云量',
-    type: 'category',
-    axisPointer: {
-      label: {
-        formatter: function (params) {
+    type: 'category'
+    // axisPointer: {
+    //   label: {
+    //     formatter: function (params) {
 
-          return params.value +
-            (params.seriesData.length ? '：' + params.seriesData[0].data : '');
-        }
-      }
-    }
+    //       return params.value +
+    //         (params.seriesData.length ? '：' + params.seriesData[0].data : '');
+    //     }
+    //   }
+    // }
   },
   yAxis: {},
   dataZoom: { //控制第一个xAxis的拉伸
@@ -199,7 +199,7 @@ let dailyOption = {
       name: '最低温'
     }],
     left: 180,
-    top: 16
+    top: 0
   },
   grid: {
     left: 30,
@@ -376,7 +376,7 @@ Page({
     //获取当前位置信息，并获取当前位置的天气情况
     this.getCurrentLocation().then(() => {
       this.getRecommendLocationName(); //坐标逆地址解析为人性化的地址名
-      this.getWeatherByLoca(); //获取当前经纬度的天气
+      this.getWeatherByLoca(); //获取当前经纬度的实时天气
       this.getFurture24(); //获取未来24小时天气情况
       this.getMinutesPrecip(); //获取降水情况
       this.getFurtureDayWeather(); //获取未来7天的天气情况
@@ -400,13 +400,15 @@ Page({
       await this.getMinutesPrecip(); //获取降水情况
       await this.getFurtureDayWeather(); //获取未来7天的天气情况
       wx.stopPullDownRefresh({
-        success: (res) => {},
+        success: (res) => {
+          this.getDatimeText(); //获取当前日期
+        },
       })
       wx.hideLoading({
         success: (res) => {},
       })
     });
-    this.getDatimeText(); //获取当前日期
+   
   },
   // 获取当前日期格式：2021-02-21
   getDatimeText() {
@@ -418,7 +420,7 @@ Page({
     this.canvasStrokeText("#da-time-canvas", daStr, 40);
 
   },
-  //获取当前经纬度的天气
+  //获取当前经纬度的实时天气
   async getWeatherByLoca() {
     let that = this;
     let curWeaRes = await wx.cloud.callFunction({
@@ -685,7 +687,7 @@ Page({
       latitude: that.pageData.curLat,
       longitude: that.pageData.curLng,
       success(res) {
-        // console.log("chooseLocation:", res);
+         console.log("chooseLocation:", res);
         wx.showToast({
           title: '选择位置成功'
         })
@@ -694,11 +696,14 @@ Page({
         that.pageData.curLat = newLat;
         that.pageData.curLng = newLng;
 
-        that.getRecommendLocationName(); //坐标逆地址解析为人性化的地址名
+        // that.getRecommendLocationName(); //坐标逆地址解析为人性化的地址名
         that.getWeatherByLoca(); //获取当前经纬度的天气
         that.getFurture24(); //获取未来24小时天气情况
         that.getMinutesPrecip(); //获取降水情况
         that.getFurtureDayWeather(); //获取未来7天的天气情况
+        that.setData({
+          currentLocationText: res.name
+        });
       }
     })
   },

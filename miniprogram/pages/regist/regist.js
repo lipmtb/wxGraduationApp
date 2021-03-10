@@ -18,7 +18,7 @@ Page({
     let that = this;
     //初始化通知（后面注册成败与否可以调用）
     this.notify = new MyNotify({
-      pageThis: this
+      pageThis: that
     });
     this.notify.notifyInit();
 
@@ -28,42 +28,30 @@ Page({
       name: 'login'
     }).then((res) => {
       console.log(res);
+      if(res.result.length>0){
+        //判断用户是否是管理员
+        let user=res.result[0];
+        let isAd=true;//是管理员
+        for(let i of user.right){
+          if(i===0){
+            isAd=false;
+          }
+        }
+        that.setData({
+          hasAdRight:isAd
+        })
+      }
       this.setData({
         notRegist: res.result.length === 0 ? true : false
       });
       
-  //用户注册过，判断是否授权过期
-      if (res.result.length >0) {
-        //用户的登录状态
-        wx.getSetting({ //判断用户是否授权过
-          withSubscriptions: true
-        }).then((res) => {
-          if (res.authSetting['scope.userInfo']) {
-            wx.getUserInfo({
-              lang: 'zh_CN',
-            }).then((res) => {
-              console.log("获取用户信息成功", res);
-              let userObj = res.userInfo;
-              app.globalData.userObj = userObj;
-              wx.setStorageSync("userInfo", userObj);
-              //授权过的用户直接登录
-              wx.switchTab({
-                url: '/pages/talk/talk',
-              });
-
-            }).catch((err) => {
-              console.error("获取用户信息失败", err);
-            })
-          }
-        });
-      }
     });
 
 
   },
   //注册过的授权信息过期的需要点击登录按钮授权登录
   onUserLogin(e) {
-    console.log(e);
+    console.log("登录进入小程序",e);
     //用户的登录状态
     wx.getSetting({ //判断用户是否授权过
       withSubscriptions: true
@@ -112,19 +100,18 @@ Page({
         app.globalData.userObj = userObj;
         wx.setStorageSync('userInfo', userObj);
 
-
         let tmpNickName = that.pageData.userInputNickName || userObj.nickName;
-        let nickName = userObj.nickName;
+        // let nickName = userObj.nickName;
         let avatarImgUrl = userObj.avatarUrl;
         let gender = userObj.gender === 1 ? '男' : '女';
         //注册用户
         db.collection("angler").add({
           data: {
             tempNickName: tmpNickName,
-            nickname: nickName,
             avatarUrl: avatarImgUrl,
             gender: gender,
-            registTime: new Date()
+            registTime: new Date(),
+            right:[1,0,0,1]
           }
         }).then((res) => {
           console.log(res);
@@ -140,6 +127,11 @@ Page({
       }
     });
 
+  },
+  toArrangePage(){
+    wx.navigateTo({
+      url: '../arrange/arrange',
+    })
   }
 
 

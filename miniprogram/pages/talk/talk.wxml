@@ -1,10 +1,12 @@
 <!--pages/talk/talk.wxml-->
-<!-- 通知栏  -->
+
 
 <view class="wrapper">
   <van-action-sheet show="{{ showSheet }}" bind:select="onSheetSelect" bind:cancel="onSheetCancel"
     actions="{{ actions }}" cancel-text="取消" class="select-sheet" />
   <van-button icon="plus" type="primary" id="toAddTalkBtn" bind:click="navToAdd"></van-button>
+
+  <!-- 公告栏  -->
   <van-notice-bar scrollable="{{true}}" left-icon="volume-o" text="钓鱼爱好者集结地，分享你的经历，倾听他人的声音" color="#1989fa"
     background="#ecf9ff"></van-notice-bar>
 
@@ -18,6 +20,7 @@
 
   </view>
 
+  <!-- 搜索结果 -->
   <view class="search-res-view">
     <block wx:for="{{searchResLists}}" wx:Lfor-item="item">
       <my-talk-item itemData="{{item}}" showHighlight="{{true}}" keywords="{{keywords}}">
@@ -33,7 +36,7 @@
     <text class="titleText" animation="{{animationShowC}}" data-idx="{{2}}" bindtransitionend="animationEndFn">圈</text>
   </view>
 
-  <!-- 最热和最新 -->
+  <!-- 热门和最新 -->
   <van-tabs active="{{ active }}" color="#ff9600" bind:change="tabChange" line-height="{{2}}">
     <van-tab title="热门">
       <view class="my-talk-cpn-list">
@@ -47,6 +50,9 @@
       <view class="more-talk-view">
         <text bindtap="getMoreHot" class="more-text">更多</text>
       </view>
+      <view wx:if="{{!hasMoreHotTalk}}"class="reach-bottom-view" >
+        <text>~到底了~</text>
+      </view>
     </van-tab>
     <van-tab title="最新">
       <view class="my-talk-cpn-list">
@@ -59,6 +65,9 @@
       </view>
       <view class="more-talk-view">
         <text bindtap="getMoreNew" class="more-text">更多</text>
+      </view>
+      <view wx:if="{{!hasMoreNewTalk}}" class="reach-bottom-view" >
+        <text>~到底了~</text>
       </view>
     </van-tab>
   </van-tabs>

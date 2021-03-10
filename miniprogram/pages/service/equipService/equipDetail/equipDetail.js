@@ -278,7 +278,8 @@ Page({
         rentEndTime:that.pageData.curEndTimeInfo,//租用结束时间
         related:that.pageData.curInputRelated,//租用联系方式
         rentAddress:that.pageData.curInputAddress,//租用详细地址
-        rentTime:new Date()
+        rentTime:new Date(),
+        orderStatus:'unconfirmed'
       }
     })
     wx.navigateTo({

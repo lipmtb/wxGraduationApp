@@ -4,8 +4,6 @@
   <view class="topView">
     <slot name="type-icon"></slot>
     <slot name="type-describe"></slot>
-    <!-- <van-icon name="fire" class="top-hot-icon"  color='#ff9600'/> -->
-    <!-- <text class="top-hot-text">热门</text> -->
 
     <text class="top-detail-anchor" bindtap="toDetailPage">详情</text>
     <van-icon name="arrow" class="top-detail-icon" bind:click="toDetailPage" />
@@ -31,16 +29,16 @@
       <!-- 用户和评论，点赞信息 -->
       <view class="title-foot">
         <view class="foot-item">
-          <image src="{{userInfo.avatarUrl}}" class="user-avatar-icon"></image>
-          <text class="user-nick-name">{{userInfo.tempNickName}}</text>
+          <image src="{{itemData.userInfo.avatarUrl}}" class="user-avatar-icon"></image>
+          <text class="user-nick-name">{{itemData.userInfo.tempNickName}}</text>
         </view>
         <view class="foot-item">
           <van-icon name="thumb-circle-o" />
-          <text class="count-text">{{likedCount}}</text>
+          <text class="count-text">{{itemData.likeCount}}</text>
         </view>
         <view class="foot-item">
           <van-icon name="chat-o" />
-          <text class="count-text">{{commentedCount}}</text>
+          <text class="count-text">{{itemData.commentCount}}</text>
         </view>
       </view>
     </view>

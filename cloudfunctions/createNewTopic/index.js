@@ -1,4 +1,4 @@
-// 添加新的主题分类:阅读量默认0
+// 添加新的主题分类
 const cloud = require('wx-server-sdk');
 
 cloud.init();
@@ -11,12 +11,12 @@ exports.main = async (event, context) => {
     }
   });
   //新主题默认阅读量=0
-  await db.collection("readTopic").add({
-    data:{
-      classifyId:resAdd._id,
-      readCount:0
-    }
-  });
+  // await db.collection("readTopic").add({
+  //   data:{
+  //     classifyId:resAdd._id,
+  //     readCount:0
+  //   }
+  // });
   return resAdd;
 
 

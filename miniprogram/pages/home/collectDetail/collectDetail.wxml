@@ -31,7 +31,7 @@
       </view>
     </van-tab>
 
-    <van-tab title="技巧" name="detail">
+    <van-tab title="技巧" name="tip">
       <view class="data-lists-view">
         <block wx:for="{{tipLists}}" wx:for-item="tipitem">
           <my-tip-cpn class="talk-item-view" itemData="{{tipitem}}" userInfo="{{tipitem.userInfo}}"
@@ -46,11 +46,11 @@
       </view>
     </van-tab>
 
-    <van-tab title="钓点" name="detail">
+    <van-tab title="钓点" name="loc">
       <view class="data-lists-view">
         <block wx:for="{{locLists}}" wx:for-item="locitem">
           <my-loc-cpn class="talk-item-view" itemData="{{locitem}}">
-            <text slot="type-describe" class="category-text">钓点</text>
+            <text slot="type-describe" style="padding:8rpx 20rpx;background-color:#77de5e;float:left;margin-left:10rpx;">钓点</text>
             <text slot="type-icon" class="to-loc-detail"
               style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;" catch:tap="toLocDetail"
               data-loc-id="{{locitem._id}}">详情</text>
@@ -58,6 +58,26 @@
         </block>
       </view>
       <view wx:if="{{!hasMoreArr[2]}}">
+        <text>没有更多了。。。</text>
+      </view>
+    </van-tab>
+
+    <van-tab title="装备" name="equip">
+      <view class="data-lists-view">
+        <block wx:for="{{equipLists}}" wx:for-item="eqItem">
+          <view class="equip-collect-item" style="margin:20rpx 8rpx;">
+            <my-equip-cpn itemData="{{eqItem}}">
+              <van-icon slot="type-icon" name="diamond-o"></van-icon>
+              <text slot="type-name"
+                style="margin-left:6rpx;background-color:#f69e33;padding:4rpx 12rpx;">{{eqItem.equipType.equipTypeName}}</text>
+              <text slot="type-describe" style="float:right;margin-right:14rpx;color:#2ab707;text-decoration:underline;"
+                catch:tap="toEquipDetail" data-equip-id="{{eqItem._id}}">详情</text>
+            </my-equip-cpn>
+          </view>
+
+        </block>
+      </view>
+      <view wx:if="{{!hasMoreArr[4]}}">
         <text>没有更多了。。。</text>
       </view>
     </van-tab>

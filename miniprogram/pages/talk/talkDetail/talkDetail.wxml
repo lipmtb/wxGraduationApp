@@ -39,8 +39,9 @@
   <view class="talk-time-share">
     <text class="talk-publish-time">{{talkItemData.publishTime}}</text>
     <view wx:if="{{talkItemData.location}}">
-      <van-icon name="location-o" bind:click="chooseLocationDetail" data-location-info="{{talkItemData.location}}"></van-icon>
-      <text >{{talkItemData.location.name}}</text>
+      <van-icon name="location-o" bind:click="chooseLocationDetail" data-location-info="{{talkItemData.location}}">
+      </van-icon>
+      <text>{{talkItemData.location.name}}</text>
     </view>
   </view>
   <!-- 相关评论列表 -->
@@ -49,8 +50,9 @@
     <view class="comment-count-view">
       <text class="all-comment-text">全部评论</text>
       <text class="all-comment-count">{{commentLists.length}}</text>
-      <van-icon wx:if="{{hasLiked}}" name="thumb-circle"  size="40px" class="like-van-icon" bind:click="unLikeTalk"/>
-      <van-icon wx:else name="thumb-circle-o"  size="40px"  data-like-name="like-icon" class="like-van-icon"  bind:click="likeTalk"/>
+      <van-icon wx:if="{{hasLiked}}" name="thumb-circle" size="40px" class="like-van-icon" bind:click="unLikeTalk" />
+      <van-icon wx:else name="thumb-circle-o" size="40px" data-like-name="like-icon" class="like-van-icon"
+        bind:click="likeTalk" />
     </view>
     <!-- 评论的列表 -->
     <view class="comment-list-wrapper">
@@ -73,6 +75,10 @@
         </view>
 
       </block>
+    </view>
+
+    <view wx:if="{{!hasMoreComment&&commentLists.length>5}}" style="text-align:center;color:#ccc;font-size:0.6rem;">
+      <text>~到底了~</text>
     </view>
 
   </view>

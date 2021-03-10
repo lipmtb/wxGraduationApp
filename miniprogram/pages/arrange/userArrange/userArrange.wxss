@@ -1,0 +1,37 @@
+/* miniprogram/pages/arrange/userArrange/userArrange.wxss */
+.top-title-view{
+  text-align:center;
+  font-size:1.4rem;
+  font-weight:bold;
+  padding:20rpx 0;
+}
+.user-lists-wrapper{
+  padding:20rpx 10rpx;
+}
+.user-item-view{
+  display: flex;
+  justify-content: space-between;
+  padding:16rpx 8rpx;
+  background-color:#f118e042;
+  margin-top:20rpx;
+}
+
+.user-certify{
+  font-size:0.8rem;
+}
+.user-name{
+  vertical-align: 22rpx;
+  margin-left:16rpx;
+  font-size:1.2rem;
+}
+.oper-btn{
+  width:220rpx;
+  font-size:0.4rem;
+  margin-top:25rpx;
+}
+.oper-plain-btn{
+  background-color:#7bff44;
+}
+.oper-admin-btn{
+  background-color:#ff4444;
+}

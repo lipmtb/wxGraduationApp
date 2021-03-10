@@ -9,19 +9,25 @@ Page({
     anglerInfo: {}, //发布者的信息
     hasCollected: false, //当前用户是否收藏过文章
     commentLists: [], //当前文章的评论列表
+    hasMoreComment: true,
     commentInputValue: 666, //默认评论
     hasLiked: false
   },
   pageData: {
+    curUser: "",
     commentText: '666',
+    curCommentCount: 0,
     shareImgFileId: 'cloud://blessapp-20201123.626c-blessapp-20201123-1304304117/加减乘除-2021-02-10T06:14:42.595Z.png',
     shareImgUrl: ''
   },
   onLoad: function (options) {
-    const eventChannel=this.getOpenerEventChannel();
-    eventChannel.emit("receiveEvent",{data:'talk detail66'});
-    eventChannel.on("receiveData",function(da){
-      console.log("talkDetail reveive:",da);
+
+    const eventChannel = this.getOpenerEventChannel();
+    eventChannel.emit("receiveEvent", {
+      data: 'talk detail66'
+    });
+    eventChannel.on("receiveData", function (da) {
+      console.log("talkDetail reveive:", da);
     });
     //初始化通知（后面注册成败与否可以调用）
     this.notify = new MyNotify({
@@ -53,35 +59,17 @@ Page({
       });
     });
 
-    //当前用户是否收藏过本文章
-    let curUserId = app.globalData.userOpenId || wx.getStorageSync('userOpenId');
-    db.collection("collectTalk").where({
-      _openid: curUserId,
-      collectTalkId: that.options.talkId //当前文章的_id
-    }).get().then((res) => {
-      this.notify.notifyInit();
-      if (res.data[0]) {
-        this.notifycancel.notifyInit();
-        that.setData({
-          hasCollected: res.data[0]._id
-        });
-      }
+    this.getCurUser().then((userRes)=>{
+      this.pageData.curUser=userRes;
     });
-    //获取评论
+    //获取帖子的评论
     that.getCommentLists();
+    //当前用户是否收藏过帖子
+    that.userHasCollect();
+    //当前用户是否点赞过帖子
+    that.userHasLike();
 
-    //判断当前用户是否给此条文章点过赞
-    db.collection('likeTalk').where({
-      _openid: wx.getStorageSync('userOpenId'),
-      likeTalkId: this.options.talkId
-    }).get().then((res) => {
 
-      if (res.data.length > 0) {
-        this.setData({
-          hasLiked: res.data[0]._id
-        });
-      }
-    });
 
   },
   onReady() {
@@ -92,6 +80,108 @@ Page({
       console.log(res);
       this.pageData.shareImgUrl = res.fileList[0].tempFileURL;
     })
+  },
+  async getCurUser() {
+    let openid = wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      openid = openRes.result;
+    }
+
+    let userRes = await db.collection("angler").where({
+      _openid: openid
+    }).get();
+    return userRes.data[0];
+  },
+  //当前用户是否收藏过本文章
+  async userHasCollect() {
+    let that = this;
+    let openid = wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      openid = openRes.result;
+    }
+    let res = await db.collection("collectTalk").where({
+      _openid: openid,
+      collectTalkId: that.options.talkId //当前文章的_id
+    }).get();
+    this.notify.notifyInit();
+    if (res.data[0]) {
+      this.notifycancel.notifyInit();
+      that.setData({
+        hasCollected: res.data[0]._id
+      });
+    }
+
+  },
+  //判断当前用户是否给此条文章点过赞
+  async userHasLike() {
+    let openid = wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      openid = openRes.result;
+    }
+    let res = await db.collection('likeTalk').where({
+      _openid: openid,
+      likeTalkId: this.options.talkId
+    }).get();
+    if (res.data.length > 0) {
+      this.setData({
+        hasLiked: res.data[0]._id
+      });
+    }
+
+  },
+  //获取文章的评论
+  async getCommentLists() {
+    let that = this;
+    let getCommentRes = await db.collection("comment").where({
+      commentTalkId: that.options.talkId
+    }).orderBy("commentTime", "desc").skip(that.pageData.curCommentCount).limit(5).get();
+
+    if (getCommentRes.data.length < 5) {
+      that.setData({
+        hasMoreComment: false
+      })
+    }
+
+    //格式化输出时间和获取用户信息
+    for (let itemData of getCommentRes.data) {
+      itemData.commentTime = customFormatTime(itemData.commentTime);
+
+      let userRes = await db.collection('angler').where({
+        _openid: itemData._openid
+      }).get();
+      itemData.userInfo = userRes.data[0];
+    }
+
+    that.data.commentLists.push(...getCommentRes.data);
+    that.pageData.curCommentCount += getCommentRes.data.length;
+    console.log("获取评论成功", getCommentRes.data);
+    that.setData({
+      commentLists: that.data.commentLists
+    });
+
+  },
+  //触底加载更多评论
+  onReachBottom() {
+
+    if (this.data.hasMoreComment) {
+      wx.showLoading({
+        title: '更多评论',
+      })
+      this.getCommentLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+    }
   },
   //用户收藏文章
   onCollect() {
@@ -138,72 +228,49 @@ Page({
       }
     }).then((res) => {
       console.log("评论成功", res);
-      that.getCommentLists();
+      let errUser = {
+        tempNickName: '我'
+      };
+      that.pageData.curCommentCount++;
+      that.data.commentLists.unshift({
+        _id: res._id,
+        commentText: that.pageData.commentText,
+        commentTime: customFormatTime(new Date()),
+        userInfo:that.pageData.curUser||errUser
+      })
       that.createCommentMessage(res._id);
       that.setData({
-        commentInputValue: ''
+        commentInputValue: '',
+        commentLists:that.data.commentLists
       });
     })
   },
   async createCommentMessage(commentResId) {
-    let that=this;
+    let that = this;
     let toUserId = this.data.anglerInfo._openid;
     let fromUserRes = await wx.cloud.callFunction({
       name: "getUserOpenId"
     });
-    let fromUserArrRes=await db.collection("angler").where({
-      _openid:fromUserRes.result
+    let fromUserArrRes = await db.collection("angler").where({
+      _openid: fromUserRes.result
     }).get();
 
     let fromUserId = fromUserRes.result;
-    let fromUserInfo=fromUserArrRes.data[0];
+    let fromUserInfo = fromUserArrRes.data[0];
     return await db.collection("message").add({
       data: {
         toUser: toUserId, //接受消息的用户
-        fromUser: fromUserId, //发消息的用户
-        type: 'normal', //消息的类型，基本消息，分系统消息和基本消息
+        type: 'normal', //消息的类型
         status: 'progress', //progress代表未读，finish代表已读
         time: new Date(), //消息的创建时间
         messageDetail: {
           msgFromId: that.data.talkItemData._id,
           msgFrom: 'talk',
-          msgContent: fromUserInfo.tempNickName+"在钓友圈评论了你: "+that.pageData.commentText,
-          commentId:commentResId
+          msgContent: fromUserInfo.tempNickName + "在钓友圈评论了你: " + that.pageData.commentText,
+          commentId: commentResId
         }
       }
     })
-  },
-  //获取文章的评论
-  getCommentLists() {
-    let that = this;
-    db.collection("comment").where({
-      commentTalkId: that.options.talkId
-    }).get().then((res) => {
-      console.log("获取评论成功", res);
-      //评论排序：按照发布的时间先后
-      res.data.sort(function (itemDataA, itemDataB) {
-        return itemDataB.commentTime - itemDataA.commentTime;
-      });
-      //格式化输出时间和获取用户信息
-      let prosArr = [];
-      for (let itemData of res.data) {
-        itemData.commentTime = customFormatTime(itemData.commentTime);
-
-        prosArr.push(db.collection('angler').where({
-          _openid: itemData._openid
-        }).get().then((userRes) => {
-          itemData.userInfo = userRes.data[0];
-        }));
-      }
-      Promise.all(prosArr).then(() => {
-
-        that.setData({
-          commentLists: res.data
-        });
-      });
-
-
-    });
   },
   //点赞
   likeTalk() {

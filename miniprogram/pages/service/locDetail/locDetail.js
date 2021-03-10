@@ -227,14 +227,13 @@ Page({
     return await db.collection("message").add({
       data: {
         toUser: toUserId, //接受消息的用户
-        fromUser: fromUserId, //发消息的用户
-        type: 'normal', //消息的类型，基本消息，分系统消息和基本消息
+        type: 'normal', //消息的类型
         status: 'progress', //progress代表未读，finish代表已读
         time: new Date(), //消息的创建时间
         messageDetail: {
           msgFromId: that.options.locId,
           msgFrom: 'anglerLoc',
-          msgContent: fromUserInfo.tempNickName + "你发布钓点发表评论: " + that.pageData.commentText,
+          msgContent: fromUserInfo.tempNickName + "在你发布的钓点发表评论: " + that.pageData.commentText,
           commentId: commentResId
         }
       }
@@ -518,10 +517,10 @@ Page({
     let fromUserName=await this.getCurUserName();
     let msgDetail={
       msgFrom:'orderLoc',
-      msgContent:fromUserName+"预约了你发布的钓点:"+that.data.locItemData.locName+"时间是："+that.formattedDateStr(that.pageData.selectedOrderTime),
+      msgContent:fromUserName+"预约了你发布的钓点:"+that.data.locItemData.locName+"，时间是："+that.formattedDateStr(that.pageData.selectedOrderTime),
       msgFromId:orderId
     }
-    wx.cloud.callFunction({
+    return await wx.cloud.callFunction({
       name:'createOrderMsg',
       data:{
         toUser:toUser,
@@ -529,7 +528,7 @@ Page({
         type:'locOrder'
       }
     }).then((res)=>{
-      console.log("预约消息发送给钓点主人",res);
+      console.log("预约消息发送给钓点发布者",res);
     })
     
   },
@@ -552,9 +551,11 @@ Page({
             db.collection("orderLoc").add({
               data: {
                 orderLocId: orderLocId,
-                orderTime: orderTime,
+                orderTime: orderTime,//预约的时间
                 orderLocName: orderLocName,
-                related:related
+                related:related,
+                createTime:new Date() ,//订单的创建时间
+                orderStatus:'progress'
               }
             }).then((res) => {
 

@@ -8,17 +8,25 @@ Page({
   onLoad(options){
     console.log(options);
     this.getRentOrderDetail().then(([rentOrder,equipInfo])=>{
+      if(equipInfo.length>0){
         this.setData({
-          rentOrder:rentOrder,
-          equipInfo:equipInfo
+          equipInfo:equipInfo[0]
         })
+      }
+      this.setData({
+        rentOrder:rentOrder
+      })
+      
+       
     });
   },
   //获取订单详情（包括订单来源的equip）
   async getRentOrderDetail(){
     //rentId来自myRent.js的toRentEquipDetail  
     let rentRes=await db.collection("rentEquip").doc(this.options.rentId).get();
-    let equipRes=await db.collection("equip").doc(rentRes.data.rentEquipId).get();
+    let equipRes=await db.collection("equip").where({
+      _id:rentRes.data.rentEquipId
+    }).get();
     rentRes.data.rentStartTime=rentRes.data.rentStartTime.toLocaleDateString();
     rentRes.data.rentEndTime=rentRes.data.rentEndTime.toLocaleDateString();
     return [rentRes.data,equipRes.data];

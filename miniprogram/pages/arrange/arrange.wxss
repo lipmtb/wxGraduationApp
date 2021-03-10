@@ -1,0 +1,11 @@
+/* miniprogram/pages/arrange/arrange.wxss */
+.select-view{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.type-button{
+  margin:20rpx auto;
+  background-color:#56ef4c;
+}

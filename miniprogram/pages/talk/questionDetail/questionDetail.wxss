@@ -143,6 +143,7 @@ image.user-avatar {
 .comment-item-view .comment-foot-view {
   font-size: 0.8rem;
   color: rgba(133, 131, 131, 0.89);
+
 }
 
 .comment-foot-view .footer-count {
@@ -152,8 +153,10 @@ image.user-avatar {
 
 /* 回复列表 */
 .comment-item-childs{
-  margin-left:40rpx;
+  margin-left:80rpx;
   background-color:#dcd5d585;
+  max-height:600rpx;
+  overflow:auto;
 }
 .comment-reply-children{
    margin:20rpx 0;

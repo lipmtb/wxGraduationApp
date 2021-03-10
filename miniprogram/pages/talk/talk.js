@@ -7,7 +7,9 @@ import customFormatTime from '../../util/customTime'; //自定义的日期格式
 Page({
   data: {
     hotLists: [], //热门
+    hasMoreHotTalk: true,
     newLists: [], //最新
+    hasMoreNewTalk: true,
     questionLists: [], //问答圈
     bottomStyleShow: 'display:none', //默认不显示到底了
     searchResLists: [], //搜索结果
@@ -60,7 +62,6 @@ Page({
   },
   onLoad: function () {
     this.getHotLists(); //获取热门帖子
-    this.getNewLists(); //获取最新帖子
     this.getQuestionLists(); //获取问答圈帖子
   },
   //获取热门：按照评论数排序
@@ -74,13 +75,12 @@ Page({
     }).then((res) => {
       console.log("获取热门帖子成功", res);
       if (res.result.list.length === 0) {
-        wx.showToast({
-          title: '没有数据了',
-          icon: 'none'
-        });
+        this.setData({
+          hasMoreHotTalk: false
+        })
         return;
       }
-      //更新已经获取的热门帖子数
+
       this.pageData.hotTalkCount = this.pageData.hotTalkCount + res.result.list.length;
       console.log("加载热门帖子数:", this.pageData.hotTalkCount);
       this.data.hotLists.push(...res.result.list);
@@ -100,10 +100,9 @@ Page({
     }).then((res) => {
       console.log("获取最新帖子成功", res);
       if (res.result.list.length === 0) {
-        wx.showToast({
-          title: '没有数据了',
-          icon: 'none'
-        });
+        this.setData({
+          hasMoreNewTalk: false
+        })
         return;
       }
       //更新已经获取的热门帖子数
@@ -127,6 +126,9 @@ Page({
       console.log("获取问答圈帖子成功", res);
       if (res.result.list.length == 0) {
         that.pageData.hasMoreQuestion = false;
+        that.setData({
+          bottomStyleShow: ""
+        });
         return;
       }
       //修改服务器时间为本地时间
@@ -147,21 +149,51 @@ Page({
 
     })
   },
+  //更多热门
+  getMoreHot() {
+    if (this.data.hasMoreHotTalk) {
+      wx.showLoading({
+        title: '更多热门帖子'
+      })
+      this.getHotLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+    }
+
+  },
+  //更多最新
+  getMoreNew() {
+    if (this.data.hasMoreNewTalk) {
+      wx.showLoading({
+        title: '更多最新帖子'
+      })
+      this.getNewLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+    }
+  },
   //下拉刷新
   onPullDownRefresh() {
     wx.showLoading({
-      title: '数据加载中。。。',
+      title: '正在刷新。。。',
     });
     this.pageData.hasMoreQuestion = true;
     this.pageData.hotTalkCount = 0;
     this.pageData.newTalkCount = 0;
     this.pageData.curQuestionCount = 0;
     this.data.hotLists = []; //热门
-    this.data.newLists = []; //最新
+
     this.data.questionLists = []; //问答圈
     this.setData({
+      newLists: [],
       bottomStyleShow: "display:none",
-      searchResLists: []
+      searchResLists: [],
+      hasMoreNewTalk: true,
+      hasMoreHotTalk: true
     });
 
     Promise.all([this.getHotLists(), this.getNewLists(), this.getQuestionLists()]).then(() => {
@@ -170,10 +202,16 @@ Page({
           wx.hideLoading({
             success: (res) => {
               wx.showToast({
-                title: '获取数据成功',
+                title: '刷新成功',
               })
             }
           });
+        },
+      })
+    }).catch((err) => {
+      wx.stopPullDownRefresh({
+        success: (res) => {
+          console.log("刷新失败");
         },
       })
     })
@@ -184,26 +222,20 @@ Page({
   //触底加载更多
   onReachBottom() {
 
+    if (this.pageData.hasMoreQuestion) {
 
-    if (!this.pageData.hasMoreQuestion) {
-      console.log("到底了");
-      this.setData({
-        bottomStyleShow: ""
+      wx.showLoading({
+        title: '更多问答圈帖子'
       });
-      return;
+      this.getQuestionLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {
+
+          },
+        })
+      });
     }
-    wx.showLoading({
-      title: '数据加载中。。。',
-    });
-    this.getQuestionLists().then(() => {
-      wx.hideLoading({
-        success: (res) => {
-          wx.showToast({
-            title: '获取数据成功',
-          })
-        },
-      })
-    });
+
   },
   onShow() {
     this.getTabBar().init(); //tabBar选项卡组件初始化active
@@ -270,10 +302,13 @@ Page({
   },
   //用户点击搜索按钮
   onSearch(e) {
-    console.log("搜索" + this.pageData.searchInputText + "相关", e);
+
     this.setData({
       searchResLists: []
     });
+    wx.showLoading({
+      title: '搜索：' + this.pageData.searchInputText
+    })
     wx.cloud.callFunction({
       name: 'searchTalkByKey',
       data: {
@@ -292,21 +327,35 @@ Page({
       });
       this.setData({
         searchResLists: res.result.list,
-        keywords:this.pageData.searchInputText
+        keywords: this.pageData.searchInputText
       })
     });
   },
   //用户切换热门和最新
   tabChange(e) {
     let selIdx = e.detail.index;
+    if (selIdx === 0 && this.pageData.hotTalkCount === 0) {
+      wx.showLoading({
+        title: '加载热门',
+      })
+      this.getHotLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+      return;
+    }
+    if (selIdx === 1 && this.pageData.newTalkCount === 0) {
 
-  },
-  //获取更多的热门帖子
-  getMoreHot() {
-    this.getHotLists(); //获取热门帖子
-  },
-  getMoreNew() {
-    this.getNewLists(); //获取最新帖子
+      wx.showLoading({
+        title: '加载最新',
+      })
+      this.getNewLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      });
+    }
   }
 
 

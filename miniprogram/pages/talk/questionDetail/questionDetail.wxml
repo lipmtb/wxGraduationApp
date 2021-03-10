@@ -65,10 +65,10 @@
             <text>{{item.commentText}}</text>
             <text class="like-cmt-count">{{item.likeCount}}</text>
             <van-icon wx:if="{{item.hasLiked}}" name="thumb-circle" data-like-idx="{{index}}" data-like-tar="{{item}}"
-              size="20px" class="thumb-icon" catch:tap="unlikeComment"  id="thumbIcon-{{index}}"/>
+              size="20px" class="thumb-icon" catch:tap="unlikeComment" id="thumbIcon-{{index}}" />
 
             <van-icon wx:else name="thumb-circle-o" data-like-idx="{{index}}" data-like-tar="{{item}}" size="20px"
-              class="thumb-icon" catch:tap="likeComment"  id="thumbIcon-{{index}}"/>
+              class="thumb-icon" catch:tap="likeComment" id="thumbIcon-{{index}}" />
           </view>
           <!-- 一条评论的底部信息 -->
           <view class="comment-foot-view">
@@ -88,14 +88,17 @@
                     <image class="user-avatar" src="{{replyItem.tarUserInfo.avatarUrl}}"></image>
                     <text class="user-nickname">{{replyItem.tarUserInfo.tempNickName}}</text>
                     <text class="reply-content">{{replyItem.content}}</text>
-                    <text class="like-comment-count">{{replyItem.likeCount}}</text>
-                    <van-icon wx:if="{{replyItem.hasLiked}}" name="thumb-circle" data-like-tar="{{replyItem}}"
-                      size="20px" class="thumb-icon" data-like-idx="{{index}}" data-like-idx-child="{{replyIndex}}"
-                      catch:tap="unlikeReplyComment" />
+                    <view class="reply-like-view" style="overflow:hidden;margin-top:-46rpx;">
+                      <text class="like-comment-count">{{replyItem.likeCount}}</text>
+                      <van-icon wx:if="{{replyItem.hasLiked}}" name="thumb-circle" data-like-tar="{{replyItem}}"
+                        size="20px" class="thumb-icon" data-like-idx="{{index}}" data-like-idx-child="{{replyIndex}}"
+                        catch:tap="unlikeReplyComment" />
 
-                    <van-icon wx:else name="thumb-circle-o" data-like-idx-child="{{replyIndex}}"
-                      data-like-idx="{{index}}" data-like-tar="{{replyItem}}" size="20px" class="thumb-icon"
-                      catch:tap="likeReplyComment" />
+                      <van-icon wx:else name="thumb-circle-o" data-like-idx-child="{{replyIndex}}"
+                        data-like-idx="{{index}}" data-like-tar="{{replyItem}}" size="20px" class="thumb-icon"
+                        catch:tap="likeReplyComment" />
+                    </view>
+
                   </view>
                   <!-- 回复底部信息 -->
                   <view class="comment-reply-foot">
@@ -104,13 +107,24 @@
                   </view>
                 </view>
               </block>
+              <!-- 更多回复 -->
+              <view wx:if="{{item.replyLists.length>2}}" style="overflow:hidden;" class="more-reply-view">
+                <text catch:tap="getMoreReply" data-main-comment="{{item}}" data-main-idx="{{index}}"
+                  style="float:right;margin-right:8rpx;color:#4496ea;">更多回复</text>
+              </view>
             </view>
+
+
           </view>
         </view>
 
       </block>
     </view>
 
+    <view wx:if="{{!hasMoreComment&&canShowBottom}}" style="color:#ccc;font-size:0.8rem;text-align:center;"
+      class="bottom-comment-view">
+      <text>~到底了~</text>
+    </view>
   </view>
 
 

@@ -1,0 +1,29 @@
+<!--miniprogram/pages/arrange/userArrange/userArrange.wxml-->
+<view class="user-wrapper">
+  <view class="top-title-view">
+    <text>用户管理</text>
+  </view>
+  <view class="user-lists-wrapper">
+    <block wx:for="{{anglerLists}}" wx:for-item="anglerItem" wx:for-index="userIndex">
+      <view class="user-item-view">
+        <view class="user-left-wrapper">
+          <view class="user-info">
+            <image src="{{anglerItem.avatarUrl}}" style="width:80rpx;height:80rpx;border-radius:50%;"></image>
+            <text class="user-name">{{anglerItem.tempNickName}}</text>
+          </view>
+
+          <view class="user-certify">
+            <text>身份:</text>
+            <text wx:if="{{anglerItem.isAdmin}}" style="color:red;">管理员</text>
+            <text wx:else style="color:orange;">普通用户</text>
+          </view>
+        </view>
+
+        <view class="angler-oper">
+          <button catch:tap="cancelAdmin" data-user-id="{{anglerItem._id}}" data-user-idx="{{userIndex}}" class="oper-plain-btn oper-btn" wx:if="{{anglerItem.isAdmin}}">取消管理员</button>
+          <button catch:tap="addAdmin" data-user-id="{{anglerItem._id}}" data-user-idx="{{userIndex}}" class="oper-admin-btn oper-btn" wx:else>添加管理员</button>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

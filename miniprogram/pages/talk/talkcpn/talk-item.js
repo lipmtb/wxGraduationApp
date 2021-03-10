@@ -26,32 +26,32 @@ Component({
   lifetimes: {
     ready() {
       let that=this;
-      //获取发布者信息
-      db.collection('angler').where({
-        _openid: this.data.itemData._openid
-      }).get().then((res) => {
-        this.setData({
-          userInfo: res.data[0]
-        });
-      });
-      //获取此文章的点赞数
-      db.collection('likeTalk').where({
-        likeTalkId: this.data.itemData._id
-      }).get().then((res) => {
+      // //获取发布者信息
+      // db.collection('angler').where({
+      //   _openid: this.data.itemData._openid
+      // }).get().then((res) => {
+      //   this.setData({
+      //     userInfo: res.data[0]
+      //   });
+      // });
+      // //获取此文章的点赞数
+      // db.collection('likeTalk').where({
+      //   likeTalkId: this.data.itemData._id
+      // }).count().then((res) => {
 
-        this.setData({
-          likedCount: res.data.length
-        });
-      })
+      //   this.setData({
+      //     likedCount: res.total
+      //   });
+      // })
 
-      //获取文章的评论数
-      db.collection("comment").where({
-        commentTalkId: this.data.itemData._id
-      }).get().then((res) => {
-        this.setData({
-          commentedCount: res.data.length
-        });
-      })
+      // //获取文章的评论数
+      // db.collection("comment").where({
+      //   commentTalkId: this.data.itemData._id
+      // }).count().then((res) => {
+      //   this.setData({
+      //     commentedCount:res.total
+      //   });
+      // })
       //如果展示关键词
       if (this.data.showHighlight) {
         let key=this.data.keywords;

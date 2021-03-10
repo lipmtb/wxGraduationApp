@@ -13,38 +13,39 @@ Page({
   },
   pageData: {
     curSpecialCount: 0, //获取的两个主题的帖子数
-    curTopicSkip: 0   //获取精选跳过的主题数
+    curTopicSkip: 0 //获取精选跳过的主题数
   },
   onLoad: function (options) {
-    this.getTopicLists();//获取6个阅读量前6的分类主题
-    this.getSpecialTipEssays();  //获取精选
-  },
-  onShow() {
+    let that=this;
     wx.setNavigationBarTitle({
       title: '技巧',
     })
+    this.getTopicLists(); //获取6个阅读量前6的分类主题
+    this.getSpecialTipEssays(0).then((lists) => {
+      if (lists.length < 1) {
+        db.collection("tipEssays").aggregate().sample({
+          size: 1
+        }).end().then((resdata) => {
+          that.data.essenceLists.push(...resdata.list);
+          that.setData({
+            essenceLists: that.data.essenceLists
+          });
+        });
+      }
+    }); //获取精选
   },
-  toMoreClassifyPage(){
+  toMoreClassifyPage() {
     wx.navigateTo({
       url: 'moreClassify/moreClassify',
     })
   },
   //获取6个阅读量前6的分类主题
   async getTopicLists() {
+    let resTopicCall = await wx.cloud.callFunction({
+      name: 'getHotTipClassify'
+    });
+    let resTopic = resTopicCall.result;
 
-    let resTopic = await db.collection('readTopic').aggregate().group({
-      _id: '$classifyId',
-      count: $.sum(1)
-    }).sort({
-      count: -1
-    }).limit(6).end();
-    //获取主题的名字classifyName
-    for (let groupitem of resTopic.list) {
-      let resname = await db.collection("tipClassify").where({
-        _id: groupitem._id
-      }).get();
-      groupitem.classifyName = resname.data[0].classifyName;
-    }
     this.setData({
       classifyNameLists: resTopic.list
     });
@@ -59,14 +60,23 @@ Page({
       name: 'getSpecialTips',
       data: {
         skipNum: Math.round(that.pageData.curSpecialCount / 2), //每个主题的跳过帖子数
-        skipTopicNum: skipTopicNum || 0   //跳过的主题数
+        skipTopicNum: skipTopicNum || 0 //跳过的主题数
       }
     });
     console.log("加载精华", essenceRes.result);
     that.pageData.curSpecialCount = that.pageData.curSpecialCount + essenceRes.result.length;
+  
     that.data.essenceLists.push(...essenceRes.result);
+     //去除重复的帖子,并增加类型名
+     let obj={};
+     for(let li of that.data.essenceLists){
+       obj[li._id]=li;
+       let typeRes=await db.collection("tipClassify").doc(li.classifyId).get();
+       li.typeName=typeRes.data.classifyName;
+     }
+     console.log(obj);
     that.setData({
-      essenceLists: that.data.essenceLists
+      essenceLists: Object.values(obj)
     });
     return essenceRes.result;
 
@@ -74,30 +84,16 @@ Page({
   onShow() {
     this.getTabBar().init();
   },
-  // 更多精选
-  moreSpecial() {
-
-    wx.pageScrollTo({
-      scrollTop: 800,
-      duration: 400
-    })
-    // this.getSpecialTipEssays().then((res) => {
-    //   wx.hideLoading({
-    //     success: (res) => {},
-    //   })
-    // });
-
-  },
   // 下拉刷新
   onPullDownRefresh() {
     this.pageData.curSpecialCount = 0;
-    this.pageData.curTopicSkip=0;
+    this.pageData.curTopicSkip = 0;
     this.data.essenceLists = [];
     this.setData({
       hasMoreEssays: true
     })
     let prs1 = this.getTopicLists();
-    let prs2 = this.getSpecialTipEssays();
+    let prs2 = this.getSpecialTipEssays(0);
     Promise.all([prs1, prs2]).then(() => {
       wx.stopPullDownRefresh({
         success: (res) => {

@@ -1,31 +1,10 @@
 <!--miniprogram/pages/home/myRent/rentOrderDetail/rentOrderDetail.wxml-->
 <view class="rent-order-detail">
-  <!-- <van-cell-group>
-    <van-field value="{{rentOrder.rentUserName}}"  readonly>
-      <text slot="label" class="label-text">租赁者</text>
-    </van-field>
-    <van-field value="{{equipInfo.equipName}}"  readonly>
-      <text slot="label" class="label-text">租赁装备名</text>
-    </van-field>
-    <van-field value="{{rentOrder.related}}"  readonly>
-      <text slot="label" class="label-text">租赁者联系方式</text>
-    </van-field>
-    <van-field value="{{rentOrder.rentAddress}}"  readonly>
-      <text slot="label" class="label-text">租赁者地址</text>
-    </van-field>
-    <van-field value="{{rentOrder.rentStartTime}}"  readonly>
-      <text slot="label">预订租赁开始时间</text>
-    </van-field>
-    <van-field value="{{rentOrder.rentEndTime}}"  readonly>
-      <text slot="label" class="label-text">预订租赁结束时间</text>
-    </van-field>
-  </van-cell-group> -->
-
   <van-cell-group>
     <van-cell title="租赁者" value="{{rentOrder.rentUserName}}">
     </van-cell>
-    <van-cell title="租赁装备名" value="{{equipInfo.equipName}}"  >
-      <van-icon slot="right-icon" name="arrow" data-equip-id="{{equipInfo._id}}" bind:click="toEquipDetail"/>
+    <van-cell wx:if="{{equipInfo}}" title="租赁装备名" value="{{equipInfo.equipName}}">
+      <van-icon slot="right-icon" name="arrow" data-equip-id="{{equipInfo._id}}" bind:click="toEquipDetail" />
     </van-cell>
     <van-cell title="租赁者联系方式" value="{{rentOrder.related}}">
     </van-cell>
@@ -34,6 +13,10 @@
     <van-cell title="预订租赁开始时间" value="{{rentOrder.rentStartTime}}">
     </van-cell>
     <van-cell title="预订租赁结束时间" value="{{rentOrder.rentEndTime}}">
+    </van-cell>
+    <van-cell wx:if="{{rentOrder.orderStatus==='progress'}}" title="租赁状态" value="进行中">
+    </van-cell>
+    <van-cell wx:else title="租赁状态" value="已取消" style="color:red;">
     </van-cell>
   </van-cell-group>
 

@@ -4,23 +4,49 @@
   <van-tabs active="{{ curActive }}" bind:change="onTabChange">
     <!-- 我的预约 -->
     <van-tab title="我的预约">
-      <block wx:for="{{orderLocLists}}" wx:for-item="mainitem" wx:for-index="msgidx">
-        <van-swipe-cell id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{msgidx}}"
-          data-order-info="{{mainitem}}" async-close bind:close="onClose">
-          <view class="message-item" data-loc-id="{{mainitem.orderLocId}}" catch:tap="toOrderDetail">
+      <block wx:for="{{orderLocLists}}" wx:for-item="mainitem" wx:for-index="odIdx">
+        <van-swipe-cell id="swipe-cell" wx:if="{{mainitem.orderStatus==='progress'}}" right-width="{{ 100 }}"
+          data-order-idx="{{odIdx}}" data-order-info="{{mainitem}}" async-close bind:close="onClose">
+          <view class="message-item" data-my-id="{{mainitem._id}}" catch:tap="toOrderDetail">
             <view class="msg-top">
               <van-icon name="diamond-o"></van-icon>
               <text class="from-type-name">钓点预约</text>
             </view>
 
             <view class="msg-main">
-              <text>{{mainitem.orderLocName}}</text>
-              <view>预约的时间：{{mainitem.orderTime}}</view>
+              <text>我预约的钓点：{{mainitem.orderLocName}}</text>
+              <text>我预约的时间：{{mainitem.orderTime}}</text>
+
+            </view>
+            <view class="footer-time">
+              <text class="footer-time-text">{{mainitem.createTime}}</text>
+            </view>
+          </view>
+          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消预约</view>
+        </van-swipe-cell>
+
+        <van-swipe-cell wx:else id="swipe-cell" right-width="{{ 65 }}" data-order-idx="{{odIdx}}"
+          data-order-info="{{mainitem}}" async-close bind:close="onCloseDeleteOrder">
+          <view class="message-item" data-my-id="{{mainitem._id}}" catch:tap="toOrderDetail">
+            <view class="msg-top">
+              <van-icon name="diamond-o"></van-icon>
+              <text class="from-type-name">钓点预约</text>
+              <text wx:if="{{mainitem.orderStatus==='destroy'}}"
+                style="color:red;float:right;margin-right:10rpx;font-size:1.4rem;">已失效</text>
+              <text wx:else style="color:blue;float:right;margin-right:10rpx;font-size:1.4rem;">已取消</text>
             </view>
 
+            <view class="msg-main">
+              <text>我预约的钓点：{{mainitem.orderLocName}}</text>
+              <view>我预约的时间：{{mainitem.orderTime}}</view>
+            </view>
+
+            <view class="footer-time">
+              <text class="footer-time-text">{{mainitem.createTime}}</text>
+            </view>
 
           </view>
-          <view slot="right" style="background-color:#efb923;padding:100rpx 38rpx;">取消</view>
+          <view slot="right" style="background-color:#0066ff;padding:100rpx 38rpx;">删除</view>
         </van-swipe-cell>
       </block>
 
@@ -29,26 +55,30 @@
         catch:tap="showMoreOrders">更多我的预约</text>
     </van-tab>
 
-    <!-- 预约订单 -->
-    <van-tab title="预约订单">
+    <!-- 预约消息 -->
+    <van-tab title="预约消息">
       <block wx:for="{{bookLists}}" wx:for-item="bookItem" wx:for-index="bookidx">
 
-        <view class="message-item" data-book-id="{{bookItem._id}}" catch:tap="toBookDetail">
+        <view class="message-item" data-msg-id="{{bookItem._id}}" data-book-id="{{bookItem.messageDetail.msgFromId}}" data-item-idx="{{bookidx}}" data-msg-status="{{bookItem.status}}" catch:tap="toBookDetail">
           <view class="msg-top">
             <van-icon name="diamond-o"></van-icon>
-            <text class="from-type-name">钓点预约订单</text>
+            <text class="from-type-name">钓点预约消息</text>
+            <text wx:if="{{bookItem.status==='progress'}}" style="color:red;float:right;margin-right:12px;" class="status-text">未读</text>
+            <text wx:else style="float:right;margin-right:12px;"class="status-text">已读</text>
           </view>
 
           <view class="msg-main">
-            <text>{{bookItem.fromUser.tempNickName}}预约了钓点：{{bookItem.orderLocName}}</text>
-            <text>预约时间是：{{bookItem.orderTime}}</text>
+            <text>{{bookItem.messageDetail.msgContent}}</text>
+          </view>
+          <view class="footer-time">
+            <text class="footer-time-text">{{bookItem.time}}</text>
           </view>
         </view>
       </block>
 
 
       <text style="float:right;color:#999;font-size:0.6rem;padding:10rpx 14rpx;text-decoration:underline;"
-        catch:tap="showMoreOrders">更多预约订单</text>
+        catch:tap="showMoreBooks">更多预约消息</text>
     </van-tab>
   </van-tabs>
 

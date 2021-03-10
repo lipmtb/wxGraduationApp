@@ -85,7 +85,7 @@
         {
           "name": "pages/talk/questionDetail/questionDetail",
           "pathName": "pages/talk/questionDetail/questionDetail",
-          "query": "questionId=79550af26020ebbb035736427fb9f634",
+          "query": "questionId=79550af2602e754f0596138e4a53e21a",
           "scene": null
         },
         {
@@ -176,6 +176,36 @@
           "name": "pages/service/equipService/equipDetail",
           "pathName": "pages/service/equipService/equipDetail/equipDetail",
           "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/arrange",
+          "pathName": "pages/arrange/arrange",
+          "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/tipArrange/tipArrange",
+          "pathName": "pages/arrange/tipArrange/tipArrange",
+          "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/tipArrange/tipArrange",
+          "pathName": "pages/arrange/tipArrange/tipArrange",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/equipArrange/equipArrange",
+          "pathName": "pages/arrange/equipArrange/equipArrange",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/sysMsgArrange/sysMsgArrange",
+          "pathName": "pages/arrange/sysMsgArrange/sysMsgArrange",
+          "query": "",
           "scene": null
         }
       ]

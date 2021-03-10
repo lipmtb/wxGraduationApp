@@ -1,0 +1,14 @@
+<!--miniprogram/pages/arrange/sysMsgArrange/sysMsgArrange.wxml-->
+<view class="sys-msg-wrapper">
+  <view class="title-show-view">
+    <text>系统消息管理</text>
+  </view>
+
+  <view class="write-sys-msg">
+    <view class="msg-send-title">
+      <text>系统消息发布</text>
+    </view>
+    <textarea name="sysMsgArea" id="sysarea" cols="30" rows="10" bindinput="onInputMsg"></textarea>
+    <van-button type="primary" style="margin-left:214rpx;" bind:click="onSendMsg">发布系统消息</van-button>
+  </view>
+</view>

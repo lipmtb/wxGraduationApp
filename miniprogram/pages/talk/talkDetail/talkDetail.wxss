@@ -112,7 +112,7 @@
 
 .comment-count-view .like-van-icon {
   display:inline-block;
-  margin-left: 440rpx;
+  margin-left: 428rpx;
   vertical-align: -22rpx;
   height:100rpx;
   width:100rpx;

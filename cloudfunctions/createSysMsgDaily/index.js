@@ -1,4 +1,4 @@
-//系统消息：统计用户当天的发帖情况
+//系统消息：统计用户当天的发帖情况，利用云函数定时触发器每天发一次
 const cloud = require('wx-server-sdk')
 
 cloud.init()

@@ -1,0 +1,19 @@
+<!--pages/service/equipService/equip-cpn/equip-cpn.wxml-->
+<view class="equip-item-wrapper">
+  <view class="top-view">
+    <slot name="type-icon"></slot>
+    <slot name="type-name"></slot>
+    
+    <slot name="type-describe"></slot>
+  </view>
+  <view class="main-view">
+    <view class="img-left" wx:if="{{itemData.images[0]}}">
+      <image class="img" src="{{itemData.images[0]}}" mode="aspectFit"></image>
+    </view>
+
+    <view class="content-right">
+      <text class="content-title">{{itemData.equipName}}</text>
+      <text class="content-detail">{{itemData.equipDesc}}</text>
+    </view>
+  </view>
+</view>

@@ -1,4 +1,4 @@
-// miniprogram/pages/talk/talkDetail/talkDetail.js
+//问答帖子详情
 const db = wx.cloud.database();
 const app = getApp();
 import MyNotify from '../../../util/mynotify/mynotify';
@@ -13,18 +13,35 @@ Page({
     placeHolderText: '期待你的评论',
     commentTarget: '', //回复和普通评论切换
     hasFocus: false, //评论输入聚焦
-    totalCommentCount: 0
+    totalCommentCount: 0,
+    hasMoreComment: true,
+    canShowBottom: false
   },
   pageData: {
+    userTempInfo: {}, //当前用户的信息
     commentText: '', //获取输入的评论内容
     tarId: '', //要回复的评论的_id
     tarUser: {}, //回复评论的用户对象
     tarIdx: 0, //回复的主评论索引
     curCommentLen: 0, //当前加载的评论数
-    hasMoreComment: true
+    canGetMoreComment: false
+  },
+  async getUserTemp() {
+    let openid = wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let opRes = wx.cloud.callFunction({
+        name: "getUserOpenId"
+      });
+      openid = (await opRes).result;
+    }
+    return await db.collection("angler").where({
+      _openid: openid
+    }).get();
   },
   onLoad: function (options) {
-
+    this.getUserTemp().then((userArr) => {
+      this.pageData.userTempInfo = userArr.data[0];
+    })
     //默认发表对帖子的评论
     this.setData({
       commentTarget: options.questionId
@@ -132,6 +149,7 @@ Page({
   onCommentChange(e) {
     this.pageData.commentText = e.detail;
   },
+  //评论消息发给问题发布者
   async createCommentMsg(commentId) {
     let that = this;
     //获取消息来源的用户名
@@ -175,8 +193,8 @@ Page({
       }
     }).then((res) => {
       //刷新评论区
-      let curUser = wx.getStorageSync('userInfo') || app.globalData.userObj;
-      that.data.commentLists.push({
+      let curUser = that.pageData.userTempInfo;
+      that.data.commentLists.unshift({
         commentQuestionId: that.options.questionId,
         commentText: that.pageData.commentText,
         commentTime: "刚刚",
@@ -210,7 +228,7 @@ Page({
       }
     }).then((res) => {
       //刷新评论区
-      let curUser = wx.getStorageSync('userInfo') || app.globalData.userObj;
+      let curUser = that.pageData.userTempInfo;
       let commentMainIdx = that.pageData.tarIdx;
 
       let newReply = {
@@ -227,8 +245,9 @@ Page({
       that.replaceDataOnPath(['commentLists', commentMainIdx, 'replyLists', endIdx], newReply);
       that.applyDataUpdates();
       wx.showToast({
-        title: '回复' + that.pageData.tarUser.tempNickName + "成功",
+        title: '回复' + that.pageData.tarUser.tempNickName,
       })
+      console.log(curUser, "回复", that.pageData.tarUser);
       that.setData({
         commentInputValue: '',
         totalCommentCount: that.data.totalCommentCount + 1
@@ -241,157 +260,117 @@ Page({
     })
   },
   //获取文章的评论
-  getCommentLists() {
-    // let that = this;
-    // db.collection("questionComment").where({
-    //   commentQuestionId: that.options.questionId
-    // }).get().then((res) => {
-    //   console.log("获取评论成功", res);
-
-    //   let prosArr = [];
-    //   for (let itemData of res.data) {
-    //     itemData.commentTime = customFormatTime(itemData.commentTime);
-    //     prosArr.push(that.getReplyCommentList(itemData)); //获取评论的回复列表
-
-    //   }
-    //   Promise.all(prosArr).then((totalRes) => {
-    //     //评论排序：按照点赞数排序
-    //     // res.data.sort(function (itemDataA, itemDataB) {
-    //     //   return itemDataB.totalLikeCount - itemDataA.totalLikeCount;
-    //     // });
-    //     //总的评论数
-    //     let replyTotal = totalRes.reduce((prev, cur, idx, arr) => {
-    //       return prev + cur;
-    //     }, 0);
-    //     let total = res.data.length + replyTotal;
-
-    //     that.setData({
-    //       commentLists: res.data,
-    //       totalComment: total
-    //     });
-    //     // that.replaceDataOnPath(['commentLists','totalLength'],total);
-    //     // that.applyDataUpdates();
-    //   });
-
-
-    // });
-
+  async getCommentLists() {
     let that = this;
-    wx.cloud.callFunction({
+    that.pageData.canGetMoreComment = false;
+    let openid = app.globalData.userOpenId || wx.getStorageSync('userOpenId');
+    if (!openid) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      openid = openRes.result;
+    }
+    let resAll = await wx.cloud.callFunction({
       name: 'getQuestionCommentLists',
       data: {
         questionId: that.options.questionId,
-        skipComment: that.pageData.curCommentLen
-      }
-    }).then((resAll) => {
-
-      let res = resAll.result.list;
-      if (res.length == 0) {
-        that.pageData.hasMoreComment = false;
-        return;
-      }
-      that.pageData.curCommentLen += res.length;
-      console.log("获取评论成功", res, that.pageData.curCommentLen, that.pageData.hasMoreComment);
-      let prosArr = [];
-      for (let itemData of res) {
-        itemData.replyLists = [];
-        itemData.commentTime = customFormatTime(itemData.commentTime);
-        prosArr.push(that.getReplyCommentList(itemData)); //获取评论的回复列表
-
-      }
-      Promise.all(prosArr).then((totalRes) => {
-
-        let replyTotal = totalRes.reduce((prev, cur, idx, arr) => {
-          return prev + cur;
-        }, 0);
-        let total = that.data.totalCommentCount + res.length + replyTotal;
-        that.data.commentLists.push(...res);
-        that.setData({
-          commentLists: that.data.commentLists,
-          totalCommentCount: total
-        });
-
-      });
-
-
-    });
-  },
-  // 获取每条评论的信息：发布者，回复列表等
-  async getReplyCommentList(commentItem) {
-    //获取评论的发布者信息
-    await db.collection('angler').where({
-      _openid: commentItem._openid
-    }).get().then((userRes) => {
-      commentItem.userInfo = userRes.data[0];
-    });
-
-    //当前用户是否点过赞
-    let curUserId = app.globalData.userOpenId || wx.getStorageSync('userOpenId');
-    await db.collection('likeQuestionComment').where({
-      _openid: curUserId,
-      likeCommentId: commentItem._id
-    }).get().then((likeRes) => {
-      commentItem.hasLiked = false;
-      if (likeRes.data.length > 0) {
-
-        commentItem.hasLiked = likeRes.data[0]._id;
+        skipComment: that.pageData.curCommentLen,
+        curUserOpenId: openid
       }
     });
-    //获取点赞人数
-    let likeCountRes = await db.collection('likeQuestionComment').where({
-      likeCommentId: commentItem._id
-    }).get();
-    commentItem.likeCount = likeCountRes.data.length;
-
-    //获取评论的回复
-
-    let res = await db.collection("questionCommentReply").where({
-      tarCommentId: commentItem._id
-    }).get();
-
-    // let replyTotalLikeCount = 0;
-    for (let item of res.data) {
-      item.commentTime = customFormatTime(item.commentTime);
-      //回复对象信息
-      await db.collection("angler").doc(item.tarUserId).get().then((resuser) => {
-        item.tarUserInfo = resuser.data;
-      });
-      //回复人信息
-      await db.collection("angler").where({
-        _openid: item._openid
-      }).get().then((fromuser) => {
-        item.userInfo = fromuser.data[0];
-      });
-      //回复是否点过赞
-      await db.collection('likeQuestionComment').where({
-        _openid: curUserId,
-        likeCommentId: item._id
-      }).get().then((like) => {
-        item.hasLiked = false;
-        if (like.data.length > 0) {
-          item.hasLiked = like.data[0]._id;
-        }
-      });
-      //获取点赞人数
-      let likeCRes = await db.collection('likeQuestionComment').where({
-        likeCommentId: item._id
-      }).get();
-      item.likeCount = likeCRes.data.length;
-      // replyTotalLikeCount += likeCRes.data.length;
+    let res = resAll.result.list;
+    if (res.length === 0) {
+      that.setData({
+        hasMoreComment: false
+      })
+      return;
     }
-    // commentItem.totalLikeCount = replyTotalLikeCount + likeCountRes.data.length;
-    commentItem.replyLists = res.data;
-    return res.data.length;
+
+
+    for (let [idx, itemData] of res.entries()) {
+      itemData.replyLists = [];
+      itemData.replyLen=0;
+      itemData.commentTime = customFormatTime(itemData.commentTime);
+      itemData.openInfo = openid;
+      that.getReplyCommentList(openid, itemData, that.pageData.curCommentLen + idx); //获取评论的回复列表
+
+    }
+    that.pageData.curCommentLen += res.length;
+    if (that.pageData.curCommentLen > 5) {
+      that.setData({
+        canShowBottom: true
+      })
+    }
+    console.log("获取评论成功", res, that.pageData.curCommentLen);
+    that.data.commentLists.push(...res);
+    that.setData({
+      commentLists: that.data.commentLists,
+      totalCommentCount: that.data.commentLists.length
+    }, () => {
+      that.pageData.canGetMoreComment = true;
+    });
+    return res;
+
+  },
+  // 获取每条评论的回复信息：发布者，回复列表等
+  async getReplyCommentList(curUserId, mainComment, mainCommentIdx) {
+    let _this = this;
+    let mainId = mainComment._id;
+    // let skipNum = mainComment.replyLists.length;
+    let skipNum = mainComment.replyLen;
+    // console.log("skipNum",skipNum);
+    let replyRes = await wx.cloud.callFunction({
+      name: 'getQuesComReply',
+      data: {
+        tarCommentId: mainId,
+        skipReplyCount: skipNum,
+        curUserOpenId: curUserId
+      }
+    });
+    for (let item of replyRes.result.list) {
+      item.commentTime = customFormatTime(item.commentTime);
+    }
+    mainComment.replyLists.push(...replyRes.result.list);
+    mainComment.replyLen+=replyRes.result.list.length;
+    _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'replyLists'], mainComment.replyLists);
+    _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'replyLen'], mainComment.replyLen);
+
+    _this.applyDataUpdates();
+    return replyRes.result.list;
+
+  },
+  //获取主评论更多回复
+  async getMoreReply(e) {
+    wx.showLoading({
+      title: '更多回复'
+    })
+
+    let mainCommentItem = e.currentTarget.dataset.mainComment;//主评论
+    let mainIndex = e.currentTarget.dataset.mainIdx;//第几条主评论
+    let openid =  wx.getStorageSync('userOpenId');
+    if (!openid) {
+     openid=mainCommentItem.openInfo;
+    }
+    this.getReplyCommentList(openid, mainCommentItem, mainIndex).then((res) => {
+      wx.hideLoading({
+        success: (res) => {},
+      })
+    });
   },
   //触底加载更多评论
   onReachBottom() {
-    if (!this.pageData.hasMoreComment) {
-      wx.showToast({
-        title: '没有更多评论了',
+    if (this.data.hasMoreComment && this.pageData.canGetMoreComment) {
+      wx.showLoading({
+        title: '更多评论'
+      })
+      this.getCommentLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
       });
-      return;
+
     }
-    this.getCommentLists();
+
 
   },
   //用户点赞主评论
@@ -406,14 +385,15 @@ Page({
     }).then((res) => {
       this.showBigLikeIcon(idx);
 
-      this.replaceDataOnPath(['commentLists', idx, 'hasLiked'], res._id);
+      this.replaceDataOnPath(['commentLists', idx, 'hasLiked'], res);
       this.replaceDataOnPath(['commentLists', idx, 'likeCount'], this.data.commentLists[idx].likeCount + 1);
       this.applyDataUpdates();
     })
   },
   //取消主评论的赞
   unlikeComment(e) {
-    let dislikeId = e.currentTarget.dataset.likeTar.hasLiked;
+    // let dislikeId = e.currentTarget.dataset.likeTar.hasLiked;
+    let dislikeId = e.currentTarget.dataset.likeTar.hasLiked._id;
     let idx = e.currentTarget.dataset.likeIdx;
     db.collection("likeQuestionComment").doc(dislikeId).remove().then((res) => {
       wx.showToast({
@@ -426,7 +406,7 @@ Page({
   },
   //取消评论回复的赞
   unlikeReplyComment(e) {
-    let dislikeId = e.currentTarget.dataset.likeTar.hasLiked;
+    let dislikeId = e.currentTarget.dataset.likeTar.hasLiked._id;
     let idx = e.currentTarget.dataset.likeIdx;
     let idxChild = e.currentTarget.dataset.likeIdxChild;
     db.collection("likeQuestionComment").doc(dislikeId).remove().then((res) => {
@@ -451,7 +431,7 @@ Page({
       wx.showToast({
         title: '赞一个',
       })
-      this.replaceDataOnPath(['commentLists', idx, 'replyLists', idxChild, 'hasLiked'], res._id);
+      this.replaceDataOnPath(['commentLists', idx, 'replyLists', idxChild, 'hasLiked'], res);
       this.replaceDataOnPath(['commentLists', idx, 'replyLists', idxChild, 'likeCount'], this.data.commentLists[idx]['replyLists'][idxChild].likeCount + 1);
       this.applyDataUpdates();
     })

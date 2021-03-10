@@ -4,17 +4,26 @@
   <van-cell-group>
     <van-cell title="预约者" value="{{locOrder.fromUserInfo.tempNickName}}">
     </van-cell>
-  
-    <van-cell title="预约的钓点" value="{{locOrder.locInfo.locName}}"  >
-      <van-icon slot="right-icon" name="arrow" data-loc-id="{{locOrder.orderLocId}}" bind:click="toLocDetail"/>
+
+    <van-cell title="预约的钓点" value="{{locOrder.orderLocName}}">
+      <van-icon wx:if="{{locOrder.locInfo}}" slot="right-icon" name="arrow" data-loc-id="{{locOrder.orderLocId}}"
+        bind:click="toLocDetail" />
+    </van-cell>
+    <block wx:if="{{locOrder.locInfo}}">
+      <van-cell title="预约的钓点地址" value="{{locOrder.locInfo.locationDetail.name}}">
+      </van-cell>
+      <van-cell title="联系方式" value="{{locOrder.related}}">
+      </van-cell>
+      <van-cell title="预约时间" value="{{locOrder.orderTime}}">
+      </van-cell>
+      <van-cell title="预约状态" wx:if="{{locOrder.orderStatus==='progress'}}" value="进行中">
+      </van-cell>
+      <van-cell wx:else title="预约状态" value="已取消" value-class="red-status">
+      </van-cell>
+    </block>
+    <van-cell wx:else title="预约状态" value="{{'钓点不存在了'}}">
     </van-cell>
 
-    <van-cell title="预约的钓点地址" value="{{locOrder.locInfo.locationDetail.name}}">
-    </van-cell>
-    <van-cell title="联系方式" value="{{locOrder.related}}">
-    </van-cell>
-    <van-cell title="预约时间" value="{{locOrder.orderTime}}">
-    </van-cell>
 
   </van-cell-group>
 

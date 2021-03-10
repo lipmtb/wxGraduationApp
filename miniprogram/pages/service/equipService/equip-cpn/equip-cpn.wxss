@@ -1,0 +1,31 @@
+/* pages/service/equipService/equip-cpn/equip-cpn.wxss */
+.equip-item-wrapper {
+  background-color: rgba(37, 179, 172, 0.25);
+  padding:12rpx;
+}
+
+.top-view{
+  padding:5rpx 0 2rpx 10rpx;
+}
+.img-left {
+  float: left;
+  font-size: 0;
+}
+
+.img-left .img {
+  float: left;
+  width: 260rpx;
+  height: 260rpx;
+}
+
+.content-right {
+  overflow: hidden;
+  height: 336rpx;
+
+
+}
+
+.content-title {
+  display: block;
+  padding: 64rpx 0;
+}

@@ -5,3 +5,21 @@
   padding:60rpx 0;
 }
 
+.login-arrange-select{
+  display: flex;
+  flex-direction: column;
+  margin-top:200rpx;
+
+}
+
+.plain-btn-select{
+  background-color:#0493f3;
+  padding:0 100rpx;
+  color:#fff;
+}
+
+.admin-btn-select{
+  background-color:#f9a0a0;
+  margin-top:60rpx;
+  color:#fff;
+}

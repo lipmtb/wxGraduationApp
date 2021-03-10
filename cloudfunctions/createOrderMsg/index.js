@@ -1,4 +1,4 @@
-// 预约钓点和租赁消息发给所有者
+// 钓点消息和租赁消息发给所有者
 const cloud = require('wx-server-sdk');
 
 cloud.init();

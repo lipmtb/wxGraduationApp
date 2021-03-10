@@ -1,0 +1,27 @@
+/* miniprogram/pages/arrange/sysMsgArrange/sysMsgArrange.wxss */
+.sys-msg-wrapper{
+  padding:20rpx 2rpx 200rpx 2rpx;
+}
+.title-show-view{
+  text-align:center;
+  font-weight:600;
+  font-size:1.4rem;
+  padding:30rpx 0;
+}
+
+.write-sys-msg{
+  margin:0 20rpx;
+}
+
+.msg-send-title{
+  text-align:center;
+  font-weight:600;
+  padding:10rpx 0;
+}
+
+#sysarea{
+  border:1px solid #999;
+  text-indent:0.8rem;
+  font-size:1.4rem;
+  color:rgb(255, 0, 55);
+}
