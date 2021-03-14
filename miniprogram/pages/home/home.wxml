@@ -48,13 +48,13 @@
   </view>
 
   <!-- 我的日记 -->
-  <navigator url="myDiary/myDiary">
+  <!-- <navigator url="myDiary/myDiary">
     <view class="my-view">
       <van-icon name="records"></van-icon>
       <text class="my-text">我的日记</text>
       <text class="diary-count-text">{{diaryCount}}</text>
     </view>
-  </navigator>
+  </navigator> -->
 
   <!-- 我的消息 -->
   <view class="my-view" catch:tap="toMessageDetail">

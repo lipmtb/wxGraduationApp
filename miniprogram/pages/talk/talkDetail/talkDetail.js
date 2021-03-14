@@ -1,5 +1,9 @@
 // miniprogram/pages/talk/talkDetail/talkDetail.js
-const db = wx.cloud.database();
+const db = wx.cloud.database({
+  env: 'blessapp-20201123'
+});
+const _ = db.command;
+const $ = _.aggregate;
 const app = getApp();
 import MyNotify from '../../../util/mynotify/mynotify';
 import customFormatTime from '../../../util/customTime';
@@ -17,6 +21,7 @@ Page({
     curUser: "",
     commentText: '666',
     curCommentCount: 0,
+    lastCommentTimeStr: '',
     shareImgFileId: 'cloud://blessapp-20201123.626c-blessapp-20201123-1304304117/加减乘除-2021-02-10T06:14:42.595Z.png',
     shareImgUrl: ''
   },
@@ -59,8 +64,8 @@ Page({
       });
     });
 
-    this.getCurUser().then((userRes)=>{
-      this.pageData.curUser=userRes;
+    this.getCurUser().then((userRes) => {
+      this.pageData.curUser = userRes;
     });
     //获取帖子的评论
     that.getCommentLists();
@@ -141,10 +146,29 @@ Page({
   //获取文章的评论
   async getCommentLists() {
     let that = this;
-    let getCommentRes = await db.collection("comment").where({
-      commentTalkId: that.options.talkId
-    }).orderBy("commentTime", "desc").skip(that.pageData.curCommentCount).limit(5).get();
+    let getCommentRes = null;
+    if (that.pageData.lastCommentTimeStr) {
+      
+      getCommentRes = await db.collection("comment").where({
+        commentTalkId: that.options.talkId,
+        commentTime: _.lt(that.pageData.lastCommentTimeStr)
+      }).orderBy("commentTime", "desc").limit(5).get();
 
+    } else {
+      getCommentRes = await db.collection("comment").where({
+        commentTalkId: that.options.talkId
+      }).orderBy("commentTime", "desc").skip(that.pageData.curCommentCount).limit(5).get();
+
+      that.pageData.curCommentCount += getCommentRes.data.length;
+    }
+
+    //保留查询出的最后一条评论的标识，为下一次获取更多评论使用（限制范围）
+    if (getCommentRes.data.length > 0) {
+      console.log(getCommentRes.data[getCommentRes.data.length - 1].commentTime);
+      that.pageData.lastCommentTimeStr = getCommentRes.data[getCommentRes.data.length - 1].commentTime;
+    }
+
+    console.log("获取talk的评论", getCommentRes);
     if (getCommentRes.data.length < 5) {
       that.setData({
         hasMoreComment: false
@@ -162,12 +186,22 @@ Page({
     }
 
     that.data.commentLists.push(...getCommentRes.data);
-    that.pageData.curCommentCount += getCommentRes.data.length;
-    console.log("获取评论成功", getCommentRes.data);
+
     that.setData({
       commentLists: that.data.commentLists
     });
 
+  },
+  formatServerDate(da) {
+    da = new Date(da - 8 * 60 * 60 * 1000);
+    let year = da.getFullYear();
+    let month = da.getMonth() + 1;
+    let date = da.getDate();
+    let hour = da.getHours();
+    let minute = da.getMinutes();
+    let second = da.getSeconds();
+
+    return `${year}-${month}-${date} ${hour}:${minute}:${second}`;
   },
   //触底加载更多评论
   onReachBottom() {
@@ -236,12 +270,12 @@ Page({
         _id: res._id,
         commentText: that.pageData.commentText,
         commentTime: customFormatTime(new Date()),
-        userInfo:that.pageData.curUser||errUser
+        userInfo: that.pageData.curUser || errUser
       })
       that.createCommentMessage(res._id);
       that.setData({
         commentInputValue: '',
-        commentLists:that.data.commentLists
+        commentLists: that.data.commentLists
       });
     })
   },

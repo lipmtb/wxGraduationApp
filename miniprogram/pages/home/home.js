@@ -4,7 +4,7 @@ const db = wx.cloud.database();
 const _ = db.command;
 Page({
   data: {
-    activeNames: ['1'],//默认展开第一个，即我的发布
+    activeNames: ['1'], //默认展开第一个，即我的发布
     inProgressCount: 0 //未读我的消息数
   },
   pageData: {
@@ -18,24 +18,67 @@ Page({
       this.getInprogressMsg(); //获取消息总数
       this.getOrderCount(); //获取预约数
       this.getRentCount(); //获取租赁数
+      this.watchMyMsg();
     });
 
 
   },
-  onPullDownRefresh(){
+  //监听与当前用户相关的消息
+  watchMyMsg() {
+    let that = this;
+    db.collection("message").where({
+      toUser: that.pageData.userOpenId,
+      status: 'progress'
+    }).limit(99).watch({
+      onChange: function (snap) {
+        console.log(snap);
+        //snap.type=undefined表示新的变化
+        if (!snap.type) {
+          //消息变更
+
+          if (snap.docChanges[0].dataType === 'add') {
+            that.setData({
+              inProgressCount: that.data.inProgressCount + 1
+            });
+          }
+
+
+          if (snap.docChanges[0].dataType === 'add' && snap.docChanges[0].doc.type === 'locOrder') {
+            that.setData({
+              orderCount: that.data.orderCount + 1
+            });
+          }
+
+          if (snap.docChanges[0].dataType === 'add' && snap.docChanges[0].doc.type === 'equipOrder') {
+            that.setData({
+              rentEquipCount: that.data.rentEquipCount + 1
+            });
+          }
+        }
+      },
+      onError: function (err) {
+        console.error('the watch closed because of error', err);
+      }
+    })
+  },
+  onPullDownRefresh() {
     wx.showLoading({
       title: '正在刷新',
     })
     this.getOpenId().then(() => {
-      let userInfoPros=this.getUserInfo(); //获取用户信息
-      let diaryInfoPros= this.getDiaryCount(); //获取日记总数
-      let inProgressMsgInfoPros=this.getInprogressMsg(); //获取消息总数
-      let orderInfoPros=this.getOrderCount(); //获取预约数
-      let rentInfoPros= this.getRentCount(); //获取租赁数
-      Promise.all([userInfoPros,diaryInfoPros,inProgressMsgInfoPros,orderInfoPros,rentInfoPros]).then(()=>{
+      let userInfoPros = this.getUserInfo(); //获取用户信息
+      let diaryInfoPros = this.getDiaryCount(); //获取日记总数
+      let inProgressMsgInfoPros = this.getInprogressMsg(); //获取消息总数
+      let orderInfoPros = this.getOrderCount(); //获取预约数
+      let rentInfoPros = this.getRentCount(); //获取租赁数
+      Promise.all([userInfoPros, diaryInfoPros, inProgressMsgInfoPros, orderInfoPros, rentInfoPros]).then(() => {
+        wx.showToast({
+          title: '刷新成功',
+        })
+      }).finally(() => {
         wx.stopPullDownRefresh({
           success: (res) => {
-            console.log("刷新成功");
+
           }
         })
       })
@@ -85,7 +128,7 @@ Page({
     let countRes = await db.collection("message").where({
       toUser: openid,
       type: 'locOrder',
-      status:'progress'
+      status: 'progress'
     }).count();
     this.setData({
       orderCount: countRes.total
@@ -97,7 +140,7 @@ Page({
     let countRes = await db.collection("message").where({
       toUser: openid,
       type: 'equipOrder',
-      status:'progress'
+      status: 'progress'
     }).count();
     this.setData({
       rentEquipCount: countRes.total
