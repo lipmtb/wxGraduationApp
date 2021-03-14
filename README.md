@@ -13,7 +13,7 @@ tipEssays技巧类帖子，tipComment技巧类帖子评论，likeTip点赞帖子
 
 
 
-- 第四个是我的，有我的预约（钓点预约，装备预约:我的租赁包括几种情况，如orderStatus=unconfirmed的不显示出来，orderStatus=progress或者cancel，destroy显示出来，cancel和destroy可以删除），我的收藏（收藏的钓友圈文章，问答圈文章，技巧部分的文章，钓点，装备），我的日记（记录自己的钓鱼经历），消息（钓点预约，装备预约等消息，系统通知等）。
+- 第四个是我的，有我的预约（钓点预约，装备预约:我的租赁包括几种情况，如orderStatus=unconfirmed的不显示出来，orderStatus=progress或者cancel，destroy显示出来，cancel和destroy可以删除），我的收藏（收藏的钓友圈文章，问答圈文章，技巧部分的文章，钓点，装备），我的日记（记录自己的钓鱼经历），消息（圈内消息，钓点预约消息，装备租赁和系统公告消息等）。
 
 
 
