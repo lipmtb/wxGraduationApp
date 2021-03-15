@@ -1,5 +1,9 @@
 import * as echart from '../../ec-canvas/echarts';
 let QQMapWX = require('../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
+import qqmapkey from "../../qqmapConfig/keyconfig.js";
+import wConfig from "../../weatherConfig/weatherConfig.js";
+import mConfig from "../../weatherConfig/minuteConfig.js";
+
 const db = wx.cloud.database();
 const _ = db.command;
 const $ = _.aggregate;
@@ -370,7 +374,7 @@ Page({
   },
   onLoad() {
     this.pageData.qqmapsdk = new QQMapWX({
-      key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
+      key: qqmapkey
     });
     //天气服务
     //获取当前位置信息，并获取当前位置的天气情况
@@ -427,7 +431,8 @@ Page({
       name: "getDiaryWeather",
       data: {
         long: that.pageData.curLng,
-        lat: that.pageData.curLat
+        lat: that.pageData.curLat,
+        weatherConfig:wConfig
       }
     });
     let wea = JSON.parse(curWeaRes.result);
@@ -468,13 +473,15 @@ Page({
   },
   //获取24小时天气
   async getFurture24() {
+
     let that = this;
     let fu24Res = await wx.cloud.callFunction({
       name: 'getDiaryWeather',
       data: {
         long: that.pageData.curLng,
         lat: that.pageData.curLat,
-        daWeather: '24h'
+        daWeather: '24h',
+        weatherConfig:wConfig
       }
     });
     let weaRes = JSON.parse(fu24Res.result);
@@ -511,7 +518,8 @@ Page({
       name: 'getMinutely',
       data: {
         long: this.pageData.curLng,
-        lat: this.pageData.curLat
+        lat: this.pageData.curLat,
+        weatherConfig:mConfig
       }
     });
     let mRes = minutelyReq.result;
@@ -538,7 +546,8 @@ Page({
       data: {
         long: that.pageData.curLng,
         lat: that.pageData.curLat,
-        daWeather: '7d'
+        daWeather: '7d',
+        weatherConfig:wConfig
       }
     });
     let weaRes = JSON.parse(furRes.result);

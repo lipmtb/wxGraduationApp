@@ -7,6 +7,7 @@ const template_id = 'QIk7dR4Q-XsKlu22ED5O8zJ26_08ZWW5ZtQkUdj_m08';
 import MyNotify from '../../../util/mynotify/mynotify';
 import customFormatTime from '../../../util/customTime';
 let QQMapWX = require('../../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
+import qqmapkey from "../../../qqmapConfig/keyconfig";
 Page({
   data: {
     popVisible: false, //默认不显示遮罩
@@ -51,7 +52,7 @@ Page({
   onLoad: function (options) {
     //初始化腾讯位置服务，用于获取附近渔具店，烧烤，饭店等
     this.pageData.qqmapsdk = new QQMapWX({
-      key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
+      key: qqmapkey
     });
 
     //初始化通知（后面注册成败与否可以调用）

@@ -2,6 +2,7 @@
 const db = wx.cloud.database();
 import customFormatTime from '../../../util/customTime';
 let QQMapWX = require('../../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
+import qqmapkey from "../../../qqmapConfig/keyconfig";
 Page({
 
   data: {
@@ -30,7 +31,7 @@ Page({
     })
     let that = this;
     this.pageData.qqmapsdk = new QQMapWX({
-      key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
+      key: qqmapkey
     });
     //获取当前用户的openid
     let openidRes = wx.cloud.callFunction({

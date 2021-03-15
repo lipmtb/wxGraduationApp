@@ -1,14 +1,13 @@
 // 获取2小时内的天气变化：分钟级降水
 const cloud = require('wx-server-sdk');
 cloud.init();
-const {
-  config
-} = require("config.js");
+
 const zlib = require("zlib");
 const https = require("https");
 
 
 exports.main = async (event, context) => {
+  let config=event.weatherConfig;
   let longNum = event.long;
   let latNum = event.lat;
   let urlStr = config.base;
