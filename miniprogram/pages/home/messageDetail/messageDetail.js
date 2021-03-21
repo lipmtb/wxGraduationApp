@@ -142,15 +142,19 @@ Page({
   },
   // 获取系统消息
   async getSysMessageLists() {
-    let openidRes = await wx.cloud.callFunction({
-      name: 'getUserOpenId'
-    });
-    let useropenid = openidRes.result;
+    let useropenid = wx.getStorageSync("userOpenId");
+    if (!useropenid) {
+      let openidRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
+      });
+      useropenid = openidRes.result;
+    }
+
 
     let datares = await db.collection("message").where({
       toUser: useropenid,
       type: 'system'
-    }).orderBy("time", "asc").skip(this.pageData.curSysMsgCount).limit(4).get();
+    }).orderBy("time", "desc").skip(this.pageData.curSysMsgCount).limit(4).get();
     for (let it of datares.data) {
       if (it.status === 'progress') {
         wx.cloud.callFunction({
@@ -160,9 +164,9 @@ Page({
           }
         }).then((updateRes) => {
           //更新home页面的消息数，messageDetail的上个page：home
-          this.pageData.homePageThis.setData({
-            inProgressCount: this.pageData.homePageThis.data.inProgressCount - 1
-          })
+          // this.pageData.homePageThis.setData({
+          //   inProgressCount: this.pageData.homePageThis.data.inProgressCount - 1
+          // })
           console.log("阅读系统消息:", updateRes.result)
         });
 
@@ -274,6 +278,9 @@ Page({
           title: '刷新预约消息'
         })
         this.getOrderMsgLists().then((orderlists) => {
+          wx.stopPullDownRefresh({
+            success: (res) => {},
+          })
           wx.hideLoading({
             success: (res) => {
               console.log("刷新预约消息", orderlists);
@@ -291,6 +298,9 @@ Page({
           title: '刷新租赁消息'
         })
         this.getRentOrderMsgs().then((orderlists) => {
+          wx.stopPullDownRefresh({
+            success: (res) => {},
+          })
           wx.hideLoading({
             success: (res) => {
               console.log("刷新租赁消息", orderlists);
@@ -449,24 +459,17 @@ Page({
         if (statStr === 'progress') {
           that.updateMsgStatus(msgId).then((res) => {
             console.log("更新消息状态成功", res.result);
-
             that.replaceDataOnPath(['mainMessageLists', msgIdx, 'status'], 'finish');
-
             that.applyDataUpdates();
-            //更新home页面的消息数，messageDetail的上个page：home
-            that.pageData.homePageThis.setData({
-              inProgressCount: that.pageData.homePageThis.data.inProgressCount - 1
-            })
           });
 
         }
         //附加的评论信息给nav目标页
-        if (msgDetail.commentId) {
-          res.eventChannel.emit('receiveData', {
-            data: msgDetail.commentId
-          });
-        }
-
+        // if (msgDetail.commentId) {
+        //   res.eventChannel.emit('receiveData', {
+        //     data: msgDetail.commentId
+        //   });
+        // }
         console.log("nav success");
       }
     })
@@ -488,9 +491,9 @@ Page({
 
             that.replaceDataOnPath(['orderMsgLists', msgIdx, 'status'], 'finish');
             that.applyDataUpdates();
-            that.pageData.homePageThis.setData({
-              inProgressCount: that.pageData.homePageThis.data.inProgressCount - 1
-            })
+            // that.pageData.homePageThis.setData({
+            //   inProgressCount: that.pageData.homePageThis.data.inProgressCount - 1
+            // })
           });
 
         }
@@ -515,9 +518,9 @@ Page({
 
             that.replaceDataOnPath(['rentOrderLists', msgIdx, 'status'], 'finish');
             that.applyDataUpdates();
-            that.pageData.homePageThis.setData({
-              inProgressCount: that.pageData.homePageThis.data.inProgressCount - 1
-            })
+            // that.pageData.homePageThis.setData({
+            //   inProgressCount: that.pageData.homePageThis.data.inProgressCount - 1
+            // })
           });
 
         }

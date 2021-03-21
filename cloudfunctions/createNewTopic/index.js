@@ -7,7 +7,8 @@ exports.main = async (event, context) => {
   let newTopicName = event.classifyName;
   let resAdd= await db.collection("tipClassify").add({
     data: {
-      classifyName: newTopicName
+      classifyName: newTopicName,
+      readCount:0
     }
   });
   //新主题默认阅读量=0

@@ -18,6 +18,8 @@
   float: right;
   width:320rpx;
   height:400rpx;
+  margin-right:20rpx;
+  margin-top:10rpx;
 }
 
 /* 日期canvas */
@@ -30,7 +32,7 @@
   position: absolute;
   width:110rpx;
   height:110rpx;
-  left:-20rpx;
+  left:-30rpx;
   top:20rpx;
 }
 /* 天气canvas */
@@ -58,7 +60,7 @@
 
 #loc-wea-hum {
   position: absolute;
-  left: -80rpx;
+  left: -100rpx;
   top: 140rpx;
   width: 320rpx;
   height: 120rpx;
@@ -66,7 +68,7 @@
 
 #loc-wea-pres {
   position: absolute;
-  left: 80rpx;
+  left: 70rpx;
   top: 140rpx;
   width: 320rpx;
   height: 120rpx;

@@ -4,7 +4,7 @@ const cloud = require('wx-server-sdk');
 cloud.init();
 const db = cloud.database();
 const _ = db.command;
-// 云函数入口函数
+
 exports.main = async (event, context) => {
   let allDel = [];
   let delTpId = event.topicId;
@@ -16,9 +16,9 @@ exports.main = async (event, context) => {
   }])).remove();
   allDel.push(topicRelevantRes);
   //删除阅读
-  let readRes = await db.collection("readTopic").where({
-    classifyId: delTpId
-  }).remove();
+  // let readRes = await db.collection("readTopic").where({
+  //   classifyId: delTpId
+  // }).remove();
 
   //删除类型的相关帖子
   let essayArrRes = await db.collection("tipEssays").where({

@@ -7,5 +7,6 @@
     <button data-arrange-type="tipArrange"  class="type-button">管理技巧主题帖子</button>
     <button data-arrange-type="equipArrange" class="type-button" >管理装备</button>
     <button data-arrange-type="sysMsgArrange" class="type-button" >系统消息</button>
+    <!-- <button data-arrange-type="sysMsgArrange" class="type-button" >预约和租赁</button> -->
   </view>
 </view>

@@ -356,6 +356,12 @@ Page({
         })
       });
     }
+  },
+  onShareAppMessage(){
+    return {
+      title:"杂谈",
+      path:'/pages/talk/talk'
+    }
   }
 
 

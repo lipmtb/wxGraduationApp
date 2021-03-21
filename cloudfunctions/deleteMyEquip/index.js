@@ -11,6 +11,7 @@ exports.main = async (event, context) => {
   let eId = event.equipId;
   let allDel = [];
 
+  let equipDetailInfo = await db.collection("equip").doc(eId).get();
   //装备相关的预约订单及其提醒订单取消消息
   let orderRes=await db.collection("rentEquip").where({
     rentEquipId:eId
@@ -26,7 +27,7 @@ exports.main = async (event, context) => {
     });
     let toUser=od._openid;
     let msg={
-      msgContent:'租赁订单被取消，装备发布者取消了装备',
+      msgContent:'租赁订单被取消，装备发布者取消了装备:'+equipDetailInfo.equipName,
       msgFrom:"rentEquip",
       msgFromId:od._id
     }
@@ -58,7 +59,7 @@ exports.main = async (event, context) => {
   allDel.push(collectRes);
 
   //删除帖子上传的文件
-  let essayItem = await db.collection("equip").doc(essayId).get();
+  let essayItem = await db.collection("equip").doc(eId).get();
   let delImgArr = [];
   for (let fileid of essayItem.data.images) {
     let delFileImgRes = await cloud.callFunction({

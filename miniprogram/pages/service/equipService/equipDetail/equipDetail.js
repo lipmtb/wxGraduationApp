@@ -6,6 +6,7 @@ const app = getApp();
 import MyNotify from '../../../../util/mynotify/mynotify';
 import customFormatTime from '../../../../util/customTime';
 let QQMapWX = require('../../../../qqmap-wx-jssdk1.2/qqmap-wx-jssdk');
+import qqmapkey from "../../../../qqmapConfig/keyconfig";
 Page({
   data: {
     popVisible: false, //默认不显示遮罩
@@ -76,7 +77,7 @@ Page({
   },
   onLoad: function (options) {
     this.pageData.qqmapsdk = new QQMapWX({
-      key: 'YSTBZ-2AV62-M4MUW-CBF5K-OSK2F-4CBEF'
+      key: qqmapkey
     });
 
 
@@ -120,8 +121,8 @@ Page({
     //根据_id获取内容和发布者的信息
     let equipRes = await db.collection('equip').doc(this.options.equipId).get();
 
-    let eTypeRes=await db.collection("equipType").doc(equipRes.data.equipTypeId).get();
-    equipRes.data.equipType=eTypeRes.data;
+    let eTypeRes = await db.collection("equipType").doc(equipRes.data.equipTypeId).get();
+    equipRes.data.equipType = eTypeRes.data;
 
 
     //根据发布者_openid获取发布者的详细信息
@@ -168,8 +169,8 @@ Page({
         longitude: curLocRes.longitude
       },
       to: [{
-        longitude:  tarequip.locationDetail&&tarequip.locationDetail.longitude||116.674,
-        latitude:  tarequip.locationDetail&&tarequip.locationDetail.latitude||23.4665
+        longitude: tarequip.locationDetail && tarequip.locationDetail.longitude || 116.674,
+        latitude: tarequip.locationDetail && tarequip.locationDetail.latitude || 23.4665
       }],
       success: (disres) => {
         console.log(disres);
@@ -235,16 +236,6 @@ Page({
       }
     })
   },
-  //分享这篇帖子
-  onShareAppMessage() {
-    console.log(this.pageData.shareImgUrl);
-    return {
-      title: '装备分享',
-      path: '/pages/service/equipService/equipDetail/equipDetail',
-      imageUrl: this.pageData.shareImgUrl
-    }
-  },
-
   onInputRelated(e) {
     this.pageData.curInputRelated = e.detail;
   },
@@ -255,38 +246,47 @@ Page({
   // 确认租用
   async confirmOrder() {
 
-    let that=this;
-    let userOpenId=wx.getStorageSync('userOpenId');
-    if(!userOpenId){
-      let openRes=await wx.cloud.callFunction({
-        name:'getUserOpenId'
+    let that = this;
+    let userOpenId = wx.getStorageSync('userOpenId');
+    if (!userOpenId) {
+      let openRes = await wx.cloud.callFunction({
+        name: 'getUserOpenId'
       });
-      userOpenId=openRes.result;
+      userOpenId = openRes.result;
     }
 
-    let userInfoRes=await db.collection("angler").where({
-      _openid:userOpenId
+    let userInfoRes = await db.collection("angler").where({
+      _openid: userOpenId
     }).get();
-    let userObj=userInfoRes.data[0];//获取租赁用户对象
+    let userObj = userInfoRes.data[0]; //获取租赁用户对象
 
     //添加租赁订单
-    let rentRes=await db.collection("rentEquip").add({
-      data:{
-        rentEquipId:that.data.equipItemData._id,//租用的装备
-        rentUserName:userObj.tempNickName,//租用者昵称
-        rentStartTime:that.pageData.curStartTimeInfo,//租用起始时间
-        rentEndTime:that.pageData.curEndTimeInfo,//租用结束时间
-        related:that.pageData.curInputRelated,//租用联系方式
-        rentAddress:that.pageData.curInputAddress,//租用详细地址
-        rentTime:new Date(),
-        orderStatus:'unconfirmed'
+    let rentRes = await db.collection("rentEquip").add({
+      data: {
+        rentEquipId: that.data.equipItemData._id, //租用的装备
+        rentUserName: userObj.tempNickName, //租用者昵称
+        rentStartTime: that.pageData.curStartTimeInfo, //租用起始时间
+        rentEndTime: that.pageData.curEndTimeInfo, //租用结束时间
+        related: that.pageData.curInputRelated, //租用联系方式
+        rentAddress: that.pageData.curInputAddress, //租用详细地址
+        rentTime: new Date(),
+        orderStatus: 'unconfirmed'
       }
     })
     wx.navigateTo({
-      url: '../rentDetail/rentDetail?rentId='+rentRes._id,
+      url: '../rentDetail/rentDetail?rentId=' + rentRes._id,
     })
 
 
+  },
+  //分享装备
+  onShareAppMessage() {
+    let eid = this.options.equipId;
+    return {
+      title: '钓鱼装备',
+      path: '/pages/service/equipService/equipDetail/equipDetail?equipId=' + eid
+    }
   }
+
 
 })

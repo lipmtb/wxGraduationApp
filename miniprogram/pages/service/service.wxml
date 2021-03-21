@@ -103,8 +103,8 @@
           </near-cpn>
         </block>
       </view>
-      <view class="more-recommend-foot" style="color:#999;font-size:0.6rem;">
-        <text class="more-text" style="float:right;margin-right:12rpx;" catch:tap="showMoreLoc">更多</text>
+      <view class="more-recommend-foot" style="color:#999;font-size:0.8rem;">
+        <text class="more-text" style="float:right;margin-right:20rpx;" catch:tap="showMoreLoc">更多</text>
       </view>
 
     </van-tab>

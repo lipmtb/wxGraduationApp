@@ -35,23 +35,41 @@ Page({
         //snap.type=undefined表示新的变化
         if (!snap.type) {
           //消息变更
-
+          //总的未读消息增加
           if (snap.docChanges[0].dataType === 'add') {
             that.setData({
               inProgressCount: that.data.inProgressCount + 1
             });
           }
+          //总的未读消息减少
+          if (snap.docChanges[0].dataType === 'update') {
+            that.setData({
+              inProgressCount: that.data.inProgressCount - 1
+            });
+          }
 
-
+          //钓点预约消息
           if (snap.docChanges[0].dataType === 'add' && snap.docChanges[0].doc.type === 'locOrder') {
             that.setData({
               orderCount: that.data.orderCount + 1
             });
           }
 
+          if (snap.docChanges[0].dataType === 'update' && snap.docChanges[0].doc.type === 'locOrder') {
+            that.setData({
+              orderCount: that.data.orderCount - 1
+            });
+          }
+          //装备租赁消息
           if (snap.docChanges[0].dataType === 'add' && snap.docChanges[0].doc.type === 'equipOrder') {
             that.setData({
               rentEquipCount: that.data.rentEquipCount + 1
+            });
+          }
+
+          if (snap.docChanges[0].dataType === 'update' && snap.docChanges[0].doc.type === 'equipOrder') {
+            that.setData({
+              rentEquipCount: that.data.rentEquipCount - 1
             });
           }
         }

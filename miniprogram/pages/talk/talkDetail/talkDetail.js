@@ -27,13 +27,13 @@ Page({
   },
   onLoad: function (options) {
 
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.emit("receiveEvent", {
-      data: 'talk detail66'
-    });
-    eventChannel.on("receiveData", function (da) {
-      console.log("talkDetail reveive:", da);
-    });
+    // const eventChannel = this.getOpenerEventChannel();
+    // eventChannel.emit("receiveEvent", {
+    //   data: 'talk detail66'
+    // });
+    // eventChannel.on("receiveData", function (da) {
+    //   console.log("talkDetail reveive:", da);
+    // });
     //初始化通知（后面注册成败与否可以调用）
     this.notify = new MyNotify({
       pageThis: this,
@@ -148,7 +148,7 @@ Page({
     let that = this;
     let getCommentRes = null;
     if (that.pageData.lastCommentTimeStr) {
-      
+
       getCommentRes = await db.collection("comment").where({
         commentTalkId: that.options.talkId,
         commentTime: _.lt(that.pageData.lastCommentTimeStr)
@@ -438,11 +438,10 @@ Page({
   },
   //分享这篇帖子
   onShareAppMessage() {
-    console.log(this.pageData.shareImgUrl);
+    let tid = this.options.talkId;
     return {
       title: '钓友圈分享',
-      path: '/pages/talk/talkDetail/talkDetail',
-      imageUrl: this.pageData.shareImgUrl
+      path: '/pages/talk/talkDetail/talkDetail?talkId=' + tid
     }
   }
 

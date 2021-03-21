@@ -18,6 +18,6 @@
 </view>
 
 <view wx:else class="login-arrange-select">
-  <button  class="plain-btn-select" open-type="getUserInfo" bindgetuserinfo="onUserLogin">登录</button>
-  <button class="admin-btn-select" wx:if="{{hasAdRight}}" bind:tap="toArrangePage">进入管理页</button>
+  <button  class="plain-btn-select" open-type="getUserInfo" bindgetuserinfo="onUserLogin" style="width: 303rpx; height: 108rpx; display: block; box-sizing: border-box">登录</button>
+  <button class="admin-btn-select" wx:if="{{hasAdRight}}" bind:tap="toArrangePage" style="width: 303rpx; height: 108rpx; display: block; box-sizing: border-box">进入管理页</button>
 </view>

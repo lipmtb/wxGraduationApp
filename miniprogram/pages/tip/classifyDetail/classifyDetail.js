@@ -22,13 +22,20 @@ Page({
   },
   // 进入此主题时增加此话题的阅读量
   async readTopic() {
-    return await db.collection("readTopic").add({
+    let that=this;
+    return await wx.cloud.callFunction({
+      name: "readTipClassify",
       data: {
-        classifyId: this.pageData.curClassifyId
+        classifyId: that.pageData.curClassifyId
       }
-    }).then((res) => {
-      console.log("阅读", this.pageData.curClassifyId);
-    })
+    });
+    // return await db.collection("readTopic").add({
+    //   data: {
+    //     classifyId: this.pageData.curClassifyId
+    //   }
+    // }).then((res) => {
+    //   console.log("阅读", this.pageData.curClassifyId);
+    // })
   },
   //获取分类主题的信息
   async getTopicInfo() {
@@ -40,11 +47,11 @@ Page({
       classifyId: that.pageData.curClassifyId,
       classifyName: res.data.classifyName
     });
-  
-      wx.setNavigationBarTitle({
-        title: res.data.classifyName
-      })
-    
+
+    wx.setNavigationBarTitle({
+      title: res.data.classifyName
+    })
+
   },
   //获取当前分类的帖子
   async getTopicLists() {
@@ -125,9 +132,9 @@ Page({
         }
       ]
     )).orderBy("relatedCount", "desc").limit(3).get();
-    console.log("topicRelevant:",relevantRes);
-   
-    let relevantArr = [];//相关主题的tipClassify的_id数组
+    console.log("topicRelevant:", relevantRes);
+
+    let relevantArr = []; //相关主题的tipClassify的_id数组
     let reslists = relevantRes.data;
     for (let item of reslists) {
       item.fromTopicId === that.pageData.curClassifyId ? relevantArr.push(item.toTopicId) : relevantArr.push(item.fromTopicId);
@@ -142,36 +149,35 @@ Page({
         }).sort({
           readCount: -1
         }).limit(2).end();
-      console.log("hotRes",hotRes.list);
+      console.log("hotRes", hotRes.list);
       for (let hotitem of hotRes.list) {
         if (hotitem._id != that.pageData.curClassifyId) {
           relevantArr.push(hotitem._id);
         }
       }
       //随机取两个主题分类
-      let resRandomRes=await db.collection("tipClassify").aggregate().match({
-        _id:_.nor([_.in(relevantArr),_.eq(that.pageData.curClassifyId)])
+      let resRandomRes = await db.collection("tipClassify").aggregate().match({
+        _id: _.nor([_.in(relevantArr), _.eq(that.pageData.curClassifyId)])
       }).sample({
-        size:2
+        size: 2
       }).end();
-     relevantArr.push(...resRandomRes.list.map((item)=>item._id));
-     console.log("获取相关的随机的主题", resRandomRes.list);
-    
-      relevantArr = [...new Set(relevantArr)];//避免重复的话题
+      relevantArr.push(...resRandomRes.list.map((item) => item._id));
+      console.log("获取相关的随机的主题", resRandomRes.list);
+
+      relevantArr = [...new Set(relevantArr)]; //避免重复的话题
       let classifyNameRes = await db.collection("tipClassify").where({
         _id: _.in(relevantArr)
       }).get();
-      console.log("全部主题",classifyNameRes);
+      console.log("全部主题", classifyNameRes);
       that.setData({
         relevantTopicLists: classifyNameRes.data
       })
     }
   },
   //发展主题之间的关系
-  async developRelevantion(toRelevantId){
-    let that=this;
-    let queryRes=await db.collection("topicRelevant").where(_.or([
-      {
+  async developRelevantion(toRelevantId) {
+    let that = this;
+    let queryRes = await db.collection("topicRelevant").where(_.or([{
         fromTopicId: that.pageData.curClassifyId,
         toTopicId: toRelevantId
       },
@@ -181,32 +187,32 @@ Page({
       }
     ])).get();
     //如果关系已经存在则更新好感度+1
-    if(queryRes.data.length>0){
-      let updateRes=await wx.cloud.callFunction({
-        name:'developTopicRelation',
-        data:{
-          relatedId:queryRes.data[0]._id
+    if (queryRes.data.length > 0) {
+      let updateRes = await wx.cloud.callFunction({
+        name: 'developTopicRelation',
+        data: {
+          relatedId: queryRes.data[0]._id
         }
       });
-      console.log("更新成功",updateRes.result);
+      console.log("更新成功", updateRes.result);
       return updateRes.result;
     }
 
-    let insertRes=await wx.cloud.callFunction({
-      name:"insertTopicRelevant",
-      data:{
-        fromId:that.pageData.curClassifyId,
-        toId:toRelevantId
+    let insertRes = await wx.cloud.callFunction({
+      name: "insertTopicRelevant",
+      data: {
+        fromId: that.pageData.curClassifyId,
+        toId: toRelevantId
       }
     });
-    console.log("开始新的关系",insertRes.result);
+    console.log("开始新的关系", insertRes.result);
     return insertRes;
   },
   async toRelevant(e) {
     // console.log(e);
     let relevId = e.currentTarget.dataset.relevantId;
-    await this.developRelevantion(relevId);//发展主题的关系
-  
+    await this.developRelevantion(relevId); //发展主题的关系
+
     wx.pageScrollTo({
       scrollTop: 0,
       duration: 300
@@ -224,7 +230,7 @@ Page({
     await this.readTopic(); //当前主题的阅读量增加
     await this.getTopicLists(); //获取当前分类的帖子
     await this.getRelevantTopicLists(); //获取当前主题的相关主题
-    
+
     wx.hideLoading({
       success: (res) => {
         wx.showToast({

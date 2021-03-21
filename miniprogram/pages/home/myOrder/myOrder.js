@@ -224,14 +224,7 @@ Page({
             wx.showToast({
               title: '取消预约成功'
             });
-            // that.pageData.curOrderLists.splice(oIdx, 1);
-            // that.pageData.curOrderCount -= 1;
-            // that.setData({
-            //   orderLocLists: that.pageData.curOrderLists
-            // });
-            // that.pageData.homePageThis.setData({
-            //   orderCount: that.pageData.homePageThis.data.orderCount - 1
-            // })
+        
           })
         }
 
@@ -253,7 +246,7 @@ Page({
     } = e.detail;
     wx.showModal({
       title: '删除我的预约',
-      content: '确定要删除：' + oInfo.orderLocName + "?",
+      content: '确定要删除到：' + oInfo.orderLocName + "的预约?",
       success: (res) => {
         if (res.confirm) {
 
@@ -307,10 +300,10 @@ Page({
               messageId: mId
             }
           }).then((res) => {
-            that.pageData.homePageThis.setData({
-              orderCount: that.pageData.homePageThis.data.orderCount - 1,
-              inProgressCount:that.pageData.homePageThis.data.inProgressCount-1
-            })
+            // that.pageData.homePageThis.setData({
+            //   orderCount: that.pageData.homePageThis.data.orderCount - 1,
+            //   inProgressCount:that.pageData.homePageThis.data.inProgressCount-1
+            // })
             that.replaceDataOnPath(['bookLists',idx,'status'],'finish');
             that.applyDataUpdates();
             console.log("更新消息已读", res.result);

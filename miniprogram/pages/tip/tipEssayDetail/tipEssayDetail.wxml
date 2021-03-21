@@ -6,7 +6,7 @@
   <!-- 评论发布输入框 -->
   <van-field value="{{commentInputValue}}" placeholder="输入你的评论" placeholder-style="text-indent:1rem;"
     border="{{ false }}" bind:change="onCommentChange" class="comment-field">
-    <van-button slot="button" size="small" type="primary" bind:click="onSendComment">发表评论</van-button>
+    <van-button slot="button" size="small" type="primary" bind:click="onSendComment" disabled="{{!canComment}}">发表评论</van-button>
   </van-field>
 
   <!-- 顶部用户信息和标题 -->
@@ -71,7 +71,11 @@
 
       </block>
     </view>
-
+   
+    <!-- 到底了 -->
+    <view wx:if="{{!hasMoreComment&&commentLists.length>5}}" class="comment-bottom-view" style="text-align:center;">
+      <text style="color:#666;font-size:0.6rem;">~到底了~</text>
+    </view>
   </view>
 
 

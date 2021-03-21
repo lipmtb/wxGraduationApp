@@ -3,20 +3,25 @@
   <van-cell-group>
     <van-cell title="租赁者" value="{{rentOrder.rentUserName}}">
     </van-cell>
-    <van-cell wx:if="{{equipInfo}}" title="租赁装备名" value="{{equipInfo.equipName}}">
-      <van-icon slot="right-icon" name="arrow" data-equip-id="{{equipInfo._id}}" bind:click="toEquipDetail" />
-    </van-cell>
-    <van-cell title="租赁者联系方式" value="{{rentOrder.related}}">
-    </van-cell>
-    <van-cell title="租赁者地址" value="{{rentOrder.rentAddress}}">
-    </van-cell>
-    <van-cell title="预订租赁开始时间" value="{{rentOrder.rentStartTime}}">
-    </van-cell>
-    <van-cell title="预订租赁结束时间" value="{{rentOrder.rentEndTime}}">
-    </van-cell>
-    <van-cell wx:if="{{rentOrder.orderStatus==='progress'}}" title="租赁状态" value="进行中">
-    </van-cell>
-    <van-cell wx:else title="租赁状态" value="已取消" style="color:red;">
+
+    <block wx:if="{{equipInfo}}">
+      <van-cell title="租赁装备名" value="{{equipInfo.equipName}}">
+        <van-icon slot="right-icon" name="arrow" data-equip-id="{{equipInfo._id}}" bind:click="toEquipDetail" />
+      </van-cell>
+      <van-cell title="预订租赁开始时间" value="{{rentOrder.rentStartTime}}">
+      </van-cell>
+      <van-cell title="预订租赁结束时间" value="{{rentOrder.rentEndTime}}">
+      </van-cell>
+      <van-cell title="租赁者联系方式" value="{{rentOrder.related}}">
+      </van-cell>
+      <van-cell title="租赁者地址" value="{{rentOrder.rentAddress}}">
+      </van-cell>
+      <van-cell wx:if="{{rentOrder.orderStatus==='progress'}}" title="租赁状态" value="进行中">
+      </van-cell>
+      <van-cell wx:else title="租赁状态" value="已取消" style="color:red;">
+      </van-cell>
+    </block>
+    <van-cell wx:else title="租赁状态" value="装备不存在了" style="color:red;">
     </van-cell>
   </van-cell-group>
 

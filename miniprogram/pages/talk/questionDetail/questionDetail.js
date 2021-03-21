@@ -523,6 +523,14 @@ Page({
     });
     query.exec();
 
+  },
+  //分享这篇帖子
+  onShareAppMessage() {
+    let that=this;
+    return {
+      title: '问答圈',
+      path: '/pages/talk/questionDetail/questionDetail?questionId='+that.options.questionId
+    }
   }
 
 })

@@ -16,7 +16,7 @@ Page({
     curTopicSkip: 0 //获取精选跳过的主题数
   },
   onLoad: function (options) {
-    let that=this;
+    let that = this;
     wx.setNavigationBarTitle({
       title: '技巧',
     })
@@ -65,16 +65,16 @@ Page({
     });
     console.log("加载精华", essenceRes.result);
     that.pageData.curSpecialCount = that.pageData.curSpecialCount + essenceRes.result.length;
-  
+
     that.data.essenceLists.push(...essenceRes.result);
-     //去除重复的帖子,并增加类型名
-     let obj={};
-     for(let li of that.data.essenceLists){
-       obj[li._id]=li;
-       let typeRes=await db.collection("tipClassify").doc(li.classifyId).get();
-       li.typeName=typeRes.data.classifyName;
-     }
-     console.log(obj);
+    //去除重复的帖子,并增加类型名
+    let obj = {};
+    for (let li of that.data.essenceLists) {
+      obj[li._id] = li;
+      let typeRes = await db.collection("tipClassify").doc(li.classifyId).get();
+      li.typeName = typeRes.data.classifyName;
+    }
+    console.log(obj);
     that.setData({
       essenceLists: Object.values(obj)
     });
@@ -86,6 +86,7 @@ Page({
   },
   // 下拉刷新
   onPullDownRefresh() {
+    let that=this;
     this.pageData.curSpecialCount = 0;
     this.pageData.curTopicSkip = 0;
     this.data.essenceLists = [];
@@ -93,7 +94,18 @@ Page({
       hasMoreEssays: true
     })
     let prs1 = this.getTopicLists();
-    let prs2 = this.getSpecialTipEssays(0);
+    let prs2 = this.getSpecialTipEssays(0).then((lists) => {
+      if (lists.length < 1) {
+        db.collection("tipEssays").aggregate().sample({
+          size: 1
+        }).end().then((resdata) => {
+          that.data.essenceLists.push(...resdata.list);
+          that.setData({
+            essenceLists: that.data.essenceLists
+          });
+        });
+      }
+    });
     Promise.all([prs1, prs2]).then(() => {
       wx.stopPullDownRefresh({
         success: (res) => {

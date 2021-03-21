@@ -34,18 +34,22 @@ Page({
     anglerInfo: {}, //发布者的信息
     hasCollected: false, //当前用户是否收藏过文章
     commentLists: [], //当前文章的评论列表
+    hasMoreComment: true,
+    canComment: false,
     commentInputValue: 666, //默认评论
     canRate: true,
     rateValue: 0, //默认的评分
     avgRateValue: 2.5 //默认的综合评分
   },
   pageData: {
-    userTempNickName:'',//当前用户的昵称
+    userTempNickName: '', //当前用户的昵称
+    curUserAvatarUrl: '', //当前用户的头像信息
     selectedOrderTime: new Date(), //选择的预约时间
-    curInputRelated:'123',//用户输入的联系方式
+    curInputRelated: '123', //用户输入的联系方式
     recommendNearLists: [], //钓点附近
     curRecommendNearCount: 0, //钓点附近
     commentText: '666', //评论发表的内容
+    curCommentCount: 0,
     shareImgFileId: 'cloud://blessapp-20201123.626c-blessapp-20201123-1304304117/加减乘除-2021-02-10T06:14:42.595Z.png',
     shareImgUrl: ''
   },
@@ -68,9 +72,13 @@ Page({
       bgColor: '#ccc'
     });
     let that = this;
-    that.getCurUserName().then((namestr)=>{
-      that.pageData.userTempNickName=namestr;
-      console.log(namestr);
+    that.getCurUserInfo().then((userInfo) => {
+      that.pageData.userTempNickName = userInfo.tempNickName;
+      that.pageData.curUserAvatarUrl = userInfo.avatarUrl;
+
+      that.setData({
+        canComment: true
+      })
     })
     //根据文章_id获取文章内容和发布者的信息
     db.collection('anglerLoc').doc(options.locId).get().then((res) => {
@@ -87,17 +95,17 @@ Page({
       this.setData({
         locItemData: res.data //文章的主要信息
       }, () => {
-        Promise.all([that.getRecommendNearLists("钓具"),that.getRecommendNearLists("烧烤"),that.getRecommendNearLists("饭店")]).then((resarr)=>{
+        Promise.all([that.getRecommendNearLists("钓具"), that.getRecommendNearLists("烧烤"), that.getRecommendNearLists("饭店")]).then((resarr) => {
           console.log(resarr);
           that.pageData.recommendNearLists.push(...resarr[0]);
           that.pageData.recommendNearLists.push(...resarr[1]);
           that.pageData.recommendNearLists.push(...resarr[2]);
-          that.pageData.curRecommendNearCount+=resarr[0].length;
-          that.pageData.curRecommendNearCount+=resarr[1].length;
-          that.pageData.curRecommendNearCount+=resarr[2].length;
-          console.log("当前的地点数:",that.pageData.curRecommendNearCount);
+          that.pageData.curRecommendNearCount += resarr[0].length;
+          that.pageData.curRecommendNearCount += resarr[1].length;
+          that.pageData.curRecommendNearCount += resarr[2].length;
+          console.log("当前的地点数:", that.pageData.curRecommendNearCount);
           that.setData({
-            recommendNearLists:that.pageData.recommendNearLists
+            recommendNearLists: that.pageData.recommendNearLists
           })
 
         });
@@ -198,6 +206,9 @@ Page({
   //用户发表评论
   onSendComment() {
     let that = this;
+    that.setData({
+      canComment: false
+    })
     db.collection('commentLoc').add({
       data: {
         commentLocId: that.options.locId,
@@ -206,25 +217,29 @@ Page({
       }
     }).then((res) => {
       console.log("评论成功", res);
-      that.getCommentLists();
-      that.createCommentMessage(res._id);
-      that.setData({
-        commentInputValue: ''
+      that.data.commentLists.unshift({
+        _id: res._id,
+        userInfo: {
+          tempNickName: that.pageData.userTempNickName,
+          avatarUrl: that.pageData.curUserAvatarUrl
+        },
+        commentText: that.pageData.commentText,
+        commentTime: '刚刚'
       });
+      that.pageData.curCommentCount++;
+
+      that.setData({
+        commentInputValue: '',
+        canComment: true,
+        commentLists: that.data.commentLists
+      });
+      that.createCommentMessage(res._id);
     })
   },
   async createCommentMessage(commentResId) {
     let that = this;
     let toUserId = this.data.anglerInfo._openid;
-    let fromUserRes = await wx.cloud.callFunction({
-      name: "getUserOpenId"
-    });
-    let fromUserArrRes = await db.collection("angler").where({
-      _openid: fromUserRes.result
-    }).get();
 
-    let fromUserId = fromUserRes.result;
-    let fromUserInfo = fromUserArrRes.data[0];
     return await db.collection("message").add({
       data: {
         toUser: toUserId, //接受消息的用户
@@ -234,43 +249,64 @@ Page({
         messageDetail: {
           msgFromId: that.options.locId,
           msgFrom: 'anglerLoc',
-          msgContent: fromUserInfo.tempNickName + "在你发布的钓点发表评论: " + that.pageData.commentText,
+          msgContent: that.pageData.userTempNickName + "在你发布的钓点发表评论: " + that.pageData.commentText,
           commentId: commentResId
         }
       }
     })
   },
   //获取文章的评论
-  getCommentLists() {
+  async getCommentLists() {
     let that = this;
-    db.collection("commentLoc").where({
-      commentLocId: that.options.locId
-    }).get().then((res) => {
-      console.log("获取评论成功", res);
-      //评论排序：按照发布的时间先后
-      res.data.sort(function (itemDataA, itemDataB) {
-        return itemDataB.commentTime - itemDataA.commentTime;
+    let commentRes = await db.collection("commentLoc").where({
+        commentLocId: that.options.locId
+      }).orderBy("commentTime", "desc")
+      .skip(that.pageData.curCommentCount).limit(5).get();
+
+
+    if (commentRes.data.length < 5) {
+      that.setData({
+        hasMoreComment: false
+      })
+    }
+    console.log("获取评论成功", commentRes);
+
+    //格式化输出时间和获取用户信息
+    let prosArr = [];
+    for (let itemData of commentRes.data) {
+      itemData.commentTime = customFormatTime(itemData.commentTime);
+
+      prosArr.push(db.collection('angler').where({
+        _openid: itemData._openid
+      }).get().then((userRes) => {
+        itemData.userInfo = userRes.data[0];
+      }));
+    }
+    Promise.all(prosArr).then(() => {
+      that.pageData.curCommentCount += commentRes.data.length;
+      that.data.commentLists.push(...commentRes.data);
+      that.setData({
+        commentLists: that.data.commentLists
       });
-      //格式化输出时间和获取用户信息
-      let prosArr = [];
-      for (let itemData of res.data) {
-        itemData.commentTime = customFormatTime(itemData.commentTime);
-
-        prosArr.push(db.collection('angler').where({
-          _openid: itemData._openid
-        }).get().then((userRes) => {
-          itemData.userInfo = userRes.data[0];
-        }));
-      }
-      Promise.all(prosArr).then(() => {
-
-        that.setData({
-          commentLists: res.data
-        });
-      });
-
-
     });
+  },
+  moreComment() {
+    let that=this;
+    if (that.data.hasMoreComment) {
+      wx.showLoading({
+        title: '更多评论'
+      })
+
+      that.getCommentLists().then(() => {
+        wx.hideLoading({
+          success: (res) => {},
+        })
+      })
+    }else{
+        wx.showToast({
+          title: '没有更多了',
+        })
+    }
   },
   //打开微信内置地图查看地点
   chooseLocationDetail(e) {
@@ -483,9 +519,9 @@ Page({
       currentDate: this.pageData.selectedOrderTime.getTime()
     })
   },
-  onInputRelated(e){
+  onInputRelated(e) {
     // console.log(e.detail.value);
-    this.pageData.curInputRelated=e.detail.value;
+    this.pageData.curInputRelated = e.detail.value;
   },
   //确认选择
   onSelectedTimeConfirm(e) {
@@ -512,26 +548,26 @@ Page({
 
   },
   //发送预约消息给钓点发布者
-  async sendOrderMsg(orderId){
-    let that=this;
-    let toUser=that.data.anglerInfo._openid;
-    let fromUserName=await this.getCurUserName();
-    let msgDetail={
-      msgFrom:'orderLoc',
-      msgContent:fromUserName+"预约了你发布的钓点:"+that.data.locItemData.locName+"，时间是："+that.formattedDateStr(that.pageData.selectedOrderTime),
-      msgFromId:orderId
+  async sendOrderMsg(orderId) {
+    let that = this;
+    let toUser = that.data.anglerInfo._openid;
+    let fromUserInfo = await this.getCurUserInfo();
+    let msgDetail = {
+      msgFrom: 'orderLoc',
+      msgContent: fromUserInfo.tempNickName + "预约了你发布的钓点:" + that.data.locItemData.locName + "，时间是：" + that.formattedDateStr(that.pageData.selectedOrderTime),
+      msgFromId: orderId
     }
     return await wx.cloud.callFunction({
-      name:'createOrderMsg',
-      data:{
-        toUser:toUser,
-        msgDetail:msgDetail,
-        type:'locOrder'
+      name: 'createOrderMsg',
+      data: {
+        toUser: toUser,
+        msgDetail: msgDetail,
+        type: 'locOrder'
       }
-    }).then((res)=>{
-      console.log("预约消息发送给钓点发布者",res);
+    }).then((res) => {
+      console.log("预约消息发送给钓点发布者", res);
     })
-    
+
   },
   //确认预约：数据库插入orderLoc
   async confirmOrderTime() {
@@ -541,7 +577,7 @@ Page({
     let orderLocId = locDetail._id; //钓点_id
     let orderLocName = locDetail.locName; //钓点名称
     let orderTime = that.pageData.selectedOrderTime; //预约的时间
-    let related=that.pageData.curInputRelated;//预约者联系方式
+    let related = that.pageData.curInputRelated; //预约者联系方式
     return await new Promise((resolve) => {
       wx.showModal({
         title: '钓点预约确认',
@@ -552,18 +588,18 @@ Page({
             db.collection("orderLoc").add({
               data: {
                 orderLocId: orderLocId,
-                orderTime: orderTime,//预约的时间
+                orderTime: orderTime, //预约的时间
                 orderLocName: orderLocName,
-                related:related,
-                createTime:new Date() ,//订单的创建时间
-                orderStatus:'progress'
+                related: related,
+                createTime: new Date(), //订单的创建时间
+                orderStatus: 'progress'
               }
             }).then((res) => {
 
               console.log("预约成功", res);
               resolve(res._id);
-              that.sendOrderMsg(res._id);//发locOrder类的消息通知发布者
-              that.pageData.oLocId=res._id;
+              that.sendOrderMsg(res._id); //发locOrder类的消息通知发布者
+              that.pageData.oLocId = res._id;
             })
           } else {
             resolve(false);
@@ -587,10 +623,10 @@ Page({
 
     })
   },
-  //获取当前用户的昵称
-  async getCurUserName() {
+  //获取当前用户的信息
+  async getCurUserInfo() {
     let openid = wx.getStorageSync('userOpenId');
-    let fromUserName = "";
+
     if (!openid) {
       let openRes = await wx.cloud.callFunction({
         name: 'getUserOpenId'
@@ -600,16 +636,15 @@ Page({
     let fromUserRes = await db.collection("angler").where({
       _openid: openid
     }).get();
-    fromUserName = fromUserRes.data[0].tempNickName;
-    return fromUserName;
+    return fromUserRes.data[0];
   },
   //订阅消息的date格式：2021年2月20日 15：12
-  formattedDateStr(da){
-    let year=da.getFullYear();
-    let month=da.getMonth()+1;
-    let date=da.getDate();
-    let hours=da.getHours();
-    let minute=da.getMinutes();
+  formattedDateStr(da) {
+    let year = da.getFullYear();
+    let month = da.getMonth() + 1;
+    let date = da.getDate();
+    let hours = da.getHours();
+    let minute = da.getMinutes();
     return `${year}年${month}月${date}日 ${hours}:${minute}`;
   },
   //请求发送订阅消息
@@ -626,10 +661,10 @@ Page({
             name: 'sendLocOrderMsg',
             data: {
               userId: that.data.anglerInfo._openid,
-              fromUser:  that.pageData.userTempNickName,
+              fromUser: that.pageData.userTempNickName,
               locName: that.data.locItemData.locName,
               orderTimeStr: that.formattedDateStr(that.pageData.selectedOrderTime),
-              orderId:that.pageData.oLocId
+              orderId: that.pageData.oLocId
             }
           }).then((res) => {
             console.log("云函数调用成功,结果：", res);
@@ -644,6 +679,13 @@ Page({
       }
     })
 
+  },
+  onShareAppMessage() {
+    let locid = this.options.locId;
+    return {
+      title: '钓点预约',
+      path: '/pages/service/locDetail/locDetail?locId=' + locid
+    }
   }
 
 })

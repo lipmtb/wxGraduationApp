@@ -294,10 +294,10 @@ Page({
               messageId: mId
             }
           }).then((res) => {
-            that.pageData.homePageThis.setData({
-              rentEquipCount: that.pageData.homePageThis.data.rentEquipCount - 1,
-              inProgressCount:that.pageData.homePageThis.data.inProgressCount-1
-            })
+            // that.pageData.homePageThis.setData({
+            //   rentEquipCount: that.pageData.homePageThis.data.rentEquipCount - 1,
+            //   inProgressCount:that.pageData.homePageThis.data.inProgressCount-1
+            // })
             that.replaceDataOnPath(['rentMsgLists',idx,'status'],'finish');
             that.applyDataUpdates();
             console.log("更新消息已读", res.result);

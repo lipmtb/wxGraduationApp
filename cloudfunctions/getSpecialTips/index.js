@@ -9,15 +9,23 @@ const $ = _.aggregate;
 exports.main = async (event, context) => {
   let skipNum=event.skipNum||0;
   let skipTopic=event.skipTopicNum||0;
-  let topicHotRes = await db.collection("tipClassify").aggregate().lookup({
-    from:'readTopic',
-    localField:'_id',
-    foreignField:'classifyId',
-    as:'readLists'
-  }).project({
+  // let topicHotRes = await db.collection("tipClassify").aggregate().lookup({
+  //   from:'readTopic',
+  //   localField:'_id',
+  //   foreignField:'classifyId',
+  //   as:'readLists'
+  // }).project({
+  //   _id:1,
+  //   classifyName:1,
+  //   readCount:$.size('$readLists')
+  // }).sort({
+  //   readCount: -1
+  // }).skip(skipTopic).limit(2).end();
+  
+  let topicHotRes = await db.collection("tipClassify").aggregate().project({
     _id:1,
     classifyName:1,
-    readCount:$.size('$readLists')
+    readCount:1
   }).sort({
     readCount: -1
   }).skip(skipTopic).limit(2).end();

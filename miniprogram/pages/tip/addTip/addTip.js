@@ -31,7 +31,7 @@ Page({
     this.notify.notifyInit();
 
     //获取已经存在的主题this.data.classifyNameLists，设置piker的初始状态
-    db.collection("tipClassify").get().then((resdata) => {
+    db.collection("tipClassify").limit(20).get().then((resdata) => {
       console.log(resdata);
       this.pageData.classifyLists = resdata.data;
       let classifyIdx = 0;
@@ -239,10 +239,6 @@ Page({
       });
 
     });
-
-
-
-
 
   },
   // 发布前先上传图片

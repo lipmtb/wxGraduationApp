@@ -612,11 +612,8 @@ Page({
       let width = quRes[0].width;
       let height = quRes[0].height;
 
-
       let context = canvas.getContext("2d"); //获取2d上下文对象
-      let metrics = context.measureText(textstr); //测量文本的宽度
-
-
+    
 
       let a = -21;
       let timer = setInterval(function () {
@@ -628,13 +625,16 @@ Page({
         context.clearRect(-20, -20, width * 3, height * 2);
         context.save();
         context.beginPath();
+     
+     
+        context.font = (scale + a) + "px KaiTi";
+        let metrics = context.measureText(textstr); //测量文本的宽度
         let linearGra = context.createLinearGradient(width / 2 - metrics.width / 2, height / 2 + 10, width / 2 + metrics.width / 2, height / 2 + 10);
         linearGra.addColorStop(0, "#00f");
         linearGra.addColorStop(0.4, "#0f0");
         linearGra.addColorStop(0.6, "#f0f");
         linearGra.addColorStop(1, "#00f");
         context.fillStyle = linearGra;
-        context.font = (scale + a) + "px KaiTi";
         context.closePath();
         context.fillText(textstr, width / 2, height / 2 + 40);
         context.restore();
@@ -791,5 +791,11 @@ Page({
       url: 'locDetail/locDetail?locId=' + locid,
     })
 
+  },
+  onShareAppMessage(){
+    return {
+      title:'垂钓者服务',
+      path:'/pages/service/service'
+    }
   }
 })
