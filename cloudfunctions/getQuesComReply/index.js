@@ -49,11 +49,7 @@ exports.main = async (event, context) => {
       tarUserInfo: $.arrayElemAt(['$tarUserArr', 0]),
       tarCommentId: 1,
       content: 1,
-      commentTime: $.dateToString({
-        date: '$commentTime',
-        format: '%Y-%m-%d %H:%M:%S',
-        timezone: 'Asia/Shanghai'
-      }),
+      commentTime:1,
       commentTimeDa: '$commentTime',
       likeCount: $.size('$likeCommentList'),
       hasLiked: $.cond({

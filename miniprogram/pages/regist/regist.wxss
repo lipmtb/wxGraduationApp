@@ -14,7 +14,7 @@
 
 .plain-btn-select{
   background-color:#0493f3;
-  padding:0 100rpx;
+  padding:0 110rpx;
   color:#fff;
 }
 

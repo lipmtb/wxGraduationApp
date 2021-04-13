@@ -72,5 +72,5 @@
     <van-icon name="delete" class="del-location-icon" bind:click="onDeleteLocation"></van-icon>
   </view>
 </view>
-<van-button type="primary" size="normal" color="#329df9" block class="sendBtnClass" bind:click="onAllSend">出租
+<van-button type="primary" size="normal" color="#329df9" block class="sendBtnClass"  bind:click="requestSendMsg">出租
 </van-button>

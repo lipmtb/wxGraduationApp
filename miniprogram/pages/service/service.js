@@ -28,10 +28,12 @@ let weatherOption = {
     top: 10
   },
   grid: {
-    left: 30,
-    width: '90%',
-    height: '60%',
-    bottom: 50
+    left: '10%',
+    right: '46%',
+    width: '76%',
+    height: '66%',
+    top:60,
+    bottom: 80
   },
   dataset: {
     // 图形的数据来源
@@ -40,19 +42,31 @@ let weatherOption = {
     ]
   },
   xAxis: {
-    name: '气温云量',
     type: 'category'
-    // axisPointer: {
-    //   label: {
-    //     formatter: function (params) {
-
-    //       return params.value +
-    //         (params.seriesData.length ? '：' + params.seriesData[0].data : '');
-    //     }
-    //   }
-    // }
   },
-  yAxis: {},
+  yAxis: [{
+    name: '气温',
+    axisLabel: {
+      formatter: '{value}°C'
+    },
+    splitLine: {
+      lineStyle: {
+        color: '#eee'
+      }
+    }
+  }, {
+    name: '云量',
+    max: 100,
+    nameGap: 15,
+    axisLine: {
+      lineStyle: {
+        color: '#00f'
+      }
+    },
+    splitLine: {
+      show: false
+    }
+  }],
   dataZoom: { //控制第一个xAxis的拉伸
     xAxisIndex: 0
   },
@@ -73,7 +87,8 @@ let weatherOption = {
     encode: {
       x: 'product',
       y: 'cloudlg'
-    }
+    },
+    yAxisIndex: 1
   }]
 
 }
@@ -101,10 +116,12 @@ let windOption = {
     top: 10
   },
   grid: {
-    left: 30,
-    width: '90%',
+    left: 28,
+    width: '86%',
     height: '60%',
-    bottom: 50
+    top: 50,
+    bottom: 160
+
   },
   dataset: {
     // 图形的数据来源
@@ -116,9 +133,36 @@ let windOption = {
     name: '风力风速',
     type: 'category'
   },
-  yAxis: {},
+  yAxis: {
+    name: '风速(节)',
+    type: 'value',
+    min: 1
+  },
+  visualMap: {
+    type: 'piecewise',
+    orient: 'horizontal',
+    left: 'center',
+    bottom: 0,
+    pieces: [{
+      gte: 17,
+      color: '#D33C3E',
+      label: '大风（>=17节）'
+    }, {
+      gte: 11,
+      lt: 17,
+      color: '#f4e9a3',
+      label: '中风（11  ~ 17 节）'
+    }, {
+      lt: 11,
+      color: '#18BF12',
+      label: '微风（小于 11 节）'
+    }],
+    seriesIndex: 0,
+    dimension: 1
+  },
   dataZoom: { //控制第一个xAxis的拉伸
-    xAxisIndex: 0
+    xAxisIndex: 0,
+    bottom: 30
   },
   series: [{
     name: '风速',
@@ -157,7 +201,7 @@ let minutelyOption = {
     top: 24
   },
   grid: {
-    left: 30,
+    left: 32,
     width: '90%',
     height: '60%',
     bottom: 50
@@ -172,7 +216,11 @@ let minutelyOption = {
     type: 'category'
 
   },
-  yAxis: {},
+  yAxis: {
+    name: '降雨量(mm)',
+    type: 'value',
+    min: 1
+  },
   series: [{
     name: '降水量',
     type: 'bar',
@@ -206,7 +254,7 @@ let dailyOption = {
     top: 0
   },
   grid: {
-    left: 30,
+    left: 32,
     width: '90%',
     height: '60%',
     bottom: 50
@@ -228,7 +276,10 @@ let dailyOption = {
     }
 
   ],
-  yAxis: {},
+  yAxis: {
+    name: '单位(°C)',
+    type: 'value'
+  },
   series: [{
     name: '最高温',
     type: 'line',
@@ -412,12 +463,11 @@ Page({
         success: (res) => {},
       })
     });
-   
+
   },
   // 获取当前日期格式：2021-02-21
   getDatimeText() {
     let da = new Date();
-
     let daTimeText = da.toLocaleDateString();
     let daStr = daTimeText.split("\/");
     daStr = daStr.join("-");
@@ -432,7 +482,7 @@ Page({
       data: {
         long: that.pageData.curLng,
         lat: that.pageData.curLat,
-        weatherConfig:wConfig
+        weatherConfig: wConfig
       }
     });
     let wea = JSON.parse(curWeaRes.result);
@@ -453,10 +503,11 @@ Page({
 
     //格式化最近更新时间
     let lastModifyStr = wea.updateTime;
-    let resStrMod = this.customFormatLastModifyTime(lastModifyStr);
-    this.setData({
-      modifyTimeStr: resStrMod
-    })
+    console.log("updateTime", lastModifyStr);
+    // let resStrMod = this.customFormatLastModifyTime(lastModifyStr);
+    // this.setData({
+    //   modifyTimeStr: resStrMod
+    // })
   },
   //格式化更新时间date.toLocaleString的输出
   customFormatLastModifyTime(lastModifyStr) {
@@ -481,7 +532,7 @@ Page({
         long: that.pageData.curLng,
         lat: that.pageData.curLat,
         daWeather: '24h',
-        weatherConfig:wConfig
+        weatherConfig: wConfig
       }
     });
     let weaRes = JSON.parse(fu24Res.result);
@@ -519,7 +570,7 @@ Page({
       data: {
         long: this.pageData.curLng,
         lat: this.pageData.curLat,
-        weatherConfig:mConfig
+        weatherConfig: mConfig
       }
     });
     let mRes = minutelyReq.result;
@@ -547,7 +598,7 @@ Page({
         long: that.pageData.curLng,
         lat: that.pageData.curLat,
         daWeather: '7d',
-        weatherConfig:wConfig
+        weatherConfig: wConfig
       }
     });
     let weaRes = JSON.parse(furRes.result);
@@ -613,7 +664,7 @@ Page({
       let height = quRes[0].height;
 
       let context = canvas.getContext("2d"); //获取2d上下文对象
-    
+
 
       let a = -21;
       let timer = setInterval(function () {
@@ -625,8 +676,8 @@ Page({
         context.clearRect(-20, -20, width * 3, height * 2);
         context.save();
         context.beginPath();
-     
-     
+
+
         context.font = (scale + a) + "px KaiTi";
         let metrics = context.measureText(textstr); //测量文本的宽度
         let linearGra = context.createLinearGradient(width / 2 - metrics.width / 2, height / 2 + 10, width / 2 + metrics.width / 2, height / 2 + 10);
@@ -654,7 +705,7 @@ Page({
           longitude: that.pageData.curLng
         },
         success: (res) => {
-          console.log("逆地址解析：",res);
+          console.log("逆地址解析：", res);
           that.setData({
             currentLocationText: res.result.formatted_addresses.recommend
           });
@@ -678,7 +729,7 @@ Page({
       wx.getLocation({
         type: 'gcj02',
         success: (res) => {
-           console.log(res);
+          console.log(res);
           let lon = res.longitude;
           let lat = res.latitude;
           that.pageData.curLat = lat;
@@ -696,7 +747,7 @@ Page({
       latitude: that.pageData.curLat,
       longitude: that.pageData.curLng,
       success(res) {
-         console.log("chooseLocation:", res);
+        console.log("chooseLocation:", res);
         wx.showToast({
           title: '选择位置成功'
         })
@@ -792,10 +843,10 @@ Page({
     })
 
   },
-  onShareAppMessage(){
+  onShareAppMessage() {
     return {
-      title:'垂钓者服务',
-      path:'/pages/service/service'
+      title: '垂钓者服务',
+      path: '/pages/service/service'
     }
   }
 })

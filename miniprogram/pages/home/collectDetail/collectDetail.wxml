@@ -17,7 +17,7 @@
       </view>
     </van-tab>
     <!-- 问答圈 -->
-    <van-tab title="问答圈" name="question">
+   <van-tab title="问答圈" name="question">
       <view class="data-lists-view">
         <block wx:for="{{questionLists}}" wx:for-item="questionitem">
           <my-question-cpn class="talk-item-view" itemData="{{questionitem}}">
@@ -29,7 +29,7 @@
       <view wx:if="{{!hasMoreArr[1]}}">
         <text>没有更多了。。。</text>
       </view>
-    </van-tab>
+    </van-tab> 
 
     <van-tab title="技巧" name="tip">
       <view class="data-lists-view">

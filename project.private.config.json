@@ -1,0 +1,167 @@
+{
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/home/home",
+          "pathName": "pages/home/home",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/addTalk",
+          "pathName": "pages/talk/addTalk/addTalk",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "talk",
+          "pathName": "pages/talk/talk",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/talk/talkDetail/talkDetail",
+          "pathName": "pages/talk/talkDetail/talkDetail",
+          "query": "talkId=28ee4e3e6017e7c1025315dd714ffe52",
+          "scene": null
+        },
+        {
+          "name": "pages/talk/questionDetail/questionDetail",
+          "pathName": "pages/talk/questionDetail/questionDetail",
+          "query": "questionId=79550af2602e754f0596138e4a53e21a",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/tip",
+          "pathName": "pages/tip/tip",
+          "query": "questionId=79550af26020ebbb035736427fb9f634",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/classifyDetail/classifyDetail",
+          "pathName": "pages/tip/classifyDetail/classifyDetail",
+          "query": "classifyId=28ee4e3e602618f804bdc11b686746ec",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/addTip/addTip",
+          "pathName": "pages/tip/addTip/addTip",
+          "query": "classifyId=b00064a76026193104801756453217ee",
+          "scene": null
+        },
+        {
+          "name": "pages/tip/moreClassify/moreClassify",
+          "pathName": "pages/tip/moreClassify/moreClassify",
+          "query": "classifyId=28ee4e3e602618f804bdc11b686746ec",
+          "scene": null
+        },
+        {
+          "name": "pages/home/sendDetail/sendDetail",
+          "pathName": "pages/home/sendDetail/sendDetail",
+          "query": "sendType=question",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myDiary/myDiary",
+          "pathName": "pages/home/myDiary/myDiary",
+          "query": "sendType=question",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myDiary/diaryDetail/diaryDetail",
+          "pathName": "pages/home/myDiary/diaryDetail/diaryDetail",
+          "query": "diaryId=b00064a7602b866a0542dd6e1e8c0b37",
+          "scene": null
+        },
+        {
+          "name": "pages/home/messageDetail/messageDetail",
+          "pathName": "pages/home/messageDetail/messageDetail",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/service",
+          "pathName": "pages/service/service",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/publicLoc",
+          "pathName": "pages/service/publicLoc/publicLoc",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/locDetail/locDetail",
+          "pathName": "pages/service/locDetail/locDetail",
+          "query": "locId=79550af2605de5f70c10fd2920f1314b",
+          "scene": null
+        },
+        {
+          "name": "pages/home/myOrder/myOrder",
+          "pathName": "pages/home/myOrder/myOrder",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/publicEquip/publicEquip",
+          "pathName": "pages/service/equipService/publicEquip/publicEquip",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/publicEquip/publicEquip",
+          "pathName": "pages/service/equipService/publicEquip/publicEquip",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/service/equipService/equipDetail",
+          "pathName": "pages/service/equipService/equipDetail/equipDetail",
+          "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/arrange",
+          "pathName": "pages/arrange/arrange",
+          "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/tipArrange/tipArrange",
+          "pathName": "pages/arrange/tipArrange/tipArrange",
+          "query": "equipId=057f92a660389632003b0228739973df",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/tipArrange/tipArrange",
+          "pathName": "pages/arrange/tipArrange/tipArrange",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/equipArrange/equipArrange",
+          "pathName": "pages/arrange/equipArrange/equipArrange",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/arrange/sysMsgArrange/sysMsgArrange",
+          "pathName": "pages/arrange/sysMsgArrange/sysMsgArrange",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

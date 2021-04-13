@@ -20,7 +20,7 @@
           <canvas type="2d" id="loc-wea-tmp"></canvas>
           <canvas type="2d" id="loc-wea-hum"></canvas>
           <canvas type="2d" id="loc-wea-pres"></canvas>
-          <text class="modify-time-describe">更新时间：{{modifyTimeStr}}</text>
+          <!-- <text class="modify-time-describe">更新时间：{{modifyTimeStr}}</text> -->
         </view>
       </view>
 

@@ -249,14 +249,9 @@ Page({
       })
       console.log(curUser, "回复", that.pageData.tarUser);
       that.setData({
-        commentInputValue: '',
-        totalCommentCount: that.data.totalCommentCount + 1
-      });
-
-
-      that.setData({
         commentInputValue: ''
       });
+
     })
   },
   //获取文章的评论
@@ -289,9 +284,10 @@ Page({
 
     for (let [idx, itemData] of res.entries()) {
       itemData.replyLists = [];
-      itemData.replyLen=0;
+      itemData.replyLen = 0;
       itemData.commentTime = customFormatTime(itemData.commentTime);
       itemData.openInfo = openid;
+      itemData.hasMoreReply = true;
       that.getReplyCommentList(openid, itemData, that.pageData.curCommentLen + idx); //获取评论的回复列表
 
     }
@@ -327,12 +323,22 @@ Page({
         curUserOpenId: curUserId
       }
     });
+    if (replyRes.result.list.length === 0) {
+      _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'hasMoreReply'], false);
+      _this.applyDataUpdates();
+    }
     for (let item of replyRes.result.list) {
       item.commentTime = customFormatTime(item.commentTime);
     }
     mainComment.replyLists.push(...replyRes.result.list);
-    mainComment.replyLen+=replyRes.result.list.length;
-    _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'replyLists'], mainComment.replyLists);
+    mainComment.replyLen += replyRes.result.list.length;
+
+    //去除重复的回复
+    let obj = {};
+    for (let replyDouble of mainComment.replyLists) {
+      obj[replyDouble._id] = replyDouble;
+    }
+    _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'replyLists'], Object.values(obj));
     _this.replaceDataOnPath(['commentLists', mainCommentIdx, 'replyLen'], mainComment.replyLen);
 
     _this.applyDataUpdates();
@@ -341,16 +347,22 @@ Page({
   },
   //获取主评论更多回复
   async getMoreReply(e) {
+    let mainCommentItem = e.currentTarget.dataset.mainComment; //主评论
+    let mainIndex = e.currentTarget.dataset.mainIdx; //第几条主评论
+    console.log(mainCommentItem.hasMoreReply);
+    if(!mainCommentItem.hasMoreReply){
+      wx.showToast({
+        title: '没有更多了'
+      })
+      return;
+    }
+    let openid = wx.getStorageSync('userOpenId');
+    if (!openid) {
+      openid = mainCommentItem.openInfo;
+    }
     wx.showLoading({
       title: '更多回复'
     })
-
-    let mainCommentItem = e.currentTarget.dataset.mainComment;//主评论
-    let mainIndex = e.currentTarget.dataset.mainIdx;//第几条主评论
-    let openid =  wx.getStorageSync('userOpenId');
-    if (!openid) {
-     openid=mainCommentItem.openInfo;
-    }
     this.getReplyCommentList(openid, mainCommentItem, mainIndex).then((res) => {
       wx.hideLoading({
         success: (res) => {},
@@ -526,10 +538,10 @@ Page({
   },
   //分享这篇帖子
   onShareAppMessage() {
-    let that=this;
+    let that = this;
     return {
       title: '问答圈',
-      path: '/pages/talk/questionDetail/questionDetail?questionId='+that.options.questionId
+      path: '/pages/talk/questionDetail/questionDetail?questionId=' + that.options.questionId
     }
   }
 

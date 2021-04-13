@@ -1,15 +1,19 @@
 //评论时间显示格式
-function customFormatTime(da){
+function customFormatTime(dastr){
+ 
   // 刚刚  1分钟内
   // 几分钟前  
   // 几小时前
   // 昨天  + da.toLocaleTimeString()
   // 前天  + da.toLocaleTimeString()
   //da.toLocaleString();
-  da=new Date(da);
+  let da=new Date(dastr);
+  // console.log("loading customFormatTime daStr:",dastr);
+  // console.log("loading customFormatTime da:",da);
+ 
   let curDa = new Date();
   let daOffset = new Date(curDa.toLocaleDateString());
-  // console.log("da",da.toLocaleString());
+  // console.log("loading customFormatTime daOffset:",daOffset);
   let timeGap = daOffset - da;
   if (timeGap > 2 * 24 * 60 * 60 * 1000) {
     return da.toLocaleString();

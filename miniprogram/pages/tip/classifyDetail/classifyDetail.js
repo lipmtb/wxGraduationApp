@@ -2,6 +2,7 @@
 const db = wx.cloud.database();
 const _ = db.command;
 const $ = _.aggregate;
+import nlpKeyConfig from "../../../nlpConfig/nlpConfig.js";
 Page({
 
   data: {
@@ -10,19 +11,24 @@ Page({
   },
   pageData: {
     curClassifyId: '',
+    curClassifyName:'',
     curTopicListsCount: 0 //当前分类的帖子数
   },
 
   onLoad: function (options) {
     this.pageData.curClassifyId = options.classifyId;
     this.readTopic(); //当前主题的阅读量增加
-    this.getTopicInfo(); //获取分类主题的信息
+    
     this.getTopicLists(); //获取当前分类的帖子
-    this.getRelevantTopicLists(); //获取当前主题的相关主题
+    //获取分类主题的信息
+    this.getTopicInfo().then(()=>{
+      this.getRelevantTopicLists(); //获取当前主题的相关主题
+    }); 
+   
   },
   // 进入此主题时增加此话题的阅读量
   async readTopic() {
-    let that=this;
+    let that = this;
     return await wx.cloud.callFunction({
       name: "readTipClassify",
       data: {
@@ -43,6 +49,7 @@ Page({
     let that = this;
     let res = await db.collection('tipClassify').doc(that.pageData.curClassifyId).get();
     console.log("获取分类主题success", res);
+    that.pageData.curClassifyName=res.data.classifyName;
     that.setData({
       classifyId: that.pageData.curClassifyId,
       classifyName: res.data.classifyName
@@ -123,6 +130,7 @@ Page({
   //获取当前话题相关的主题
   async getRelevantTopicLists() {
     let that = this;
+    // 1.优先获取本系统相关的技巧类型
     let relevantRes = await db.collection("topicRelevant").where(_.or(
       [{
           fromTopicId: that.pageData.curClassifyId
@@ -139,14 +147,32 @@ Page({
     for (let item of reslists) {
       item.fromTopicId === that.pageData.curClassifyId ? relevantArr.push(item.toTopicId) : relevantArr.push(item.fromTopicId);
     }
-    //如果相关的话题少于3个，再获取2个阅读量前2的话题
+    //2.获取百度推荐的技巧类型
+    let baiduRes=await wx.cloud.callFunction({
+      name:'aNodeJieBa',
+      data:{
+        keyword: that.pageData.curClassifyName,
+        secretId:nlpKeyConfig.secretId,
+        secretKey:nlpKeyConfig.secretKey
+      }
+    });
+    console.log("推荐的相关词条：",baiduRes.result);
+    for(let baiduItem of baiduRes.result){
+      let baiduRecommRes=await db.collection("tipClassify").where({
+        classifyName:db.RegExp({
+          regexp:baiduItem
+        })
+      }).get();
+      console.log("获得"+baiduItem+"的结果：",baiduRecommRes.data);
+      relevantArr.push(...baiduRecommRes.data.map((item) => item._id));
+    }
+  
+
+    //3.如果相关的话题少于3个，再获取2个阅读量前2的话题
     if (relevantArr.length < 3) {
       //获取阅读量最高的2个话题加入到relevantArr数组
-      let hotRes = await db.collection("readTopic").aggregate()
-        .group({
-          _id: '$classifyId',
-          readCount: $.sum(1)
-        }).sort({
+      let hotRes = await db.collection("tipClassify").aggregate()
+        .sort({
           readCount: -1
         }).limit(2).end();
       console.log("hotRes", hotRes.list);
@@ -155,24 +181,26 @@ Page({
           relevantArr.push(hotitem._id);
         }
       }
-      //随机取两个主题分类
-      let resRandomRes = await db.collection("tipClassify").aggregate().match({
-        _id: _.nor([_.in(relevantArr), _.eq(that.pageData.curClassifyId)])
-      }).sample({
-        size: 2
-      }).end();
-      relevantArr.push(...resRandomRes.list.map((item) => item._id));
-      console.log("获取相关的随机的主题", resRandomRes.list);
-
-      relevantArr = [...new Set(relevantArr)]; //避免重复的话题
-      let classifyNameRes = await db.collection("tipClassify").where({
-        _id: _.in(relevantArr)
-      }).get();
-      console.log("全部主题", classifyNameRes);
-      that.setData({
-        relevantTopicLists: classifyNameRes.data
-      })
     }
+
+    //4.随机取两个主题分类
+    let resRandomRes = await db.collection("tipClassify").aggregate().match({
+      _id: _.nor([_.in(relevantArr), _.eq(that.pageData.curClassifyId)])
+    }).sample({
+      size: 2
+    }).end();
+    relevantArr.push(...resRandomRes.list.map((item) => item._id));
+    console.log("获取相关的随机的主题", resRandomRes.list);
+
+    relevantArr = [...new Set(relevantArr)]; //避免重复的话题
+    let classifyNameRes = await db.collection("tipClassify").where({
+      _id: _.in(relevantArr)
+    }).get();
+    console.log("全部主题", classifyNameRes);
+    that.setData({
+      relevantTopicLists: classifyNameRes.data
+    })
+
   },
   //发展主题之间的关系
   async developRelevantion(toRelevantId) {

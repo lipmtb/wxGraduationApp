@@ -59,11 +59,7 @@ exports.main = async (event, context) => {
       userInfo: $.arrayElemAt(['$userArr', 0]),
       commentQuestionId: 1,
       commentText: 1,
-      commentTime: $.dateToString({
-        date: '$commentTime',
-        format: '%Y-%m-%d %H:%M:%S',
-        timezone: 'Asia/Shanghai'
-      }),
+      commentTime:1,
       commentTimeDa: '$commentTime',
       likeCount: $.size('$likeCommentList'),
       likeCommentSum: $.sum([$.sum('$replyLists.likeReplyCount'), $.size('$likeCommentList')]),

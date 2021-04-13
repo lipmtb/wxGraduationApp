@@ -291,7 +291,7 @@ Page({
     });
   },
   moreComment() {
-    let that=this;
+    let that = this;
     if (that.data.hasMoreComment) {
       wx.showLoading({
         title: '更多评论'
@@ -302,10 +302,10 @@ Page({
           success: (res) => {},
         })
       })
-    }else{
-        wx.showToast({
-          title: '没有更多了',
-        })
+    } else {
+      wx.showToast({
+        title: '没有更多了',
+      })
     }
   },
   //打开微信内置地图查看地点
@@ -525,24 +525,50 @@ Page({
   },
   //确认选择
   onSelectedTimeConfirm(e) {
-    // console.log("confirm",e);
     let that = this;
     that.pageData.selectedOrderTime = new Date(e.detail);
-    that.confirmOrderTime().then((resid) => {
-      if (resid) {
-        that.setData({
-          orderTime: that.pageData.selectedOrderTime.toLocaleString(),
-          popVisible: false,
-          orderId: resid
-        }, () => {
-          wx.showToast({
-            title: '预约成功'
+    let locDetail = that.data.locItemData;
+    let orderLocStr = locDetail.locationDetail && locDetail.locationDetail.address || '无';
+    wx.showModal({
+      title: '钓点预约确认',
+      content: '预约地点：' + orderLocStr + ",预约时间：" + that.pageData.selectedOrderTime.toLocaleString(),
+      success(res) {
+        // 确认预约
+        if (res.confirm) {
+          //添加未确认预约订单和发送预约消息
+          that.addingNewOrder().then((oRes) => {
+            console.log("未确认预约订单添加成功", oRes);
+            that.pageData.oLocId = oRes._id;
+            return oRes;
+          }).then((orderRes) => {
+            return that.sendOrderMsg(orderRes._id);
+
+          }).then((odr) => {
+            return that.updateOrderStatus(that.pageData.oLocId);
+          }).then(() => {
+            
+            wx.showToast({
+              title: '预约成功'
+            });
+            that.setData({
+              orderId:that.pageData.oLocId ,
+              orderTime:that.pageData.selectedOrderTime.toLocaleString(),
+              popVisible: false
+            })
+            setTimeout(function () {
+              wx.navigateTo({
+                url: '/pages/home/myOrder/orderLocDetail/orderLocDetail?oId=' + that.pageData.oLocId
+              })
+            }, 3000);
+
+          }).catch((eerr) => {
+            console.log("预约失败", eerr);
           })
-        })
-      } else {
-        that.setData({
-          popVisible: false
-        })
+        } else {
+          that.setData({
+            popVisible: false
+          })
+        }
       }
     })
 
@@ -557,57 +583,43 @@ Page({
       msgContent: fromUserInfo.tempNickName + "预约了你发布的钓点:" + that.data.locItemData.locName + "，时间是：" + that.formattedDateStr(that.pageData.selectedOrderTime),
       msgFromId: orderId
     }
-    return await wx.cloud.callFunction({
+    return wx.cloud.callFunction({
       name: 'createOrderMsg',
       data: {
         toUser: toUser,
         msgDetail: msgDetail,
         type: 'locOrder'
       }
-    }).then((res) => {
-      console.log("预约消息发送给钓点发布者", res);
-    })
+    });
 
   },
-  //确认预约：数据库插入orderLoc
-  async confirmOrderTime() {
+  // 添加未确认新预约
+  addingNewOrder() {
     let that = this;
     let locDetail = that.data.locItemData;
-    let orderLocStr = locDetail.locationDetail && locDetail.locationDetail.address || '无';
+
     let orderLocId = locDetail._id; //钓点_id
     let orderLocName = locDetail.locName; //钓点名称
     let orderTime = that.pageData.selectedOrderTime; //预约的时间
     let related = that.pageData.curInputRelated; //预约者联系方式
-    return await new Promise((resolve) => {
-      wx.showModal({
-        title: '钓点预约确认',
-        content: '预约地点：' + orderLocStr + ",预约时间：" + that.pageData.selectedOrderTime.toLocaleString(),
-        success(res) {
-          //  console.log(res);
-          if (res.confirm) {
-            db.collection("orderLoc").add({
-              data: {
-                orderLocId: orderLocId,
-                orderTime: orderTime, //预约的时间
-                orderLocName: orderLocName,
-                related: related,
-                createTime: new Date(), //订单的创建时间
-                orderStatus: 'progress'
-              }
-            }).then((res) => {
-
-              console.log("预约成功", res);
-              resolve(res._id);
-              that.sendOrderMsg(res._id); //发locOrder类的消息通知发布者
-              that.pageData.oLocId = res._id;
-            })
-          } else {
-            resolve(false);
-          }
-        }
-      })
-    })
-
+    return db.collection("orderLoc").add({
+      data: {
+        orderLocId: orderLocId,
+        orderTime: orderTime, //预约的时间
+        orderLocName: orderLocName,
+        related: related,
+        createTime: new Date(), //订单的创建时间
+        orderStatus: 'unconfirmed'
+      }
+    });
+  },
+  //消息发布给主人后更新预约状态
+  updateOrderStatus(oId) {
+    return db.collection("orderLoc").doc(oId).update({
+      data: {
+        orderStatus: 'progress'
+      }
+    });
   },
   //取消预约：数据库删除orderLoc
   cancelOrderTime(e) {
@@ -669,7 +681,7 @@ Page({
           }).then((res) => {
             console.log("云函数调用成功,结果：", res);
           }).catch((err) => {
-            console.log("云函数调用出错".err)
+            console.log("云函数调用出错",err);
           })
         }
 

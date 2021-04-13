@@ -1,5 +1,6 @@
 // 发布装备
 import MyNotify from '../../../../util/mynotify/mynotify';
+let template_id = 'uMBavbmSSxRegKG4prOU9l1vbDFJiwvMrvzb22cAICo';
 const db = wx.cloud.database({
   env: 'blessapp-20201123'
 });
@@ -255,6 +256,23 @@ Page({
       });
     }
     return fileIdLists;
+  },
+// 请求接受订阅消息
+  requestSendMsg(){
+    let that=this;
+    wx.requestSubscribeMessage({
+      tmplIds: [template_id],
+      success(res) { //用户选择了才有结果，否则一直等着
+        that.onAllSend();
+        console.log(res);
+      },
+      fail(err) {
+        console.log("request失败", err)
+      },
+      complete() {
+        console.log("request  complete");
+      }
+    })
   }
 
 

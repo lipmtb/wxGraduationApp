@@ -40,7 +40,7 @@
       <view wx:if="{{!hasMoreArr[1]}}">
         <text>没有更多了。。。</text>
       </view>
-    </van-tab>
+    </van-tab> 
 
     <!-- 技巧 -->
     <van-tab title="技巧" name="tip">

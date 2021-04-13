@@ -42,7 +42,7 @@ Page({
             });
           }
           //总的未读消息减少
-          if (snap.docChanges[0].dataType === 'update') {
+          if (snap.docChanges[0].queueType === 'dequeue') {
             that.setData({
               inProgressCount: that.data.inProgressCount - 1
             });

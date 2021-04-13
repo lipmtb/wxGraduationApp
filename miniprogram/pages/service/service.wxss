@@ -81,13 +81,16 @@
   width: 236rpx;
   height: 80rpx;
   color:#b1a3a3;
-  font-size:0.32rem;
+  font-size:0.6rem;
 }
 /* 24小时天气canvas的容器 */
 .weather-container {
-  height: 600rpx;
+  height: 700rpx;
+  width:800rpx;
   margin-top:60rpx;
+  overflow-x:auto;
 }
+
 
 /* 钓点服务 */
 

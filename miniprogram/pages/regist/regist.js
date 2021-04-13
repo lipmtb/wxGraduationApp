@@ -1,5 +1,6 @@
 // pages/regist/regist.js
 const app = getApp();
+
 const db = wx.cloud.database({
   env: 'blessapp-20201123'
 });
@@ -12,7 +13,8 @@ Page({
     userInputNickName: ''
   },
   data: {
-    notRegist: false
+    notRegist: false,
+    canTapLogin:true
   },
   onLoad() {
     let that = this;
@@ -21,57 +23,45 @@ Page({
       pageThis: that
     });
     this.notify.notifyInit();
-
-
     //调用login云函数判断当前用户是否注册过
     wx.cloud.callFunction({
       name: 'login'
     }).then((res) => {
       console.log(res);
-      if(res.result.length>0){
+      if (res.result.length > 0) {
         //判断用户是否是管理员
-        let user=res.result[0];
-        let isAd=true;//是管理员
-        for(let i of user.right){
-          if(i===0){
-            isAd=false;
+        let user = res.result[0];
+        let isAd = true; //是管理员
+        for (let i of user.right) {
+          if (i === 0) {
+            isAd = false;
           }
         }
         that.setData({
-          hasAdRight:isAd
+          hasAdRight: isAd
         })
       }
       this.setData({
-        notRegist: res.result.length === 0 ? true : false
+        notRegist: res.result.length === 0 ? true : false,
+        canTapLogin:false
       });
-      
+
     });
 
-
   },
-  //注册过的授权信息过期的需要点击登录按钮授权登录
+    //用户登录
   onUserLogin(e) {
-    console.log("登录进入小程序",e);
-    //用户的登录状态
-    wx.getSetting({ //判断用户是否授权过
-      withSubscriptions: true
-    }).then((res) => {
-      if (res.authSetting['scope.userInfo']) {
-        wx.getUserInfo({
-          lang: 'zh_CN',
-        }).then((res) => {
-          console.log("获取用户信息成功", res);
-          let userObj = res.userInfo;
-          app.globalData.userObj = userObj;
-          wx.setStorageSync("userInfo", userObj);
-          //授权过的用户直接登录
-          wx.switchTab({
-            url: '/pages/talk/talk',
-          });
+    wx.getUserProfile({
+      desc: '获取的你的身份信息',
+      success: (res) => {
+        console.log("获取用户信息成功:", res);
 
-        }).catch((err) => {
-          console.error("获取用户信息失败", err);
-        })
+        let userObj = res.userInfo;
+        app.globalData.userObj = userObj;
+        wx.setStorageSync("userInfo", userObj);
+        wx.switchTab({
+          url: '/pages/talk/talk',
+        });
       }
     })
   },
@@ -90,18 +80,14 @@ Page({
   //用户点击注册按钮，先登录获取用户信息，再将信息写入数据库
   onUserRegist(e) {
     let that = this;
-    console.log(e);
-    wx.getSetting({
-      withSubscriptions: true
-    }).then((res) => {
-      console.log(res);
-      if (res.authSetting['scope.userInfo']) {
-        let userObj = e.detail.userInfo;
+    wx.getUserProfile({
+      desc: '注册的昵称将在本程序中使用',
+      success: (res) => {
+        let userObj = res.userInfo;
         app.globalData.userObj = userObj;
         wx.setStorageSync('userInfo', userObj);
 
         let tmpNickName = that.pageData.userInputNickName || userObj.nickName;
-        // let nickName = userObj.nickName;
         let avatarImgUrl = userObj.avatarUrl;
         let gender = userObj.gender === 1 ? '男' : '女';
         //注册用户
@@ -111,10 +97,10 @@ Page({
             avatarUrl: avatarImgUrl,
             gender: gender,
             registTime: new Date(),
-            right:[1,0,0,1]
+            right: [1, 0, 0, 1]
           }
         }).then((res) => {
-          console.log(res);
+          console.log("注册成功",res);
           that.notify.showNotify(function () {
             wx.switchTab({
               url: '/pages/talk/talk',
@@ -122,13 +108,13 @@ Page({
           });
 
         })
-
-
       }
-    });
+    })
+
+
 
   },
-  toArrangePage(){
+  toArrangePage() {
     wx.navigateTo({
       url: '../arrange/arrange',
     })

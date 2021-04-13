@@ -3,7 +3,7 @@ const db = wx.cloud.database({
   env: 'blessapp-20201123'
 });
 const app = getApp();
-import customFormatTime from '../../util/customTime'; //自定义的日期格式化显示
+import customFormatTime from '../../util/customTime.js'; //自定义的日期格式化显示
 Page({
   data: {
     hotLists: [], //热门
@@ -131,21 +131,17 @@ Page({
         });
         return;
       }
-      //修改服务器时间为本地时间
-      let prosArr = [];
+
       for (let item of res.result.list) {
-        let prosItem = db.collection("question").doc(item._id).get().then((resitem) => {
-          item.publishTime = customFormatTime(resitem.data.publishTime);
-        });
-        prosArr.push(prosItem);
+        item.publishTime = customFormatTime(item.publishTime);
       }
       that.pageData.curQuestionCount = that.pageData.curQuestionCount + res.result.list.length;
       that.data.questionLists.push(...res.result.list);
-      Promise.all(prosArr).then(() => {
-        that.setData({
-          questionLists: that.data.questionLists
-        })
+
+      that.setData({
+        questionLists: that.data.questionLists
       })
+
 
     })
   },
@@ -242,15 +238,15 @@ Page({
   },
   onReady() {
     //钓友圈初始动画
-    // const animationArr = [];
-    // for (let i = 0; i < 3; i++) {
-    //   animationArr[i] = this.singleRunAnimation(200 * i);
-    // }
-    // this.setData({
-    //   animationShowA: animationArr[0],
-    //   animationShowB: animationArr[1],
-    //   animationShowC: animationArr[2]
-    // });
+    const animationArr = [];
+    for (let i = 0; i < 3; i++) {
+      animationArr[i] = this.singleRunAnimation(200 * i);
+    }
+    this.setData({
+      animationShowA: animationArr[0],
+      animationShowB: animationArr[1],
+      animationShowC: animationArr[2]
+    });
   },
   createTextAnimation(delayNum) {
     return wx.createAnimation({
@@ -357,10 +353,10 @@ Page({
       });
     }
   },
-  onShareAppMessage(){
+  onShareAppMessage() {
     return {
-      title:"杂谈",
-      path:'/pages/talk/talk'
+      title: "杂谈",
+      path: '/pages/talk/talk'
     }
   }
 

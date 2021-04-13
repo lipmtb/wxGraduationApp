@@ -243,9 +243,8 @@ Page({
 
     this.pageData.curInputAddress = e.detail;
   },
-  // 确认租用
+  // 点击租用前往租用详情页
   async confirmOrder() {
-
     let that = this;
     let userOpenId = wx.getStorageSync('userOpenId');
     if (!userOpenId) {
@@ -261,7 +260,7 @@ Page({
     let userObj = userInfoRes.data[0]; //获取租赁用户对象
 
     //添加租赁订单
-    let rentRes = await db.collection("rentEquip").add({
+    return await db.collection("rentEquip").add({
       data: {
         rentEquipId: that.data.equipItemData._id, //租用的装备
         rentUserName: userObj.tempNickName, //租用者昵称
@@ -272,10 +271,16 @@ Page({
         rentTime: new Date(),
         orderStatus: 'unconfirmed'
       }
+    }).then((rentRes)=>{
+      wx.navigateTo({
+        url: '../rentDetail/rentDetail?rentId=' + rentRes._id,
+      })
+    }).catch(()=>{
+      wx.showToast({
+        title: '租用失败'
+      })
     })
-    wx.navigateTo({
-      url: '../rentDetail/rentDetail?rentId=' + rentRes._id,
-    })
+  
 
 
   },

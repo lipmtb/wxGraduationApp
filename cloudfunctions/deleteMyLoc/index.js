@@ -78,9 +78,17 @@ exports.main = async (event, context) => {
   }
   allDel.push(delImgArr);
 
+
+  //删除钓点评论消息
+  let mesRes = await db.collection("message").where({
+    'messageDetail.msgFromId': essayId
+  }).remove();
+  allDel.push(mesRes);
+
   //删除钓点
   let delEssayRes = await db.collection("anglerLoc").doc(essayId).remove();
   allDel.push(delEssayRes);
+
 
   return allDel;
 

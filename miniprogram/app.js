@@ -1,4 +1,5 @@
 //app.js
+let db=null;
 App({
   onLaunch: function () {
     if (!wx.cloud) {
@@ -15,13 +16,33 @@ App({
     }
 
     this.globalData = {}// regist.js 添加：app.globalData.userObj = userObj;
+  
+   
+  },
+  onShow(e){
+    // console.log(e);
 
+    let that=this;
+    db=wx.cloud.database();
     wx.cloud.callFunction({
       name:'getUserOpenId'
     }).then((res)=>{
   
-      this.globalData.userOpenId=res.result;
+      that.globalData.userOpenId=res.result;
       wx.setStorageSync('userOpenId', res.result);
+      db.collection("angler").where({
+        _openid:res.result
+      }).get().then((userArr)=>{
+        if(userArr.data.length===0){
+          if(e.path==='pages/regist/regist'){
+              return;
+          }
+          wx.redirectTo({
+            url: '/pages/regist/regist',
+          })
+        }
+      });
     })
+   
   }
 })

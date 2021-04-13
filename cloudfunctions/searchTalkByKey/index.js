@@ -19,6 +19,26 @@ exports.main = async (event, context) => {
       $.eq(['$$talkId','$commentTalkId'])
     )).done(),
     as:'commentLists'
+  }).lookup({
+    from:'likeTalk',
+    localField:'_id',
+    foreignField:'likeTalkId',
+    as:'likeArr'
+  }).lookup({
+    from:'angler',
+    localField:'_openid',
+    foreignField:'_openid',
+    as:'ownerArr'
+  }).project({
+    title: 1,
+    images: 1,
+    _openid: 1,
+    content: 1,
+    publishTime: 1,
+    commentLists: 1,
+    commentCount: $.size('$commentLists'),
+    likeCount:$.size('$likeArr'),
+    userInfo:$.arrayElemAt(['$ownerArr',0])
   }).match(_.or([
     {
       title:new db.RegExp({
